@@ -1,0 +1,64 @@
+﻿@page
+@model GmailServer.Web.Pages.Gmails.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Gmail"];
+    PageLayout.Content.Title = L["Gmail"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.Gmail;
+}
+
+@section scripts {
+    <script>
+        var gmailStatusSelections = @Html.Raw(ViewData["gmailStatusSelections"]);
+        var genderSelections = @Html.Raw(ViewData["genderSelections"]);
+    </script>
+
+    <abp-script src="/Pages/Gmails/js/index.js"/>
+}
+
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>List Gmail</h4>
+            </abp-column>
+             <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.Gmails.Download))
+                {
+                   <abp-button class="float-right btn btn-small btn-primary" id="downloadBtn" text="Download Gmail"></abp-button> 
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="gmailTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Date"]</th>
+                    <th>@L["First Name"]</th>
+                    <th>@L["Last Name"]</th>
+                    <th>@L["Email"]</th>
+                    <th>@L["Password"]</th>
+                    <th>@L["Recovery"]</th>
+                    <th>@L["DOB"]</th>
+                    <th>@L["Gender"]</th>
+                    <th>@L["Timezone"]</th>
+                    <th>@L["Country"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Updated"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

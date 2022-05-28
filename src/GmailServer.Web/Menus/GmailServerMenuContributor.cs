@@ -1,0 +1,107 @@
+using System.Threading.Tasks;
+using GmailServer.Localization;
+using GmailServer.Permissions;
+using Volo.Abp.AuditLogging.Web.Navigation;
+using Volo.Abp.Identity.Web.Navigation;
+using Volo.Abp.IdentityServer.Web.Navigation;
+using Volo.Abp.LanguageManagement.Navigation;
+using Volo.Abp.SettingManagement.Web.Navigation;
+using Volo.Abp.TextTemplateManagement.Web.Navigation;
+using Volo.Abp.Authorization.Permissions;
+using Volo.Abp.UI.Navigation;
+using Volo.Saas.Host.Navigation;
+using GmailServer.MultiTenancy;
+
+namespace GmailServer.Web.Menus
+{
+    public class GmailServerMenuContributor : IMenuContributor
+    {
+        public async Task ConfigureMenuAsync(MenuConfigurationContext context)
+        {
+            if (context.Menu.Name == StandardMenus.Main)
+            {
+                await ConfigureMainMenuAsync(context);
+            }
+        }
+
+        private static async Task ConfigureMainMenuAsync(MenuConfigurationContext context)
+        {
+            var l = context.GetLocalizer<GmailServerResource>();
+            var administration = context.Menu.GetAdministration();
+            if (!MultiTenancyConsts.IsEnabled)
+            {
+                administration.TryRemoveMenuItem(SaasHostMenuNames.GroupName);
+            }
+            //Home
+            context.Menu.AddItem(
+                new ApplicationMenuItem(
+                    GmailServerMenus.Home,
+                    l["Menu:Home"],
+                    "~/",
+                    icon: "fa fa-home",
+                    order: 1
+                )
+            );
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.Gmails.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.Gmail,
+                       "Gmail",
+                       "/Gmails",
+                       icon: "fa fa-list-ul",
+                       order: 2
+                   )
+               );
+            }
+
+            //HostDashboard
+            //context.Menu.AddItem(
+            //    new ApplicationMenuItem(
+            //        GmailServerMenus.HostDashboard,
+            //        l["Menu:Dashboard"],
+            //        "~/HostDashboard",
+            //        icon: "fa fa-line-chart",
+            //        order: 2
+            //    ).RequirePermissions(GmailServerPermissions.Dashboard.Host)
+            //);
+
+            ////TenantDashboard
+            //context.Menu.AddItem(
+            //    new ApplicationMenuItem(
+            //        GmailServerMenus.TenantDashboard,
+            //        l["Menu:Dashboard"],
+            //        "~/Dashboard",
+            //        icon: "fa fa-line-chart",
+            //        order: 2
+            //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
+            //);
+
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 3);
+
+            //Administration
+            //var administration = context.Menu.GetAdministration();
+            administration.Order = 5;
+
+            //Administration->Identity
+            administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);
+
+            //Administration->Identity Server
+            administration.SetSubItemOrder(AbpIdentityServerMenuNames.GroupName, 2);
+
+            //Administration->Language Management
+            administration.SetSubItemOrder(LanguageManagementMenuNames.GroupName, 3);
+
+            //Administration->Text Template Management
+            administration.SetSubItemOrder(TextTemplateManagementMainMenuNames.GroupName, 4);
+
+            //Administration->Audit Logs
+            administration.SetSubItemOrder(AbpAuditLoggingMainMenuNames.GroupName, 5);
+
+            //Administration->Settings
+            administration.SetSubItemOrder(SettingManagementMenuNames.GroupName, 6);
+
+        }
+    }
+}

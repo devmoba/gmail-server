@@ -1,0 +1,34 @@
+﻿/* Your Global Styles */
+.card-body, input[type=text], .card-body select {
+    font-size: 15px;
+}
+
+.table td, .table th {
+    padding: 5px 8px;
+}
+
+.table td {
+    padding: 5px 12px;
+}
+
+.dataTables_scrollHead {
+    overflow: visible !important;
+}
+
+#gmailTable_wrapper .dataTables_scrollBody
+ {
+    min-height: 500px;
+}
+
+.dataTables_scrollHead th div.chosen-container {
+    font-size: inherit;
+    font-weight: normal;
+}
+
+#gmailTable_wrapper table.dataTable thead tr th input[type="text"] {
+    margin: 0px;
+    width: calc(100%);
+    padding: 3px 7px;
+    height: 36px;
+    font-size: 15px;
+}
