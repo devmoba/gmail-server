@@ -32,11 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\Gmails\js\download.js" />
+    <None Remove="Pages\Gmails\js\downloadFormViewModel.js" />
     <None Remove="Pages\Gmails\js\index.js" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\libs\devmoba\core\devmoba.js" />
+    <None Include="wwwroot\libs\knockout-js\knockout.js" />
+    <None Include="wwwroot\libs\knockout-js\number-formatting.js" />
     <None Include="wwwroot\libs\moment\locale\af.js" />
     <None Include="wwwroot\libs\moment\locale\ar-dz.js" />
     <None Include="wwwroot\libs\moment\locale\ar-kw.js" />

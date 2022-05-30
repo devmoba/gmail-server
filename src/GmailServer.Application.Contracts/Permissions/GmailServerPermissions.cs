@@ -16,6 +16,7 @@ namespace GmailServer.Permissions
         {
             public const string Default = PermissionNames.Gmail_Default;
             public const string Download = PermissionNames.Gmail_Download;
+            public const string Delete = PermissionNames.Gmail_Delete;
         }
     }
 }

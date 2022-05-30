@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace GmailServer
 {
@@ -73,6 +75,29 @@ namespace GmailServer
             var res = await Repository.InsertAsync(gmail);
 
             return ObjectMapper.Map<Gmail, GmailDto>(gmail);
+        }
+
+        [Authorize(GmailServerPermissions.Gmails.Download)]
+        public async Task<List<GmailDto>> GetByTimeRange(DateTime? from, DateTime? to)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(from.HasValue, x => x.Created >= from);
+            query = query.WhereIf(to.HasValue, x => x.Created <= to);
+            var res = await AsyncExecuter.ToListAsync(query);
+            return ObjectMapper.Map<List<Gmail>, List<GmailDto>>(res);
+        }
+
+        [Authorize(GmailServerPermissions.Gmails.Download)]
+        public async Task<List<GmailDto>> GetAll()
+        {
+            var res = await Repository.ToListAsync();
+            return ObjectMapper.Map<List<Gmail>, List<GmailDto>>(res);
+        }
+
+        [Authorize(GmailServerPermissions.Gmails.Delete)]
+        public async Task DeleteAsync(long id)
+        {
+            await Repository.DeleteAsync(id);
         }
     }
 }

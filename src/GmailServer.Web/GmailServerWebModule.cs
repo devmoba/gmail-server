@@ -105,6 +105,12 @@ namespace GmailServer.Web
             ConfigureExternalProviders(context);
             ConfigureHealthChecks(context);
 
+            Configure<RazorPagesOptions>(options =>
+            {
+                options.Conventions.AuthorizePage("/Gmails", GmailServerPermissions.Gmails.Default);
+                options.Conventions.AuthorizePage("/Gmails/Download", GmailServerPermissions.Gmails.Download);
+            });
+
             Configure<AbpBundlingOptions>(options =>
             {
                 options.ScriptBundles.Configure(
@@ -113,6 +119,12 @@ namespace GmailServer.Web
                    {
                        bundleConfig.AddContributors(typeof(GlobalScriptBundleContributor));
                    });
+
+                options.ScriptBundles.Add("knockout",
+                  bundle => bundle.AddFiles(
+                      "/libs/knockout-js/knockout.js",
+                      "/libs/knockout-js/number-formatting.js"
+                  ));
             });
         }
 

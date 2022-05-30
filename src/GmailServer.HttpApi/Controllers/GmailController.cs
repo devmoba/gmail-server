@@ -25,6 +25,13 @@ namespace GmailServer.Controllers
             return await _appService.CreateAsync(input);
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task DeleteAsync(long id)
+        {
+            await _appService.DeleteAsync(id);
+        }
+
         [HttpGet]
         public async Task<PagedResultDto<GmailDto>> GetListAsync(GmailFilterDto input)
         {

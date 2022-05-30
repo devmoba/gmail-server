@@ -7,6 +7,9 @@ namespace GmailServer.ControllerInterfaces
     public interface IGmailController
     {
         Task<GmailDto> CreateAsync(CreateGmailDto input);
+
         Task<PagedResultDto<GmailDto>> GetListAsync(GmailFilterDto input);
+
+        Task DeleteAsync(long id);
     }
 }

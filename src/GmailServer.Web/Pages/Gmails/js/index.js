@@ -18,6 +18,7 @@
             { searchDisabled: true },
             { name: "status", options: gmailStatusSelections },
             { searchDisabled: true },
+            { searchDisabled: true },
             { searchDisabled: true }
         ]);
 
@@ -68,6 +69,13 @@
                     }
                 },
                 {
+                    targets: [11],
+                    render: function (data, type, row, meta) {
+                        var status = gmailStatusSelections.find(x => x.value == data);
+                        return status.text;
+                    }
+                },
+                {
                     targets: [12],
                     render: function (data, type, row, meta) {
                         if (data && type === 'display') {
@@ -86,7 +94,29 @@
                         }
                         return data;
                     }
-                }
+                },
+                {
+                    targets: [14],
+                    rowAction: {
+                        items:
+                            [
+                                {
+                                    text: l('Delete'),
+                                    //iconClass: "fas fa-trash-alt",
+                                    visible: function (data) {
+                                        return abp.auth.isGranted('GmailGroup.Delete');
+                                    },
+                                    confirmMessage: data => l('DeleteConfirm'),
+                                    action: data => {
+                                        gmailServer.controllers.gmail.delete(data.record.id).then(() => {
+                                            abp.notify.info(l('SuccessfullyDeleted'));
+                                            dataTable.ajax.reload();
+                                        });
+                                    }
+                                }
+                            ]
+                    }
+                },
             ],
 
             columns: [
@@ -103,7 +133,8 @@
                 { data: "country", width: "100px", class: "content-cell" },
                 { data: "status", width: "150px", class: "content-cell" },
                 { data: "created", width: "130px", class: "content-cell" },
-                { data: "updated", width: "130px", class: "content-cell" }
+                { data: "updated", width: "130px", class: "content-cell" },
+                { data: null, width: "100px", class: "content-cell" }
             ]
         });
 
