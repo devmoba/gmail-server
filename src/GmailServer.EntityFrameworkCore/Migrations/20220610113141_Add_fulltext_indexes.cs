@@ -2,7 +2,7 @@
 
 namespace GmailServer.Migrations
 {
-    public partial class Addfulltextindexes : Migration
+    public partial class Add_fulltext_indexes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +11,7 @@ namespace GmailServer.Migrations
              suppressTransaction: true);
 
             migrationBuilder.Sql(
-                sql: "CREATE FULLTEXT INDEX ON AppGmails(Email, RecoveryEmail, Country) KEY INDEX PK_AppGmails",
+                sql: "CREATE FULLTEXT INDEX ON AppGmails(FirstName, LastName,Email, RecoveryEmail, Country, DateOfBirth) KEY INDEX PK_AppGmails",
                 suppressTransaction: true);
         }
 

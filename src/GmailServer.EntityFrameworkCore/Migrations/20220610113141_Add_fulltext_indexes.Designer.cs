@@ -11,8 +11,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace GmailServer.Migrations
 {
     [DbContext(typeof(GmailServerDbContext))]
-    [Migration("20220528054811_Add-fulltext-indexes")]
-    partial class Addfulltextindexes
+    [Migration("20220610113141_Add_fulltext_indexes")]
+    partial class Add_fulltext_indexes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,7 +40,6 @@ namespace GmailServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
-                        .IsRequired()
                         .HasMaxLength(26)
                         .HasColumnType("nvarchar(26)");
 
@@ -50,8 +49,9 @@ namespace GmailServer.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("DateOfBirth")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("DeviceType")
                         .HasMaxLength(128)
@@ -67,15 +67,14 @@ namespace GmailServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .HasMaxLength(26)
+                        .HasColumnType("nvarchar(26)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 

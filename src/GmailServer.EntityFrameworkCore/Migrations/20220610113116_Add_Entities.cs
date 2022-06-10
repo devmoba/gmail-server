@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GmailServer.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Add_Entities : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -333,6 +333,38 @@ namespace GmailServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppGmails",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Email = table.Column<string>(type: "varchar(128)", unicode: false, maxLength: 128, nullable: false),
+                    Password = table.Column<string>(type: "varchar(64)", unicode: false, maxLength: 64, nullable: false),
+                    RecoveryEmail = table.Column<string>(type: "varchar(128)", unicode: false, maxLength: 128, nullable: false),
+                    DateOfBirth = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(26)", maxLength: 26, nullable: true),
+                    Timezone = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    FakeVersion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    DeviceType = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Version = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(26)", maxLength: 26, nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Arg1 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Arg2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Arg3 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Updated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppGmails", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -1529,6 +1561,9 @@ namespace GmailServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "AppGmails");
 
             migrationBuilder.DropTable(
                 name: "IdentityServerApiResourceClaims");

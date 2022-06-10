@@ -16,15 +16,7 @@ namespace GmailServer.Web.Pages.Gmails
                     Value = $"{(int)item}"
                 });
 
-            var genderSelections = Enum.GetValues(typeof(Gender)).Cast<Gender>()
-               .Select(item => new SelectListItem()
-               {
-                   Text = item.ToString(),
-                   Value = $"{(int)item}"
-               });
-
             ViewData.Add("gmailStatusSelections", SerializeObject(gmailStatusSelections));
-            ViewData.Add("genderSelections", SerializeObject(genderSelections));
         }
     }
 }

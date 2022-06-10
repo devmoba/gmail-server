@@ -1,5 +1,4 @@
 ﻿$(function () {
-    const GenderValues = ["Other", "Male", "Female"];
 
     $(function () {
         var l = abp.localization.getResource('GmailShop');
@@ -11,11 +10,11 @@
             { searchDisabled: true },
             { name: "email" },
             { searchDisabled: true },
+            { name: "recoveryEmail" },
             { searchDisabled: true },
             { searchDisabled: true },
-            { name: "gender", options: genderSelections },
             { searchDisabled: true },
-            { searchDisabled: true },
+            { name: "country" },
             { name: "status", options: gmailStatusSelections },
             { searchDisabled: true },
             { searchDisabled: true },
@@ -42,30 +41,20 @@
                     render: function (data, type, row, meta) {
                         if (data && type === 'display') {
                             let m = moment(data);
-                            data = `<span>${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
-                        }
-                        return data;
-                    }
-                },
-                {
-                    orderable: false,
-                    targets: [2, 3, 4, 5, 6, 9, 10],
-                },
-                {
-                    orderable: false,
-                    targets: [7],
-                    render: function (data, type, row, meta) {
-                        if (data && type === 'display') {
-                            let m = moment(data);
                             data = `<span>${m.local().format('YYYY/MM/DD')}</span>`;
                         }
                         return data;
                     }
                 },
                 {
-                    targets: [8],
+                    orderable: false,
+                    targets: [2, 3, 4, 5, 6, 8, 9, 10],
+                },
+                {
+                    orderable: false,
+                    targets: [7],
                     render: function (data, type, row, meta) {
-                        return GenderValues[data];
+                        return data;
                     }
                 },
                 {

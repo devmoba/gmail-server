@@ -29,7 +29,7 @@ namespace GmailServer.FileActions
                 this.gmailCsvResults.ForEach(async rs =>
                 {
                     var line = $"{rs.Date.ToString("dd/MM/yyyy HH:mm")},{rs.FirstName},{rs.LastName},{rs.Email},{rs.Password},{rs.RecoveryEmail}" +
-                    $",{rs.DateOfBirth.ToString("dd/MM/yyyy")},{(int)rs.Gender},{rs.Timezone},{rs.FakeVersion},{rs.SerialNumber},{rs.DeviceType}" +
+                    $",{rs.DateOfBirth},{rs.Gender},{rs.Timezone},{rs.FakeVersion},{rs.SerialNumber},{rs.DeviceType}" +
                     $",{rs.Version},{rs.Country},{(int)rs.Status},{rs.Arg1},{rs.Arg2},{rs.Arg3}";
                     await streamWriter.WriteLineAsync(line);
                     await streamWriter.FlushAsync();

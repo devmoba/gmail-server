@@ -11,8 +11,6 @@ namespace GmailServer.Gmails
 
         public string RecoveryEmail { get; set; }   
 
-        public Gender? Gender { get; set; }
-
         public Status? Status { get; set; }
     }
 }

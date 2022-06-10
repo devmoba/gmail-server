@@ -94,16 +94,14 @@ namespace GmailServer.EntityFrameworkCore
                 b.ToTable(GmailServerConsts.DbTablePrefix + "Gmails", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
 
-                b.Property(x => x.Date).IsRequired();
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
-                b.Property(x => x.FirstName).HasMaxLength(128).IsRequired();
-                b.Property(x => x.LastName).HasMaxLength(128).IsRequired();
                 b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128).IsRequired();
-                b.Property(x => x.DateOfBirth).IsRequired();
-                b.Property(x => x.Gender).IsRequired();
-                b.Property(x => x.Status).IsRequired();
-                b.Property(x => x.Country).HasMaxLength(26).IsRequired();
+                b.Property(x => x.FirstName).HasMaxLength(128);
+                b.Property(x => x.LastName).HasMaxLength(128);
+                b.Property(x => x.Gender).HasMaxLength(26);
+                b.Property(x => x.DateOfBirth).HasMaxLength(128);
+                b.Property(x => x.Country).HasMaxLength(26);
                 b.Property(x => x.Timezone).HasMaxLength(128);
                 b.Property(x => x.SerialNumber).HasMaxLength(128);
                 b.Property(x => x.DeviceType).HasMaxLength(128);

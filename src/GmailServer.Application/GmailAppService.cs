@@ -43,7 +43,6 @@ namespace GmailServer
                 query = Repository.FullTextSearch(query, x => x.Country, input.Country);
 
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status);
-            query = query.WhereIf(input.Gender.HasValue, x => x.Gender == input.Gender);
 
             var count = await AsyncExecuter.CountAsync(query);
 
@@ -72,8 +71,11 @@ namespace GmailServer
         public async Task<GmailDto> CreateAsync(CreateGmailDto input)
         {
             var gmail = ObjectMapper.Map<CreateGmailDto, Gmail>(input);
-            var res = await Repository.InsertAsync(gmail);
+            gmail.Status = Enums.Status.Unknown;
+            gmail.Created = DateTime.UtcNow;
+            gmail.Updated = DateTime.UtcNow;
 
+            var res = await Repository.InsertAsync(gmail);
             return ObjectMapper.Map<Gmail, GmailDto>(gmail);
         }
 

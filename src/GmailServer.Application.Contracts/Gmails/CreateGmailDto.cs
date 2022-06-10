@@ -6,15 +6,10 @@ namespace GmailServer.Gmails
 {
     public class CreateGmailDto
     {
-        [Required]
         public DateTime Date { get; set; }
 
-        [Required]
-        [MaxLength(128)]
         public string FirstName { get; set; }
 
-        [Required]
-        [MaxLength(128)]
         public string LastName { get; set; }
 
         [Required]
@@ -29,11 +24,9 @@ namespace GmailServer.Gmails
         [MaxLength(128)]
         public string RecoveryEmail { get; set; }
 
-        [Required]
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
 
-        [Required]
-        public Gender Gender { get; set; }
+        public string Gender { get; set; }
 
         public string Timezone { get; set; }
 
@@ -45,11 +38,7 @@ namespace GmailServer.Gmails
 
         public string Version { get; set; }
 
-        [Required]
         public string Country { get; set; }
-
-        [Required]
-        public Status Status { get; set; }
 
         public string Arg1 { get; set; }
 
