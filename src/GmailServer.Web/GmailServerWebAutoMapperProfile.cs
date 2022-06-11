@@ -1,4 +1,6 @@
 using AutoMapper;
+using GmailServer.Entities;
+using GmailServer.Gmails;
 
 namespace GmailServer.Web
 {
@@ -7,6 +9,9 @@ namespace GmailServer.Web
         public GmailServerWebAutoMapperProfile()
         {
             //Define your object mappings here, for the Web project
+            CreateMap<Gmail, GmailExcelModel>()
+                .AfterMap((a,b) => b.Date = a.Date.ToString("dd/MM/yyyy HH:mm"))
+                .AfterMap((a,b) => b.Status = (int)a.Status);
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using GmailServer.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
 
 namespace GmailServer.Repositories
@@ -9,5 +11,10 @@ namespace GmailServer.Repositories
     public interface IGmailRepository : IRepository<Gmail, long> 
     {
         IQueryable<Gmail> FullTextSearch(IQueryable<Gmail> query, Expression<Func<Gmail, string>> keySelector, string value);
+
+        Task<List<Gmail>> GetAll();
+
+        Task<List<Gmail>> GetByTimeRange(DateTime from = default, DateTime to = default);
+
     }
 }
