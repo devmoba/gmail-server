@@ -8,6 +8,7 @@ namespace GmailServer.Web.BundleContributors
         {
             context.Files.Add("/libs/moment/moment.js");
             context.Files.Add("/libs/devmoba/core/devmoba.js");
+           
         }
     }
 }

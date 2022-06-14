@@ -1,0 +1,54 @@
+﻿@page
+@model GmailServer.Web.Pages.FakeSettings.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Fake Setting"];
+    PageLayout.Content.Title = L["Fake Setting"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.FakeSetting;
+}
+
+@section scripts {
+<abp-script src="/Pages/FakeSettings/js/index.js" />
+}
+
+@section styles {
+
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+
+            </abp-column>
+            <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.FakeSettings.Create))
+                {
+                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
+                }
+                <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/FakeSettings/JsonView">Json View {}</a>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="fakeSettingTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["DeviceType"]</th>
+                    <th>@L["Version"]</th>
+                    <th>@L["FakeVersion"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

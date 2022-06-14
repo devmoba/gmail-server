@@ -125,7 +125,21 @@ namespace GmailServer.Web
                       "/libs/knockout-js/knockout.js",
                       "/libs/knockout-js/number-formatting.js"
                   ));
+
+
+                options.ScriptBundles.Add("pretty-json",
+                  bundle => bundle.AddFiles(
+                      "/libs/pretty-json/backbone-min.js",
+                      "/libs/pretty-json/underscore-min.js",
+                      "/libs/pretty-json/pretty-json-min.js"
+                  ));
+
+                options.StyleBundles.Add("pretty-json",
+                    bundle => bundle.AddFiles(
+                       "/libs/pretty-json/css/pretty-json.css"
+                    ));
             });
+
         }
 
         private void ConfigureHealthChecks(ServiceConfigurationContext context)
@@ -170,8 +184,8 @@ namespace GmailServer.Web
                 .AddJwtBearer(options =>
                 {
                     options.Authority = configuration["AuthServer:Authority"];
-                    options.RequireHttpsMetadata =  Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);;
-                    options.Audience  = "GmailServer";
+                    options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]); ;
+                    options.Audience = "GmailServer";
                 });
         }
 
@@ -237,7 +251,7 @@ namespace GmailServer.Web
         private void ConfigureExternalProviders(ServiceConfigurationContext context)
         {
             context.Services.AddAuthentication()
-                .AddGoogle(GoogleDefaults.AuthenticationScheme, _ => {})
+                .AddGoogle(GoogleDefaults.AuthenticationScheme, _ => { })
                 .WithDynamicOptions<GoogleOptions, GoogleHandler>(
                     GoogleDefaults.AuthenticationScheme,
                     options =>

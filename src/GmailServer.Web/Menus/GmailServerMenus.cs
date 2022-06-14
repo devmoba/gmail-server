@@ -11,5 +11,7 @@
         public const string TenantDashboard = Prefix + ".TenantDashboard";
 
         public const string Gmail = Prefix + ".Gmail";
+
+        public const string FakeSetting = Prefix + ".FakeSetting";
     }
 }

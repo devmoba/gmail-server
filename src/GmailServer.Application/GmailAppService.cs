@@ -72,8 +72,8 @@ namespace GmailServer
         {
             var gmail = ObjectMapper.Map<CreateGmailDto, Gmail>(input);
             gmail.Status = Enums.Status.Unknown;
-            gmail.Created = DateTime.UtcNow;
-            gmail.Updated = DateTime.UtcNow;
+            gmail.Created = DateTime.Now;
+            gmail.Updated = DateTime.Now;
 
             var res = await Repository.InsertAsync(gmail);
             return ObjectMapper.Map<Gmail, GmailDto>(gmail);

@@ -1,5 +1,6 @@
 using AutoMapper;
 using GmailServer.Entities;
+using GmailServer.FakeSettings;
 using GmailServer.Gmails;
 
 namespace GmailServer
@@ -14,6 +15,9 @@ namespace GmailServer
 
             CreateMap<Gmail, GmailDto>();
             CreateMap<CreateGmailDto, Gmail>();
+
+            CreateMap<FakeSetting, FakeSettingDto>();
+            CreateMap<CreateUpdateFakeSettingDto, FakeSetting>();
         }
     }
 }

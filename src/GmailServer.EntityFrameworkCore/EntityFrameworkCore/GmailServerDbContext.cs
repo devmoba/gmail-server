@@ -25,15 +25,15 @@ namespace GmailServer.EntityFrameworkCore
     [ReplaceDbContext(typeof(IIdentityProDbContext))]
     [ReplaceDbContext(typeof(ISaasDbContext))]
     [ConnectionStringName("Default")]
-    public class GmailServerDbContext : 
-        AbpDbContext<GmailServerDbContext>, 
+    public class GmailServerDbContext :
+        AbpDbContext<GmailServerDbContext>,
         IIdentityProDbContext,
         ISaasDbContext
     {
         /* Add DbSet properties for your Aggregate Roots / Entities here. */
-        
+
         #region Entities from the modules
-        
+
         /* Notice: We only implemented IIdentityProDbContext and ISaasDbContext
          * and replaced them for this DbContext. This allows you to perform JOIN
          * queries for the entities of these modules over the repositories easily. You
@@ -44,7 +44,7 @@ namespace GmailServer.EntityFrameworkCore
          * More info: Replacing a DbContext of a module ensures that the related module
          * uses this DbContext on runtime. Otherwise, it will use its own DbContext class.
          */
-        
+
         // Identity
         public DbSet<IdentityUser> Users { get; set; }
         public DbSet<IdentityRole> Roles { get; set; }
@@ -52,7 +52,7 @@ namespace GmailServer.EntityFrameworkCore
         public DbSet<OrganizationUnit> OrganizationUnits { get; set; }
         public DbSet<IdentitySecurityLog> SecurityLogs { get; set; }
         public DbSet<IdentityLinkUser> LinkUsers { get; set; }
-        
+
         // SaaS
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<Edition> Editions { get; set; }
@@ -61,7 +61,8 @@ namespace GmailServer.EntityFrameworkCore
         // Use
 
         public DbSet<Gmail> Gmails { get; set; }
-        
+        public DbSet<FakeSetting> FakeSettings { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -108,6 +109,16 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Version).HasMaxLength(128);
                 b.Property(x => x.Created).IsRequired();
                 b.Property(x => x.Updated).IsRequired();
+            });
+
+            builder.Entity<FakeSetting>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "FakeSettings", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.Property(x => x.Version).HasMaxLength(1024);
+                b.Property(x => x.FakeVersion).HasMaxLength(1024);
+                b.Property(x => x.DeviceType).HasMaxLength(2048);
             });
         }
     }

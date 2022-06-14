@@ -15,8 +15,8 @@
     overflow: visible !important;
 }
 
-#gmailTable_wrapper .dataTables_scrollBody
- {
+#fakeSettingTable_wrapper .dataTables_scrollBody,
+#gmailTable_wrapper .dataTables_scrollBody {
     min-height: 500px;
 }
 
@@ -25,6 +25,7 @@
     font-weight: normal;
 }
 
+#fakeSettingTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailTable_wrapper table.dataTable thead tr th input[type="text"] {
     margin: 0px;
     width: calc(100%);

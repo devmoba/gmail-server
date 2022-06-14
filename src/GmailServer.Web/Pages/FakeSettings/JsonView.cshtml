@@ -1,0 +1,43 @@
+﻿@page
+@model GmailServer.Web.Pages.FakeSettings.JsonViewModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Fake Setting"];
+    PageLayout.Content.Title = L["Fake Setting"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.FakeSetting;
+}
+
+@section scripts {
+    <script>
+        var fakeSettings = @Html.Raw(ViewData["fakeSettings"]);
+    </script>
+    <abp-script-bundle name="pretty-json" />
+    <abp-script src="/Pages/FakeSettings/js/jsonView.js" />
+}
+
+@section styles {
+    <abp-style-bundle name="pretty-json" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_2">
+                 <a id="downloadJson" style="font-size: 20px;"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;download</a>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <div>
+            <span style="font-size: 18px;" id="result"></span>
+        </div>
+    </abp-card-body>
+</abp-card>
