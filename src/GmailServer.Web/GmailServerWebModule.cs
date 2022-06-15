@@ -109,6 +109,8 @@ namespace GmailServer.Web
             {
                 options.Conventions.AuthorizePage("/Gmails", GmailServerPermissions.Gmails.Default);
                 options.Conventions.AuthorizePage("/Gmails/Download", GmailServerPermissions.Gmails.Download);
+                options.Conventions.AuthorizePage("/FakeSettings", GmailServerPermissions.FakeSettings.Default);
+                options.Conventions.AuthorizePage("/Decrypt", GmailServerPermissions.Decrypts.Default);
             });
 
             Configure<AbpBundlingOptions>(options =>
@@ -134,10 +136,20 @@ namespace GmailServer.Web
                       "/libs/pretty-json/pretty-json-min.js"
                   ));
 
+                options.ScriptBundles.Add("crypto-js",
+                  bundle => bundle.AddFiles(
+                      "/libs/crypto-js/aes.js",
+                      "/libs/crypto-js/md5.js",
+                      "/libs/crypto-js/pbkdf2.js",
+                      "/libs/crypto-js/jsencrypt.min.js",
+                      "/libs/crypto-js/decrypt.js"
+                  ));
+
                 options.StyleBundles.Add("pretty-json",
                     bundle => bundle.AddFiles(
                        "/libs/pretty-json/css/pretty-json.css"
                     ));
+
             });
 
         }

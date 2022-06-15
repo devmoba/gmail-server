@@ -13,5 +13,7 @@
         public const string Gmail = Prefix + ".Gmail";
 
         public const string FakeSetting = Prefix + ".FakeSetting";
+
+        public const string Decrypt = Prefix + ".Decrypt";
     }
 }

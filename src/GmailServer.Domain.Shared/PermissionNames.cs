@@ -12,5 +12,8 @@
         public const string FakeSetting_Create = FakeSetting + ".Create";
         public const string FakeSetting_Update = FakeSetting + ".Update";
         public const string FakeSetting_Delete = FakeSetting + ".Delete";
+
+        public const string Decrypt = "DecryptGroup";
+        public const string Decrypt_Default = Decrypt + ".Decrypt";
     }
 }

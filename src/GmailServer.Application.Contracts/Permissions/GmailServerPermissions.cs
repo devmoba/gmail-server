@@ -27,5 +27,11 @@ namespace GmailServer.Permissions
             public const string Update = PermissionNames.FakeSetting_Update;
             public const string Delete = PermissionNames.FakeSetting_Delete;
         }
+
+        public const string DecryptGroup = PermissionNames.Decrypt;
+        public static class Decrypts
+        {
+            public const string Default = PermissionNames.Decrypt_Default;
+        }
     }
 }

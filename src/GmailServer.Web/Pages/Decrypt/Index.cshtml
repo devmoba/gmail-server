@@ -1,0 +1,58 @@
+﻿@page
+@model GmailServer.Web.Pages.Decrypt.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Decrypt"];
+    PageLayout.Content.Title = L["Decrypt"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.Decrypt;
+}
+
+@section scripts {
+<abp-script src="/Pages/Decrypt/js/index.js" />
+}
+
+@section styles {
+<style>
+    .row {
+        margin-top: 15px;
+    }
+</style>
+}
+
+<abp-card>
+    <abp-card-body>
+        <abp-row>
+            <abp-column size="_8">
+                <input id="key" class="form-control" placeholder="Enter your KEY..." name="Key" />
+            </abp-column>
+        </abp-row>
+        <abp-row>
+            <abp-column size="_4">
+                <textarea id="cipherText" class="form-control" name="CipherText" rows="35" placeholder="Text Plain"></textarea>
+            </abp-column>
+            <abp-column size="_4">
+                <textarea id="result" class="form-control" name="Result" rows="35" readonly></textarea>
+            </abp-column>
+        </abp-row>
+        <abp-row>
+            <abp-column size="_4">
+                @*<button id="btnEncrypt" class="btn btn-secondary btn-sm">Encrypt</button>*@
+                <button id="btnDecrypt" class="btn btn-primary btn-sm">Decrypt</button>
+                <button id="btnClearPlain" class="btn btn-danger btn-sm float-right">Clear Plain</button>
+            </abp-column>
+            <abp-column size="_4">
+                <button id="btnCopy" class="btn btn-outline-info btn-sm">Copy</button>
+                <strong id="copied-alert" style="display: none;">Copied!</strong>
+                <button id="btnClearResult" class="btn btn-danger btn-sm float-right">Clear Result</button>
+            </abp-column>
+        </abp-row>
+    </abp-card-body>
+</abp-card>
