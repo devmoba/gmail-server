@@ -11,9 +11,8 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using Volo.Abp.ObjectMapping;
 
-namespace GmailServer
+namespace GmailServer.ApplicationServices
 {
     [RemoteService(IsEnabled = false)]
     public class GmailAppService : ReadOnlyAppService<
@@ -71,12 +70,15 @@ namespace GmailServer
         public async Task<GmailDto> CreateAsync(CreateGmailDto input)
         {
             var gmail = ObjectMapper.Map<CreateGmailDto, Gmail>(input);
+
             gmail.Status = Enums.Status.Unknown;
             gmail.Created = DateTime.Now;
             gmail.Updated = DateTime.Now;
+            gmail.LastCheck = DateTime.Now;
+            gmail.TimeDiff = 0;
 
             var res = await Repository.InsertAsync(gmail);
-            return ObjectMapper.Map<Gmail, GmailDto>(gmail);
+            return ObjectMapper.Map<Gmail, GmailDto>(res);
         }
 
         [Authorize(GmailServerPermissions.Gmails.Download)]

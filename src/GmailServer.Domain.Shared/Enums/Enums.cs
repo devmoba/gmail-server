@@ -3,10 +3,12 @@
     public enum Status
     {
         Unknown = 0,
-        Live = 1,
+        Good = 1,
         Disable = 2,
         Notexist = 3,
-        Verify = 4
+        Verify = 4,
+        Checking = 5,
+        Uncheck = 6,
     }
 
     public enum Gender

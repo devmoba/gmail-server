@@ -1,29 +1,39 @@
-using System.IO;
+using GmailServer.Background;
+using GmailServer.EntityFrameworkCore;
+using GmailServer.Localization;
+using GmailServer.MultiTenancy;
+using GmailServer.Permissions;
+using GmailServer.Web.BundleContributors;
+using GmailServer.Web.HealthChecks;
+using GmailServer.Web.Menus;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
+using Microsoft.AspNetCore.Authentication.Twitter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using GmailServer.EntityFrameworkCore;
-using GmailServer.Localization;
-using GmailServer.MultiTenancy;
-using GmailServer.Permissions;
-using GmailServer.Web.Menus;
 using Microsoft.OpenApi.Models;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Account.Admin.Web;
-using Volo.Abp.Account.Public.Web;
 using Volo.Abp.Account.Public.Web.ExternalProviders;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Commercial;
+using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Lepton;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Lepton.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Bundling;
+using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
+using Volo.Abp.AspNetCore.Serilog;
+using Volo.Abp.AspNetCore.SignalR;
 using Volo.Abp.AuditLogging.Web;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
@@ -32,24 +42,12 @@ using Volo.Abp.IdentityServer.Web;
 using Volo.Abp.LanguageManagement;
 using Volo.Abp.LeptonTheme.Management;
 using Volo.Abp.Modularity;
-using Volo.Abp.PermissionManagement.Web;
+using Volo.Abp.Swashbuckle;
 using Volo.Abp.TextTemplateManagement.Web;
-using Volo.Abp.UI.Navigation.Urls;
-using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
+using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Saas.Host;
-using System;
-using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
-using Microsoft.AspNetCore.Authentication.Twitter;
-using GmailServer.Web.HealthChecks;
-using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Lepton.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
-using Volo.Abp.AspNetCore.Serilog;
-using Volo.Abp.Swashbuckle;
-using GmailServer.Web.BundleContributors;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Bundling;
 
 namespace GmailServer.Web
 {
@@ -57,6 +55,7 @@ namespace GmailServer.Web
         typeof(GmailServerHttpApiModule),
         typeof(GmailServerApplicationModule),
         typeof(GmailServerEntityFrameworkCoreModule),
+        typeof(GmailServerBackgroundModule),
         typeof(AbpAutofacModule),
         typeof(AbpIdentityWebModule),
         typeof(AbpAccountPublicWebIdentityServerModule),
@@ -69,7 +68,8 @@ namespace GmailServer.Web
         typeof(AbpAspNetCoreMvcUiLeptonThemeModule),
         typeof(TextTemplateManagementWebModule),
         typeof(AbpSwashbuckleModule),
-        typeof(AbpAspNetCoreSerilogModule)
+        typeof(AbpAspNetCoreSerilogModule),
+        typeof(AbpAspNetCoreSignalRModule)
         )]
     public class GmailServerWebModule : AbpModule
     {
@@ -138,10 +138,10 @@ namespace GmailServer.Web
 
                 options.ScriptBundles.Add("crypto-js",
                   bundle => bundle.AddFiles(
-                      "/libs/crypto-js/aes.js",
-                      "/libs/crypto-js/md5.js",
-                      "/libs/crypto-js/pbkdf2.js",
-                      "/libs/crypto-js/jsencrypt.min.js",
+                      //"/libs/crypto-js/aes.js",
+                      //"/libs/crypto-js/md5.js",
+                      //"/libs/crypto-js/pbkdf2.js",
+                      //"/libs/crypto-js/jsencrypt.min.js",
                       "/libs/crypto-js/decrypt.js"
                   ));
 
@@ -198,6 +198,21 @@ namespace GmailServer.Web
                     options.Authority = configuration["AuthServer:Authority"];
                     options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]); ;
                     options.Audience = "GmailServer";
+
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/signalr-hubs/check-mail")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
         }
 

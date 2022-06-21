@@ -109,6 +109,8 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Version).HasMaxLength(128);
                 b.Property(x => x.Created).IsRequired();
                 b.Property(x => x.Updated).IsRequired();
+                b.Property(x => x.LastCheck).IsRequired();  
+                b.Property(x => x.TimeDiff).IsRequired();  
             });
 
             builder.Entity<FakeSetting>(b =>

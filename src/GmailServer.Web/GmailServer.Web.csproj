@@ -185,6 +185,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GmailServer.Application\GmailServer.Application.csproj" />
+    <ProjectReference Include="..\GmailServer.Background\GmailServer.Background.csproj" />
     <ProjectReference Include="..\GmailServer.HttpApi\GmailServer.HttpApi.csproj" />
     <ProjectReference Include="..\GmailServer.EntityFrameworkCore\GmailServer.EntityFrameworkCore.csproj" />
     <PackageReference Include="Volo.Abp.Autofac" Version="4.4.1" />

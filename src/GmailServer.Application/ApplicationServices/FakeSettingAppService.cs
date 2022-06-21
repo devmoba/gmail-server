@@ -11,7 +11,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace GmailServer
+namespace GmailServer.ApplicationServices
 {
     [RemoteService(IsEnabled = false)]
     public class FakeSettingAppService : CrudAppService<

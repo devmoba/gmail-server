@@ -46,13 +46,13 @@ namespace GmailServer.Web.Pages.Gmails
             var fileName = string.Empty;
             if (CheckedAll)
             {
-                res = await this.gmailRepository.GetAll();
+                res = await this.gmailRepository.GetAllAsync();
                 fileName = "Gmails_All.xlsx";
             }
 
             if (CheckedTimeRange)
             {
-                res = await this.gmailRepository.GetByTimeRange(DateFrom, DateTo);
+                res = await this.gmailRepository.GetByTimeRangeAsync(DateFrom, DateTo);
                 fileName = $"Gmails_TimeRange_{DateFrom.ToString("dd/MM/yyyy HH:mm")}-{DateTo.ToString("dd/MM/yyyy HH:mm")}.xlsx";
             }
             var stream = new MemoryStream();
