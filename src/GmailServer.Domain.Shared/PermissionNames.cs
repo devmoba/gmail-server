@@ -15,5 +15,8 @@
 
         public const string Decrypt = "DecryptGroup";
         public const string Decrypt_Default = Decrypt + ".Decrypt";
+
+        public const string CheckMail = "CheckMailGroup";
+        public const string CheckMail_Default = CheckMail + ".CheckMails";
     }
 }

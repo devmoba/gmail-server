@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GmailServer.HttpApi.Client"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GmailServer.DbMigrator", "src\GmailServer.DbMigrator\GmailServer.DbMigrator.csproj", "{70680696-BB1E-4383-BCB2-42C3767171FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GmailServer.Background", "src\GmailServer.Background\GmailServer.Background.csproj", "{9F33AD70-6551-4800-BE54-2FE53F551286}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GmailServer.Background", "src\GmailServer.Background\GmailServer.Background.csproj", "{9F33AD70-6551-4800-BE54-2FE53F551286}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -27,6 +27,9 @@ namespace GmailServer.Permissions
 
             var decryptGroup = context.AddGroup(GmailServerPermissions.DecryptGroup, L("Permission:DecryptGroup"));
             decryptGroup.AddPermission(GmailServerPermissions.Decrypts.Default, L("Permission:Decrypts"));
+
+            var checkMailGroup = context.AddGroup(GmailServerPermissions.CheckMailGroup, L("Permission:CheckMailGroup"));
+            checkMailGroup.AddPermission(GmailServerPermissions.CheckMails.Default, L("Permission:CheckMails"));
         }
 
         private static LocalizableString L(string name)

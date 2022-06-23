@@ -3,10 +3,11 @@
   "name": "my-app",
   "private": true,
   "dependencies": {
+    "@abp/signalr": "^5.3.0",
     "@volo/abp.aspnetcore.mvc.ui.theme.lepton": "^4.4.1",
-    "@volo/saas": "^4.4.1",
+    "@volo/account": "^4.4.1",
     "@volo/audit-logging": "^4.4.1",
     "@volo/identity": "^4.4.1",
-    "@volo/account": "^4.4.1"
+    "@volo/saas": "^4.4.1"
   }
 }

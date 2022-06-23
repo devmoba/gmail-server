@@ -1,0 +1,105 @@
+﻿@page
+@model GmailServer.Web.Pages.CheckMails.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Check Mail"];
+    PageLayout.Content.Title = L["Check Mail"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.CheckMail;
+}
+
+@section scripts {
+<abp-script type="typeof(SignalRBrowserScriptContributor)" />
+<abp-script-bundle name="codemirror" />
+<abp-script-bundle name="knockout" />
+<abp-script src="/Pages/CheckMails/js/index.js" />
+}
+
+@section styles {
+<abp-style-bundle name="codemirror" />
+<abp-style src="/Pages/CheckMails/css/index.css" />
+<style>
+
+</style>
+}
+
+<abp-card>
+    <abp-card-body>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Mail Input</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <button id="clear-input" class="btn btn-sm btn-outline-danger float-right">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <textarea id="mail-input" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Mail Output</h3>
+                    </div>
+                    <div class="col-md-6">
+                        <button id="clear-output" class="btn btn-sm btn-outline-danger float-right">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <textarea id="mail-ouput" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-4">
+                        <button id="ckeck-now" class="btn btn-lg btn-primary">Check Now</button>
+                    </div>
+                    <div class="col-md-8">
+                        <span class="float-right" style="font-size: 20px;">
+                             <span>Current:</span>
+                            <span data-bind="text: countResult"></span>
+                            <span>/</span>
+                            <span>Total:</span>
+                            <span data-bind="text: totalEmail"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <!-- ko foreach: EmailResultGroup -->
+                    <div class="col-md-6 summary-result">
+                        <h3 class="float-left" data-bind="text: status"></h3>
+                        <button class="btn btn-sm btn" data-bind="class: `btn-${status.toLowerCase()}`, click: $parent.downloadResult" title="download(good)">
+                            <b data-bind="text: count">1</b>
+                        </button>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+    </abp-card-body>
+</abp-card>

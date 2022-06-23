@@ -15,5 +15,7 @@
         public const string FakeSetting = Prefix + ".FakeSetting";
 
         public const string Decrypt = Prefix + ".Decrypt";
+
+        public const string CheckMail = Prefix + ".CheckMail";
     }
 }

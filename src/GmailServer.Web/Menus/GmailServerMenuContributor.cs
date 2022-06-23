@@ -82,6 +82,19 @@ namespace GmailServer.Web.Menus
                );
             }
 
+            if (await context.IsGrantedAsync(GmailServerPermissions.CheckMails.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.CheckMail,
+                       "Check Mail",
+                       "/CheckMails",
+                       icon: "fa-check-square",
+                       order: 5
+                   )
+               );
+            }
+
             //HostDashboard
             //context.Menu.AddItem(
             //    new ApplicationMenuItem(
@@ -104,11 +117,11 @@ namespace GmailServer.Web.Menus
             //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
             //);
 
-            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 5);
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 6);
 
             //Administration
             //var administration = context.Menu.GetAdministration();
-            administration.Order = 6;
+            administration.Order = 7;
 
             //Administration->Identity
             administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);

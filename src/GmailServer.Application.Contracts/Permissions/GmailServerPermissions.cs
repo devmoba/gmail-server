@@ -33,5 +33,11 @@ namespace GmailServer.Permissions
         {
             public const string Default = PermissionNames.Decrypt_Default;
         }
+
+        public const string CheckMailGroup = PermissionNames.CheckMail;
+        public static class CheckMails
+        {
+            public const string Default = PermissionNames.CheckMail_Default;
+        }
     }
 }

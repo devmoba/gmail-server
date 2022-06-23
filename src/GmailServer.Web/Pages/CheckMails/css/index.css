@@ -1,0 +1,54 @@
+﻿.row {
+    margin-top: 15px;
+}
+
+.CodeMirror.cm-s-default {
+    height: 700px;
+    border: 1px solid #3f38a0;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.btn {
+    border-radius: 5px;
+}
+
+.summary-result {
+    padding-bottom: 15px;
+    position: relative;
+}
+
+    .summary-result .btn {
+        font-size: 18px;
+        color: #fff;
+        position: absolute;
+        right: 150px;
+    }
+
+.btn-good {
+    background-color: #006a1d;
+}
+
+.btn-unknown {
+    background-color: #000;
+}
+
+.btn-notexist {
+    background-color: #0e0b2b99;
+}
+
+.btn-verify {
+    background-color: #f25767;
+}
+
+.btn-disable {
+    background-color: #bd081c;
+}
+
+.btn-checking {
+    background-color: #bd8e08;
+}
+
+.btn-uncheck {
+    background-color: #d4b355;
+}
