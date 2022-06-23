@@ -41,11 +41,13 @@
 
     $("#ckeck-now").on("click", function (e) {
         e.preventDefault();
+        editorOutput.setValue("");
+        viewModel.EmailResultGroup([]);
+
         var mailInput = editorInput.getValue();
         var emails = mailInput.split('\n').filter(item => {
             return item ? true : false;
         });
-
         var emailChecks = emails.map(function (email, index) {
             var emailCheck = new EmailCheck(index, email);
             return emailCheck;
