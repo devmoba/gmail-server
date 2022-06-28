@@ -79,35 +79,35 @@ namespace GmailServer.Hubs
 
         public async Task GetCheckMailResultAsync(List<EmailCheck> emailChecks)
         {
-            var checkMailResult = new CheckMailResult();
-            var emailResults = new List<EmailResult>();
-            var connections = ConnectionMapping<string>
-                    .GetInstance()
-                    .GetConnections(CurrentUser.UserName)
-                    .ToList();
+            //var checkMailResult = new CheckMailResult();
+            //var emailResults = new List<EmailResult>();
+            //var connections = ConnectionMapping<string>
+            //        .GetInstance()
+            //        .GetConnections(CurrentUser.UserName)
+            //        .ToList();
 
-            TaskPool.GetInstance().MaxThread = 150;
-            TaskPool.GetInstance().StartCheckWithEmailChecks(emailChecks);
+            //TaskPool.GetInstance().MaxThread = 150;
+            //TaskPool.GetInstance().StartCheckWithEmailChecks(emailChecks);
 
-            var count = 0;
-            while (count < emailChecks.Count)
-            {
-                Thread.Sleep(500);
-                var results = TaskPool.GetInstance().GetResultAndClear();
-                emailResults.AddRange(results);
-                count += results.Count;
-                await Clients.Clients(connections).ReceiveCountResultAsync(count);
-            }
-            emailResults = emailResults.OrderBy(x => x.Id).ToList();
-            var emailResultsString = emailResults.Select(x => $"{x.Email}|{Enum.GetName(typeof(Status), x.Status)}").ToList();
-            checkMailResult.EmailResults = emailResultsString;
-            checkMailResult.EmailResultGroups = emailResults.GroupBy(x => x.Status).Select(group => new EmailResultGroup()
-            {
-                Status = Enum.GetName(typeof(Status), group.Key),
-                EmailResults = group.Select(x => $"{x.Email}|{Enum.GetName(typeof(Status), x.Status)}").ToList(),
-                Count = group.Count()
-            }).ToList();
-            await Clients.Clients(connections).ReceiveEmailResultAsync(checkMailResult);
+            //var count = 0;
+            //while (count < emailChecks.Count)
+            //{
+            //    Thread.Sleep(500);
+            //    var results = TaskPool.GetInstance().GetResultAndClear();
+            //    emailResults.AddRange(results);
+            //    count += results.Count;
+            //    await Clients.Clients(connections).ReceiveCountResultAsync(count);
+            //}
+            //emailResults = emailResults.OrderBy(x => x.Id).ToList();
+            //var emailResultsString = emailResults.Select(x => $"{x.Email}|{Enum.GetName(typeof(Status), x.Status)}").ToList();
+            //checkMailResult.EmailResults = emailResultsString;
+            //checkMailResult.EmailResultGroups = emailResults.GroupBy(x => x.Status).Select(group => new EmailResultGroup()
+            //{
+            //    Status = Enum.GetName(typeof(Status), group.Key),
+            //    EmailResults = group.Select(x => $"{x.Email}|{Enum.GetName(typeof(Status), x.Status)}").ToList(),
+            //    Count = group.Count()
+            //}).ToList();
+            //await Clients.Clients(connections).ReceiveEmailResultAsync(checkMailResult);
         }
     }
 }

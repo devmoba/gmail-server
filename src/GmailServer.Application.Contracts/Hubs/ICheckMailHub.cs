@@ -1,5 +1,6 @@
 ﻿using GmailServer.CheckMails;
 using GmailServer.EmailChecks;
+using GmailServer.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +12,16 @@ namespace GmailServer.Hubs
 
         Task ReceiveEmailResultAsync(CheckMailResult emailResults);
 
+        Task ReceiveEmailResultOutputAsync(string output);
+
+        Task ReceiveEmailResultGroupAsync(string emailResult, Status status, int count);
+
         Task ReceiveCountResultAsync(int count);
+
+        Task ReceiveTotalCheckAsync(int count);
+
+        Task ReceiveNotiAsync(string message, string type);
+
+        Task ClearResultAsync();
     }
 }

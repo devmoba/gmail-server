@@ -6,9 +6,9 @@ namespace GmailServer.CheckMails
 {
     public class EmailResultGroup
     {
-        public string Status { get; set; }
+        public Status Status { get; set; }
 
-        public List<string> EmailResults { get; set; }
+        public string EmailResultOuput { get; set; }
 
         public int Count { get; set; }  
     }

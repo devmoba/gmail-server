@@ -4,7 +4,7 @@ namespace GmailServer.CheckMails
 {
     public class CheckMailResult
     {
-        public List<string> EmailResults { get; set; }
+        public string EmailResultOuput { get; set; }
 
         public List<EmailResultGroup> EmailResultGroups { get; set; }
     }
