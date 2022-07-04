@@ -2,6 +2,7 @@ using AutoMapper;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
 using GmailServer.Gmails;
+using GmailServer.Web.Pages.FakeSettings.ViewModels;
 
 namespace GmailServer.Web
 {
@@ -16,6 +17,8 @@ namespace GmailServer.Web
 
             CreateMap<FakeSettingDto, CreateUpdateFakeSettingDto>();
             CreateMap<FakeSetting, FakeSettingDto>();
+            CreateMap<FakeSettingViewModel, CreateUpdateFakeSettingDto>();
+            CreateMap<FakeSettingDto, FakeSettingViewModel>();
         }
     }
 }

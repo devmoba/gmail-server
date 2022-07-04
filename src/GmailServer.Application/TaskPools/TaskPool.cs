@@ -17,27 +17,17 @@ namespace GmailServer.TaskPools
 
         private List<EmailCheck> EmailCheck { get; set; }
         private List<EmailResult> Result { get; set; }
-        private static object lockObject = new object();
-        private static TaskPool mInstance;
         private RestClient client;
 
-        public static TaskPool GetInstance()
+        public TaskPool()
         {
-            lock (lockObject)
-            {
-                if (mInstance == null)
-                {
-                    mInstance = new TaskPool();
-                    mInstance.EmailCheck = new List<EmailCheck>();
-                    mInstance.Result = new List<EmailResult>();
-                    mInstance.client = new RestClient("https://peoplestack-pa.clients6.google.com/");
-                    mInstance.client.CookieContainer.Add(new System.Net.Cookie("__Secure-3PSID", "Kghzx3B9eKvHsa4AZG8qvbOCvm-pA5OCMEbZLZ4gfIgOCIilF_4-ttx-oIF-OtpDOcSAmw.", "/", ".google.com"));
-                    mInstance.client.CookieContainer.Add(new System.Net.Cookie("__Secure-3PAPISID", "tcdKkjomeIutgUNC/AJL0iS6LL4lPvHtOU", "/", ".google.com"));
-                    mInstance.MaxThread = 100;
-                    ServicePointManager.DefaultConnectionLimit = 1000000;
-                }
-            }
-            return mInstance;
+            EmailCheck = new List<EmailCheck>();
+            Result = new List<EmailResult>();
+            client = new RestClient("https://peoplestack-pa.clients6.google.com/");
+            client.CookieContainer.Add(new System.Net.Cookie("__Secure-3PSID", "Kghzx3B9eKvHsa4AZG8qvbOCvm-pA5OCMEbZLZ4gfIgOCIilF_4-ttx-oIF-OtpDOcSAmw.", "/", ".google.com"));
+            client.CookieContainer.Add(new System.Net.Cookie("__Secure-3PAPISID", "tcdKkjomeIutgUNC/AJL0iS6LL4lPvHtOU", "/", ".google.com"));
+            MaxThread = 100;
+            ServicePointManager.DefaultConnectionLimit = 1000000;
         }
 
         public void Start()
@@ -111,56 +101,56 @@ namespace GmailServer.TaskPools
             request.AddHeader("origin", "https://drive.google.com");
             request.AddHeader("x-goog-api-key", "AIzaSyC4JjdyoZPBZbhiXypJRsdhGicms9lgzoA");
             request.AddBody($"[58,[1],[[\"{mail}\"]]]");
-            //retry:
-            var attempts = 0;
-            while (attempts < 3)
+        retry:
+            //var attempts = 0;
+            //while (attempts < 3)
+            //{
+            //    attempts++;
+            var response = client.Execute(request);
+            if (response.Content != null)
             {
-                attempts++;
-                var response = client.Execute(request);
-                if (response.Content != null)
-                {
-                    if (response.Content.Contains("googleusercontent"))
-                    {
-                        return new EmailResult()
-                        {
-                            Email = mail,
-                            Id = index,
-                            Status = Status.Good
-
-                        };
-                    }
-
-                    if (response.Content.ToLower().Contains(mail.ToLower()))
-                    {
-                        return new EmailResult()
-                        {
-                            Email = mail,
-                            Id = index,
-                            Status = Status.Verify
-                        };
-                    }
-                }
-
-                if (response.StatusCode == HttpStatusCode.RequestTimeout)
+                if (response.Content.Contains("googleusercontent"))
                 {
                     return new EmailResult()
                     {
                         Email = mail,
                         Id = index,
-                        Status = Status.Unknown
+                        Status = Status.Good
+
                     };
                 }
-                Thread.Sleep(500);
+
+                if (response.Content.ToLower().Contains(mail.ToLower()))
+                {
+                    return new EmailResult()
+                    {
+                        Email = mail,
+                        Id = index,
+                        Status = Status.Verify
+                    };
+                }
             }
 
-            return new EmailResult()
+            if (response.StatusCode == HttpStatusCode.RequestTimeout)
             {
-                Email = mail,
-                Id = index,
-                Status = Status.Unknown
-            };
-            //Thread.Sleep(500);
-            //goto retry;
+                return new EmailResult()
+                {
+                    Email = mail,
+                    Id = index,
+                    Status = Status.Unknown
+                };
+            }
+            //    Thread.Sleep(500);
+            //}
+
+            //return new EmailResult()
+            //{
+            //    Email = mail,
+            //    Id = index,
+            //    Status = Status.Unknown
+            //};
+            Thread.Sleep(500);
+            goto retry;
 
         }
 

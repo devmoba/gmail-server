@@ -1,4 +1,5 @@
 using GmailServer.FakeSettings;
+using GmailServer.Web.Pages.FakeSettings.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace GmailServer.Web.Pages.FakeSettings
         public long Id { get; set; }
 
         [BindProperty]
-        public CreateUpdateFakeSettingDto FakeSetting { get; set; }
+        public FakeSettingViewModel FakeSetting { get; set; }
 
         private readonly IFakeSettingAppService fakeSettingAppService;
 
@@ -23,12 +24,13 @@ namespace GmailServer.Web.Pages.FakeSettings
         public async void OnGet()
         {
             var fakeSettingDto = await this.fakeSettingAppService.GetAsync(Id);
-            FakeSetting = ObjectMapper.Map<FakeSettingDto, CreateUpdateFakeSettingDto>(fakeSettingDto);
+            FakeSetting = ObjectMapper.Map<FakeSettingDto, FakeSettingViewModel>(fakeSettingDto);
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await this.fakeSettingAppService.UpdateAsync(Id, FakeSetting);
+            var fakeSetting = ObjectMapper.Map<FakeSettingViewModel, CreateUpdateFakeSettingDto>(FakeSetting);
+            await this.fakeSettingAppService.UpdateAsync(Id, fakeSetting);
             return NoContent();
         }
     }

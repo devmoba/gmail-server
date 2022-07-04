@@ -79,21 +79,23 @@ namespace GmailServer.Web.Pages.CheckMails
                     ).ToList();
 
                 var cancelToken = new CancellationTokenSource();
+                var taskPool = new TaskPool();
+
                 var checkMailTask = new Task(() =>
-                    TaskPool.GetInstance().StartThread(),
+                    taskPool.StartThread(),
                     cancelToken.Token
                 );
                 checkMailTask.Start();
                 foreach (var ec in emailCheckSplits)
                 {
-                    TaskPool.GetInstance().EnqueueEmails(ec);
+                    taskPool.EnqueueEmails(ec);
                     var emailResults = new List<EmailResult>();
                     var count = 0;
 
                     while (count < ec.Count)
                     {
                         Thread.Sleep(700);
-                        var results = TaskPool.GetInstance().GetResultAndClear();
+                        var results = taskPool.GetResultAndClear();
                         emailResults.AddRange(results);
                         count += results.Count;
                         await hubContext.Clients.Clients(connections)

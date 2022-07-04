@@ -118,9 +118,9 @@ namespace GmailServer.EntityFrameworkCore
                 b.ToTable(GmailServerConsts.DbTablePrefix + "FakeSettings", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
 
-                b.Property(x => x.Version).HasMaxLength(1024);
-                b.Property(x => x.FakeVersion).HasMaxLength(1024);
-                b.Property(x => x.DeviceType).HasMaxLength(2048);
+                b.Property(x => x.Version);
+                b.Property(x => x.FakeVersion);
+                b.Property(x => x.DeviceType);
             });
         }
     }
