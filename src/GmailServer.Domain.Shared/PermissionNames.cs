@@ -18,5 +18,18 @@
 
         public const string CheckMail = "CheckMailGroup";
         public const string CheckMail_Default = CheckMail + ".CheckMails";
+
+        public const string Checker = "CheckerGroup";
+        public const string Checker_Default = Checker + ".Checkers";
+        //public const string Checker_Create = Checker + ".Create";
+        //public const string Checker_Update = Checker + ".Update";
+        //public const string Checker_Delete = Checker + ".Delete";
+
+        public const string TaskCheck = "TaskCheckGroup";
+        public const string TaskCheck_Default = TaskCheck + ".TaskChecks";
+        public const string TaskCheck_Create = TaskCheck + ".Create";
+        public const string TaskCheck_Update = TaskCheck + ".Update";
+        public const string TaskCheck_Delete = TaskCheck + ".Delete";
+
     }
 }

@@ -2,6 +2,7 @@
 using GmailServer.EmailChecks;
 using GmailServer.Entities;
 using GmailServer.Enums;
+using GmailServer.Extensions;
 using GmailServer.Repositories;
 using GmailServer.TaskPools;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +21,14 @@ namespace GmailServer.Hubs
     {
         private const string ConnectionName = "CheckMailTool";
         private readonly IGmailRepository _gmailRepository;
+        private readonly ICheckerRepository _checkerRepository;
+        private readonly ITaskCheckRepository _taskCheckRepository;
 
-        public CheckMailHub(IGmailRepository gmailRepository)
+        public CheckMailHub(IGmailRepository gmailRepository,
+            ICheckerRepository checkerRepository)
         {
             _gmailRepository = gmailRepository;
+            _checkerRepository = checkerRepository;
         }
 
         public override Task OnConnectedAsync()
@@ -51,6 +56,26 @@ namespace GmailServer.Hubs
             }
 
             return base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task InputEmailCheckAsync(List<EmailCheck> input)
+        {
+            var emailCheckSplit = EnumerableExtension.Split<EmailCheck>(
+                        input,
+                        (int)Math.Ceiling((decimal)input.Count / 100)).ToList();
+            foreach (var emailChecks in emailCheckSplit)
+            {
+                var checker = await _checkerRepository.GetCheckerOnlineFirst();
+                await _taskCheckRepository.InsertAsync(new TaskCheck()
+                {
+                    CheckerId = checker.Id,
+                    Username = CurrentUser.UserName,
+                    EmailChecks = string.Join('|', emailChecks),
+                    Status = TaskCheckStatus.NA,
+                    TypeCheck = TypeCheck.Browser,
+                    Created = DateTime.Now
+                }, autoSave: true);
+            }
         }
 
         public async Task ReportEmailResultAsync(List<EmailResult> emailResults)

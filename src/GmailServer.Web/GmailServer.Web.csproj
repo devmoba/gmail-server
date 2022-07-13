@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\Checkers\js\index.js" />
     <None Remove="Pages\CheckMails\css\index.css" />
     <None Remove="Pages\CheckMails\js\checkMailViewModel.js" />
     <None Remove="Pages\CheckMails\js\index.js" />

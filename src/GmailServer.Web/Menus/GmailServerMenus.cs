@@ -17,5 +17,7 @@
         public const string Decrypt = Prefix + ".Decrypt";
 
         public const string CheckMail = Prefix + ".CheckMail";
+
+        public const string Checker = Prefix + ".Checker";
     }
 }

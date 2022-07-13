@@ -29,68 +29,83 @@ $(function () {
         .withAutomaticReconnect([0, 5000, 10000, 30000])
         .build();
 
-    connection.on("ClearResultAsync", () => {
-        ClearResult();
+    connection.on("ReceiveEmailResultAsync", (res) => {
+
     });
 
-    connection.on("ReceiveCountResultAsync", (res) => {
-        var count = viewModel.countResult();
-        count += res;
-        viewModel.countResult(count);
-    });
+    //connection.on("ClearResultAsync", () => {
+    //    ClearResult();
+    //});
 
-    connection.on("ReceiveTotalCheckAsync", (res) => {
-        viewModel.totalEmail(res);
-        $("#ckeck-now").prop('disabled', true);
-    });
+    //connection.on("ReceiveCountResultAsync", (res) => {
+    //    var count = viewModel.countResult();
+    //    count += res;
+    //    viewModel.countResult(count);
+    //});
 
-    connection.on("ReceiveNotiAsync", (message, type) => {
-        alert(message);
-    });
+    //connection.on("ReceiveTotalCheckAsync", (res) => {
+    //    viewModel.totalEmail(res);
+    //    $("#ckeck-now").prop('disabled', true);
+    //});
 
-    connection.on("ReceiveEmailResultOutputAsync", (res) => {
-        var output = editorOutput.getValue();
-        if (output) {
-            output = `${output}\n${res}`;
-            editorOutput.setValue(output);
-        } else {
-            editorOutput.setValue(res);
-        }
-        $("#ckeck-now").prop('disabled', false);
-    });
+    //connection.on("ReceiveNotiAsync", (message, type) => {
+    //    alert(message);
+    //});
 
-    connection.on("ReceiveEmailResultGroupAsync", (emailResultOuput, status, count) => {
-        switch (status) {
-            case Status.Good:
-                var good = viewModel.emailResultGood();
-                good.count += count;
-                good.emailResultOuput = good.emailResultOuput
-                    ? `${good.emailResultOuput}\n${emailResultOuput}`
-                    : emailResultOuput;
-                viewModel.emailResultGood(good);
-                break;
-            case Status.Verify:
-                var verify = viewModel.emailResultVerify();
-                verify.count += count;
-                verify.emailResultOuput = verify.emailResultOuput
-                    ? `${verify.emailResultOuput}\n${emailResultOuput}`
-                    : emailResultOuput;
-                viewModel.emailResultVerify(verify);
-                break;
-            default:
-                var unknown = viewModel.emailResultUnknown();
-                unknown.count += count;
-                unknown.emailResultOuput = unknown.emailResultOuput
-                    ? `${unknown.emailResultOuput}\n${emailResultOuput}`
-                    : emailResultOuput;
-                viewModel.emailResultUnknown(unknown);
-                break;
-        }  
-    });
+    //connection.on("ReceiveEmailResultOutputAsync", (res) => {
+    //    var output = editorOutput.getValue();
+    //    if (output) {
+    //        output = `${output}\n${res}`;
+    //        editorOutput.setValue(output);
+    //    } else {
+    //        editorOutput.setValue(res);
+    //    }
+    //    $("#ckeck-now").prop('disabled', false);
+    //});
+
+    //connection.on("ReceiveEmailResultGroupAsync", (emailResultOuput, status, count) => {
+    //    switch (status) {
+    //        case Status.Good:
+    //            var good = viewModel.emailResultGood();
+    //            good.count += count;
+    //            good.emailResultOuput = good.emailResultOuput
+    //                ? `${good.emailResultOuput}\n${emailResultOuput}`
+    //                : emailResultOuput;
+    //            viewModel.emailResultGood(good);
+    //            break;
+    //        case Status.Verify:
+    //            var verify = viewModel.emailResultVerify();
+    //            verify.count += count;
+    //            verify.emailResultOuput = verify.emailResultOuput
+    //                ? `${verify.emailResultOuput}\n${emailResultOuput}`
+    //                : emailResultOuput;
+    //            viewModel.emailResultVerify(verify);
+    //            break;
+    //        default:
+    //            var unknown = viewModel.emailResultUnknown();
+    //            unknown.count += count;
+    //            unknown.emailResultOuput = unknown.emailResultOuput
+    //                ? `${unknown.emailResultOuput}\n${emailResultOuput}`
+    //                : emailResultOuput;
+    //            viewModel.emailResultUnknown(unknown);
+    //            break;
+    //    }  
+    //});
 
     connection.start().then(function () {
         console.log("SignalR Started.");
     }).catch(function (err) {
+    });
+
+
+    $("#checkMailForm").submit(function (e) {
+        e.preventDefault();
+        $("#ckeck-now").prop('disabled', false);
+        var emailInput = editorInput.getValue();
+        var emails = emailInput.split('\n');
+        var emailChecks = emails.map((element, index) => ({ id: index, email: element }));
+
+        console.log(emailChecks);
     });
 
     $("#clear-input").on("click", function (e) {

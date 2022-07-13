@@ -1,0 +1,53 @@
+﻿@page
+@model GmailServer.Web.Pages.Checkers.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Checker"];
+    PageLayout.Content.Title = L["Checker"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.Checker;
+}
+
+@section scripts {
+    <script>
+       
+    </script>
+
+    <abp-script src="/Pages/Checkers/js/index.js"/>
+}
+
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>List Checker</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="checkerTable" class="table-bordered">
+            <thead> 
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Checker ID"]</th>
+                    <th>@L["Checker IP"]</th>
+                    <th>@L["Free RAM"]</th>
+                    <th>@L["Total RAM"]</th>
+                    <th>@L["Using Threads"]</th>
+                    <th>@L["Max Threads"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Last Check"]</th>
+                    <th>@L["Created"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

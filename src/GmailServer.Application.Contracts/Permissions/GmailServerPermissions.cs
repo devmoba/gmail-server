@@ -39,5 +39,20 @@ namespace GmailServer.Permissions
         {
             public const string Default = PermissionNames.CheckMail_Default;
         }
+
+        public const string CheckerGroup = PermissionNames.Checker;
+        public static class Checkers
+        {
+            public const string Default = PermissionNames.Checker_Default;  
+        }
+
+        public const string TaskCheckGroup = PermissionNames.TaskCheck;
+        public static class TaskChecks
+        {
+            public const string Default = PermissionNames.TaskCheck_Default;
+            public const string Create = PermissionNames.TaskCheck_Create;
+            public const string Update = PermissionNames.TaskCheck_Update;
+            public const string Delete = PermissionNames.TaskCheck_Delete;
+        }
     }
 }

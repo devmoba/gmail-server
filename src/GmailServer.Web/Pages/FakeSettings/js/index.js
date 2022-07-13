@@ -30,7 +30,7 @@
                 orderable: false,
                 targets: [1, 2, 3],
                 render: function (data, type, row, meta) {
-                    return data.replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    return `<span class="text-ellipsis">${data}</span>`;
                 }
             },
             {
@@ -65,10 +65,10 @@
             },
         ],
         columns: [
-            { data: "id", width: "80px" },
-            { data: "deviceType", width: "400px"},
-            { data: "version", width: "400px" },
-            { data: "fakeVersion", width: "400px" },
+            { data: "id", width: "100px" },
+            { data: "deviceType" },
+            { data: "version" },
+            { data: "fakeVersion" },
             { data: null, width: "100px" },
         ]
     });

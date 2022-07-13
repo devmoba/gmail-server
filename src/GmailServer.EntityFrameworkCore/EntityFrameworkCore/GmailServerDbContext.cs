@@ -63,6 +63,10 @@ namespace GmailServer.EntityFrameworkCore
         public DbSet<Gmail> Gmails { get; set; }
         public DbSet<FakeSetting> FakeSettings { get; set; }
 
+        public DbSet<Checker> Checkers { get; set; }
+
+        public DbSet<TaskCheck> TaskChecks { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -121,6 +125,35 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Version);
                 b.Property(x => x.FakeVersion);
                 b.Property(x => x.DeviceType);
+            });
+
+            builder.Entity<Checker>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "Checkers", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.HasIndex(x => x.CheckerId).IsUnique();
+                b.Property(x => x.CheckerId).IsRequired();
+                b.Property(x => x.CheckerIP).HasMaxLength(16);
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.UsingThread).IsRequired();
+                b.Property(x => x.MaxThread).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+                b.Property(x => x.LastCheck).IsRequired();
+            });
+
+            builder.Entity<TaskCheck>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "TaskChecks", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.Property(x => x.Username).IsRequired();
+                b.Property(x => x.EmailChecks).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.TypeCheck).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+                b.HasOne(x => x.Checker).WithMany(x => x.TaskChecks).HasForeignKey(x => x.CheckerId);
+                
             });
         }
     }

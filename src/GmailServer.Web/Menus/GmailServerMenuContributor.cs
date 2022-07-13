@@ -95,6 +95,18 @@ namespace GmailServer.Web.Menus
                );
             }
 
+            if (await context.IsGrantedAsync(GmailServerPermissions.Checkers.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.Checker,
+                       "Checker",
+                       "/Checkers",
+                       icon: "fa fa-cog",
+                       order: 6
+                   )
+               );
+            }
             //HostDashboard
             //context.Menu.AddItem(
             //    new ApplicationMenuItem(
@@ -117,11 +129,11 @@ namespace GmailServer.Web.Menus
             //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
             //);
 
-            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 6);
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 7);
 
             //Administration
             //var administration = context.Menu.GetAdministration();
-            administration.Order = 7;
+            administration.Order = 8;
 
             //Administration->Identity
             administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);

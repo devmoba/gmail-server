@@ -1,7 +1,9 @@
 using AutoMapper;
+using GmailServer.Checkers;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
 using GmailServer.Gmails;
+using GmailServer.TaskChecks;
 
 namespace GmailServer
 {
@@ -18,6 +20,11 @@ namespace GmailServer
 
             CreateMap<FakeSetting, FakeSettingDto>();
             CreateMap<CreateUpdateFakeSettingDto, FakeSetting>();
+
+            CreateMap<TaskCheck, TaskCheckDto>();
+            CreateMap<CreateUpdateTaskCheckDto, TaskCheck>();
+
+            CreateMap<Checker, CheckerDto>();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace GmailServer.Web.Pages.FakeSettings.ViewModels
     public class FakeSettingViewModel
     {
         [Required]
-        [TextArea(Rows = 7)]
+        [TextArea(Rows = 3)]
         public string DeviceType { get; set; }
 
         [Required]
@@ -14,7 +14,7 @@ namespace GmailServer.Web.Pages.FakeSettings.ViewModels
         public string Version { get; set; }
 
         [Required]
-        [TextArea(Rows = 10)]
+        [TextArea(Rows = 15)]
         public string FakeVersion { get; set; }
     }
 }
