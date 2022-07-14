@@ -1,4 +1,5 @@
 ﻿using GmailServer.CheckerReports;
+using GmailServer.CheckMails;
 using GmailServer.Entities;
 using GmailServer.Enums;
 using GmailServer.Hubs;
@@ -101,6 +102,24 @@ namespace GmailServer.ApplicationServices
                         .Clients
                         .Clients(connections)
                         .ReceiveEmailResultAsync(taskCheckResult.EmailResults);
+                    var emailResultGroups = taskCheckResult.EmailResults
+                                    .GroupBy(x => x.Status)
+                        .Select(group => new EmailResultGroup()
+                        {
+                            Status = group.Key,
+                            EmailResultOuput = string.Join('\n', group.Select(x => $"{x.Email}|{Enum.GetName(typeof(Status), x.Status)}").ToList()),
+                            Count = group.Count()
+                        }).ToList();
+                    foreach (var item in emailResultGroups)
+                    {
+                        await _hubContext.Clients
+                            .Clients(connections)
+                            .ReceiveEmailResultGroupAsync(
+                                item.EmailResultOuput,
+                                item.Status,
+                                item.Count
+                            );
+                    }
                 }
                 await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
             }

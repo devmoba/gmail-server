@@ -6,11 +6,13 @@ using GmailServer.Extensions;
 using GmailServer.Repositories;
 using GmailServer.TaskPools;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.AspNetCore.SignalR;
 
 namespace GmailServer.Hubs
@@ -23,12 +25,17 @@ namespace GmailServer.Hubs
         private readonly IGmailRepository _gmailRepository;
         private readonly ICheckerRepository _checkerRepository;
         private readonly ITaskCheckRepository _taskCheckRepository;
+        private readonly IConfiguration _cfg;
 
         public CheckMailHub(IGmailRepository gmailRepository,
-            ICheckerRepository checkerRepository)
+            ICheckerRepository checkerRepository,
+            ITaskCheckRepository taskCheckRepository,
+            IConfiguration configuration)
         {
             _gmailRepository = gmailRepository;
             _checkerRepository = checkerRepository;
+            _taskCheckRepository = taskCheckRepository;
+            _cfg = configuration;
         }
 
         public override Task OnConnectedAsync()
@@ -60,21 +67,25 @@ namespace GmailServer.Hubs
 
         public async Task InputEmailCheckAsync(List<EmailCheck> input)
         {
+            var limit = _cfg.GetValue<int>("CheckMail:MailPerTaskCheck");
             var emailCheckSplit = EnumerableExtension.Split<EmailCheck>(
                         input,
-                        (int)Math.Ceiling((decimal)input.Count / 100)).ToList();
+                        (int)Math.Ceiling((decimal)input.Count / limit)).ToList();
             foreach (var emailChecks in emailCheckSplit)
             {
                 var checker = await _checkerRepository.GetCheckerOnlineFirst();
-                await _taskCheckRepository.InsertAsync(new TaskCheck()
+                if (checker != null)
                 {
-                    CheckerId = checker.Id,
-                    Username = CurrentUser.UserName,
-                    EmailChecks = string.Join('|', emailChecks),
-                    Status = TaskCheckStatus.NA,
-                    TypeCheck = TypeCheck.Browser,
-                    Created = DateTime.Now
-                }, autoSave: true);
+                    await _taskCheckRepository.InsertAsync(new TaskCheck()
+                    {
+                        CheckerId = checker.Id,
+                        Username = CurrentUser.UserName,
+                        EmailChecks = string.Join('|', emailChecks),
+                        Status = TaskCheckStatus.NA,
+                        TypeCheck = TypeCheck.Browser,
+                        Created = DateTime.Now
+                    }, autoSave: true);
+                }
             }
         }
 

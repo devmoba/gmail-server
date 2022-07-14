@@ -30,7 +30,9 @@ $(function () {
         .build();
 
     connection.on("ReceiveEmailResultAsync", (res) => {
-
+        var emailChunkResults = viewModel.emailChunkResults();
+        emailChunkResults.push(...res);
+        viewModel.emailChunkResults(emailChunkResults);
     });
 
     //connection.on("ClearResultAsync", () => {
@@ -63,34 +65,34 @@ $(function () {
     //    $("#ckeck-now").prop('disabled', false);
     //});
 
-    //connection.on("ReceiveEmailResultGroupAsync", (emailResultOuput, status, count) => {
-    //    switch (status) {
-    //        case Status.Good:
-    //            var good = viewModel.emailResultGood();
-    //            good.count += count;
-    //            good.emailResultOuput = good.emailResultOuput
-    //                ? `${good.emailResultOuput}\n${emailResultOuput}`
-    //                : emailResultOuput;
-    //            viewModel.emailResultGood(good);
-    //            break;
-    //        case Status.Verify:
-    //            var verify = viewModel.emailResultVerify();
-    //            verify.count += count;
-    //            verify.emailResultOuput = verify.emailResultOuput
-    //                ? `${verify.emailResultOuput}\n${emailResultOuput}`
-    //                : emailResultOuput;
-    //            viewModel.emailResultVerify(verify);
-    //            break;
-    //        default:
-    //            var unknown = viewModel.emailResultUnknown();
-    //            unknown.count += count;
-    //            unknown.emailResultOuput = unknown.emailResultOuput
-    //                ? `${unknown.emailResultOuput}\n${emailResultOuput}`
-    //                : emailResultOuput;
-    //            viewModel.emailResultUnknown(unknown);
-    //            break;
-    //    }  
-    //});
+    connection.on("ReceiveEmailResultGroupAsync", (emailResultOuput, status, count) => {
+        switch (status) {
+            case Status.Good:
+                var good = viewModel.emailResultGood();
+                good.count += count;
+                good.emailResultOuput = good.emailResultOuput
+                    ? `${good.emailResultOuput}\n${emailResultOuput}`
+                    : emailResultOuput;
+                viewModel.emailResultGood(good);
+                break;
+            case Status.Verify:
+                var verify = viewModel.emailResultVerify();
+                verify.count += count;
+                verify.emailResultOuput = verify.emailResultOuput
+                    ? `${verify.emailResultOuput}\n${emailResultOuput}`
+                    : emailResultOuput;
+                viewModel.emailResultVerify(verify);
+                break;
+            default:
+                var unknown = viewModel.emailResultUnknown();
+                unknown.count += count;
+                unknown.emailResultOuput = unknown.emailResultOuput
+                    ? `${unknown.emailResultOuput}\n${emailResultOuput}`
+                    : emailResultOuput;
+                viewModel.emailResultUnknown(unknown);
+                break;
+        }
+    });
 
     connection.start().then(function () {
         console.log("SignalR Started.");
@@ -100,12 +102,47 @@ $(function () {
 
     $("#checkMailForm").submit(function (e) {
         e.preventDefault();
-        $("#ckeck-now").prop('disabled', false);
         var emailInput = editorInput.getValue();
-        var emails = emailInput.split('\n');
-        var emailChecks = emails.map((element, index) => ({ id: index, email: element }));
+        if (!emailInput) {
+            alert("Mail input null!")
+            return;
+        }
 
-        console.log(emailChecks);
+        $("#ckeck-now").prop('disabled', true);
+        ClearResult();
+
+        var emails = emailInput.split('\n');
+        viewModel.totalEmail(emails.length);
+
+        var emailChecks = emails.map((element, index) => ({ id: index, email: element }));
+        var emailChunks = SplitArray(emailChecks, emailLimitRequest);
+        emailChunks.forEach(async function (emailChunk, index) {
+            await connection.invoke("InputEmailCheckAsync", emailChunk);
+
+            while (true) {
+                await sleep(500);
+                var emailChunkResults = viewModel.emailChunkResults();
+                if (emailChunkResults.length == emailChunk.length) {
+                   
+                    emailChunkResults.sort(function (a, b) {
+                        return a.id - b.id;
+                    });
+                    var emailOutput = editorOutput.getValue();
+                    var emailJoin = emailChunkResults
+                        .map((item) => `${item.email}|${item.status}`)
+                        .join('\n');
+                    if (emailOutput) {
+                        emailOutput += `\n${emailJoin}`;
+                    } else {
+                        emailOutput = emailJoin;
+                    }
+                    editorOutput.setValue(emailOutput);
+                    viewModel.emailChunkResults([]);
+                    break;
+                }
+            }
+        });
+        $("#ckeck-now").prop('disabled', false);
     });
 
     $("#clear-input").on("click", function (e) {
@@ -138,6 +175,7 @@ function EmailCheck(id, email) {
 function CheckMailViewModel() {
     this.totalEmail = ko.observable(0);
     this.countResult = ko.observable(0);
+    this.emailChunkResults = ko.observable([]);
     this.emailResultGood = ko.observable(new EmailResultGroup(``, 'Good', 0));
     this.emailResultVerify = ko.observable(new EmailResultGroup(``, 'Verify', 0));
     this.emailResultUnknown = ko.observable(new EmailResultGroup(``, 'Unknown', 0));
@@ -158,4 +196,15 @@ function EmailResultGroup(emailResultOutput, status, count) {
     this.emailResultOuput = emailResultOutput;
     this.status = status;
     this.count = count;
+}
+
+function SplitArray(inputArray, perChunk) {
+    return inputArray.reduce((resultArray, item, index) => {
+        const chunkIndex = Math.floor(index / perChunk);
+        if (!resultArray[chunkIndex]) {
+            resultArray[chunkIndex] = []; // start a new chunk
+        }
+        resultArray[chunkIndex].push(item);
+        return resultArray;
+    }, []);
 }

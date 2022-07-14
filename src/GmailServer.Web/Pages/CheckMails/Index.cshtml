@@ -17,6 +17,9 @@
 }
 
 @section scripts {
+    <script>
+        var emailLimitRequest = @Html.Raw(ViewData["emailLimitRequest"]);
+    </script>
 <abp-script type="typeof(SignalRBrowserScriptContributor)" />
 <abp-script-bundle name="codemirror" />
 <abp-script-bundle name="knockout" />
