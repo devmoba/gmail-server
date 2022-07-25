@@ -16,7 +16,7 @@ namespace GmailServer.Background
     {
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
         {
-            context.AddBackgroundWorker<CheckMailReportWorker>();
+            context.AddBackgroundWorker<AutoCreateTaskCheckMailOnwnDbWorker>();
             context.AddBackgroundWorker<UncheckMailWorker>();
             context.AddBackgroundWorker<UpdateCheckerStatusWorker>();
         }

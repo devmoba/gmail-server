@@ -19,7 +19,7 @@ namespace GmailServer.Repositories
 
         Task<List<Gmail>> GetByTimeRangeAsync(DateTime from = default, DateTime to = default);
 
-        Task<List<Gmail>> GetByTimeToCheckAsync(int hourCheck);
+        Task<List<Gmail>> GetByTimeToCheckAsync(int hourCheck, int maxCount = 100);
 
         Task<List<Gmail>> GetByCheckingTimeoutAsync(DateTime uncheckTime, Status status);
 

@@ -65,13 +65,14 @@ namespace GmailServer.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<Gmail>> GetByTimeToCheckAsync(int hourCheck)
+        public async Task<List<Gmail>> GetByTimeToCheckAsync(int hourCheck, int maxcount = 100)
         {
             var timeToCheck = DateTime.Now.AddHours(-hourCheck);
             var dbConetxt = await GetDbContextAsync();
             var query = dbConetxt.Gmails.AsQueryable();
 
-            query = query.Where(x => x.Created < timeToCheck && (x.TimeDiff == 0 || x.TimeDiff < hourCheck));
+            query = query.Where(x => x.Created < timeToCheck && (x.TimeDiff == 0 || x.TimeDiff < hourCheck))
+                .TakeLast(maxcount);
 
             return await query.ToListAsync();
         }
