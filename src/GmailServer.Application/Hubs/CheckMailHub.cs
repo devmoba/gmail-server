@@ -7,6 +7,7 @@ using GmailServer.Repositories;
 using GmailServer.TaskPools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,54 +64,6 @@ namespace GmailServer.Hubs
             }
 
             return base.OnDisconnectedAsync(exception);
-        }
-
-        public async Task InputEmailCheckAsync(List<EmailCheck> input)
-        {
-            var limit = _cfg.GetValue<int>("CheckMail:MailPerTaskCheck");
-            var emailCheckSplit = EnumerableExtension.Split<EmailCheck>(
-                        input,
-                        (int)Math.Ceiling((decimal)input.Count / limit)).ToList();
-            foreach (var emailChecks in emailCheckSplit)
-            {
-                var checker = await _checkerRepository.GetCheckerOnlineFirst();
-                if (checker != null)
-                {
-                    await _taskCheckRepository.InsertAsync(new TaskCheck()
-                    {
-                        CheckerId = checker.Id,
-                        Username = CurrentUser.UserName,
-                        EmailChecks = string.Join('|', emailChecks),
-                        Status = TaskCheckStatus.NA,
-                        TypeCheck = TypeCheck.Browser,
-                        Created = DateTime.Now
-                    }, autoSave: true);
-                }
-            }
-        }
-
-        public async Task ReportEmailResultAsync(List<EmailResult> emailResults)
-        {
-            if (emailResults.Count > 0)
-            {
-                emailResults = emailResults.OrderBy(x => x.Id).ToList();
-                var ids = emailResults.Select(x => x.Id).ToList();
-
-                var entities = await _gmailRepository.GetByListIdAsync(ids);
-                for (int i = 0; i < entities.Count; i++)
-                {
-                    entities[i].Status = emailResults[i].Status;
-                    entities[i].Updated = DateTime.Now;
-                }
-
-                await _gmailRepository.BulkUpdateAsync(
-                    entities,
-                    new List<string>()
-                    {
-                        nameof(Gmail.Status),
-                        nameof(Gmail.Updated)
-                    });
-            }
         }
     }
 }

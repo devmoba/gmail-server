@@ -1,8 +1,6 @@
 ﻿using GmailServer.CheckerReports;
-using System;
+using GmailServer.EmailChecks;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GmailServer.ControllerInterfaces
@@ -10,5 +8,7 @@ namespace GmailServer.ControllerInterfaces
     public interface ICheckerReportController
     {
         Task<ReportResponseDto> ReportAsync(ReportRequestDto input);
+
+        Task InputEmailCheckAsync(List<EmailCheck> input);
     }
 }

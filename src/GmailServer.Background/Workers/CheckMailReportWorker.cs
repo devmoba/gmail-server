@@ -36,53 +36,53 @@ namespace GmailServer.Background.Workers
         protected async override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
             Logger.LogInformation("Start check mail report worker: Do something...");
-            var connections = ConnectionMapping<string>.GetInstance().GetConnections(ConnectionName).ToList();
+            //var connections = ConnectionMapping<string>.GetInstance().GetConnections(ConnectionName).ToList();
 
-            if (connections.Count > 0)
-            {
-                var hourToChecks = _cfg.GetSection("Workers:CheckMailReportWoker:HourToChecks").Get<List<int>>();
-                var gmailRepository = workerContext.ServiceProvider.GetRequiredService<IGmailRepository>();
-                var emailChecks = new List<EmailCheck>();
+            //if (connections.Count > 0)
+            //{
+            //    var hourToChecks = _cfg.GetSection("Workers:CheckMailReportWoker:HourToChecks").Get<List<int>>();
+            //    var gmailRepository = workerContext.ServiceProvider.GetRequiredService<IGmailRepository>();
+            //    var emailChecks = new List<EmailCheck>();
 
-                foreach (var hour in hourToChecks)
-                {
-                    var current = DateTime.Now;
+            //    foreach (var hour in hourToChecks)
+            //    {
+            //        var current = DateTime.Now;
 
-                    var gmails = await gmailRepository.GetByTimeToCheckAsync(hour);
-                    gmails.ForEach(gmail =>
-                    {
-                        gmail.Status = Status.Checking;
-                        gmail.LastCheck = current;
-                        gmail.TimeDiff = current.Subtract(gmail.Created).TotalHours;
-                    });
+            //        var gmails = await gmailRepository.GetByTimeToCheckAsync(hour);
+            //        gmails.ForEach(gmail =>
+            //        {
+            //            gmail.Status = Status.Checking;
+            //            gmail.LastCheck = current;
+            //            gmail.TimeDiff = current.Subtract(gmail.Created).TotalHours;
+            //        });
 
-                    emailChecks.AddRange(gmails.Select(x => new EmailCheck()
-                    {
-                        Email = x.Email,
-                        Id = x.Id
-                    }).ToList());
+            //        emailChecks.AddRange(gmails.Select(x => new EmailCheck()
+            //        {
+            //            Email = x.Email,
+            //            Id = x.Id
+            //        }).ToList());
 
-                    await gmailRepository.BulkUpdateAsync(gmails, new List<string>()
-                    {
-                        nameof(Gmail.Status),
-                        nameof(Gmail.LastCheck),
-                        nameof(Gmail.TimeDiff)
-                    });
-                }
+            //        await gmailRepository.BulkUpdateAsync(gmails, new List<string>()
+            //        {
+            //            nameof(Gmail.Status),
+            //            nameof(Gmail.LastCheck),
+            //            nameof(Gmail.TimeDiff)
+            //        });
+            //    }
 
-                var emailCheckSplit = EnumerableExtension.Split<EmailCheck>(
-                    emailChecks.DistinctBy(x => x.Id).ToList(),
-                    connections.Count)
-                    .ToList();
+            //    var emailCheckSplit = EnumerableExtension.Split<EmailCheck>(
+            //        emailChecks.DistinctBy(x => x.Id).ToList(),
+            //        connections.Count)
+            //        .ToList();
 
-                for (int i = 0; i < connections.Count; i++)
-                {
-                    await _checkMailHub
-                        .Clients
-                        .Client(connections[i])
-                        .ReceiveEmailCheckAsync(emailCheckSplit[i]);
-                }
-            }
+            //    for (int i = 0; i < connections.Count; i++)
+            //    {
+            //        await _checkMailHub
+            //            .Clients
+            //            .Client(connections[i])
+            //            .ReceiveEmailCheckAsync(emailCheckSplit[i]);
+            //    }
+            //}
 
             await Task.FromResult(1);
             Logger.LogInformation("Finish worker: Something done...");

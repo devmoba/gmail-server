@@ -5,7 +5,7 @@ namespace GmailServer.Checkers
     public interface ICheckerAppService : IReadOnlyAppService<
         CheckerDto, 
         long, 
-        CheckerFilterDto>
+        CheckerFilterDto>, IDeleteAppService<long>
     {
 
     }

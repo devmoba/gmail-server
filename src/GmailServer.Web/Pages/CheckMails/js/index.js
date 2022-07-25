@@ -4,6 +4,8 @@
     Unknown: 0
 };
 
+const NameOfStatus = ['Unknown', 'Good', '', '', 'Verify'];
+
 $(function () {
     var mailInputElement = document.getElementById("mail-input");
     var editorInput = CodeMirror.fromTextArea(mailInputElement, {
@@ -29,41 +31,61 @@ $(function () {
         .withAutomaticReconnect([0, 5000, 10000, 30000])
         .build();
 
-    connection.on("ReceiveEmailResultAsync", (res) => {
-        var emailChunkResults = viewModel.emailChunkResults();
-        emailChunkResults.push(...res);
-        viewModel.emailChunkResults(emailChunkResults);
+    connection.on("ReceiveNotiAsync", (message, type) => {
+        alert(message);
+        location.reload();
     });
 
-    //connection.on("ClearResultAsync", () => {
-    //    ClearResult();
-    //});
+    connection.on("ReceiveEmailResultAsync", (res) => {
+        var countResult = viewModel.countResult() + res.length;
+        viewModel.countResult(countResult);
 
-    //connection.on("ReceiveCountResultAsync", (res) => {
-    //    var count = viewModel.countResult();
-    //    count += res;
-    //    viewModel.countResult(count);
-    //});
+        var emailChunkResults = viewModel.emailChunkResults();
+        emailChunkResults.push(...res);
 
-    //connection.on("ReceiveTotalCheckAsync", (res) => {
-    //    viewModel.totalEmail(res);
-    //    $("#ckeck-now").prop('disabled', true);
-    //});
+        viewModel.emailChunkResults(emailChunkResults);
+        var countItemInRequest = viewModel.countItemInRequest();
+        var chunkResultLength = emailChunkResults.length;
 
-    //connection.on("ReceiveNotiAsync", (message, type) => {
-    //    alert(message);
-    //});
+        if (chunkResultLength == countItemInRequest) {
+            emailChunkResults.sort(function (a, b) {
+                return a.id - b.id;
+            });
+            var emailOutput = editorOutput.getValue();
+            var emailJoin = emailChunkResults
+                .map((item) => `${item.email}|${NameOfStatus[item.status]}`)
+                .join('\n');
+            if (emailOutput) {
+                emailOutput += `\n${emailJoin}`;
+            } else {
+                emailOutput = emailJoin;
+            }
+            editorOutput.setValue(emailOutput);
+            abp.notify.info(`Completed ${chunkResultLength} emails`);
+            viewModel.emailChunkResults([]);
 
-    //connection.on("ReceiveEmailResultOutputAsync", (res) => {
-    //    var output = editorOutput.getValue();
-    //    if (output) {
-    //        output = `${output}\n${res}`;
-    //        editorOutput.setValue(output);
-    //    } else {
-    //        editorOutput.setValue(res);
-    //    }
-    //    $("#ckeck-now").prop('disabled', false);
-    //});
+            var currentIndex = viewModel.currentIndex();
+            var countEmailSplit = viewModel.countEmailSplit();
+            currentIndex++;
+
+            if (currentIndex < countEmailSplit) {
+                var emailSplits = JSON.parse(window.localStorage.getItem('emailSplits'));
+                var next = emailSplits[currentIndex];
+                gmailServer.controllers.checkerReport.inputEmailCheck(next).then(() => { return; });
+                //connection.invoke("InputEmailCheckAsync", next);
+                viewModel.currentIndex(currentIndex);
+                viewModel.countItemInRequest(next.length);
+                console.log(`next: ${viewModel.countItemInRequest()}`);
+                console.log(`currentIndex: ${viewModel.currentIndex()}`);
+            }
+            else {
+                console.log(`currentIndex: ${viewModel.currentIndex()}`);
+                window.localStorage.clear();
+                $("#ckeck-now").prop('disabled', false);
+                abp.notify.info('Finished');
+            }
+        }
+    });
 
     connection.on("ReceiveEmailResultGroupAsync", (emailResultOuput, status, count) => {
         switch (status) {
@@ -107,42 +129,25 @@ $(function () {
             alert("Mail input null!")
             return;
         }
-
-        $("#ckeck-now").prop('disabled', true);
-        ClearResult();
-
         var emails = emailInput.split('\n');
+        if (emails.length > 70000) {
+            alert("Maximum 70k emails!")
+            return;
+        }
+        ClearResult();
         viewModel.totalEmail(emails.length);
+        $("#ckeck-now").prop('disabled', true);
 
         var emailChecks = emails.map((element, index) => ({ id: index, email: element }));
-        var emailChunks = SplitArray(emailChecks, emailLimitRequest);
-        emailChunks.forEach(async function (emailChunk, index) {
-            await connection.invoke("InputEmailCheckAsync", emailChunk);
-
-            while (true) {
-                await sleep(500);
-                var emailChunkResults = viewModel.emailChunkResults();
-                if (emailChunkResults.length == emailChunk.length) {
-                   
-                    emailChunkResults.sort(function (a, b) {
-                        return a.id - b.id;
-                    });
-                    var emailOutput = editorOutput.getValue();
-                    var emailJoin = emailChunkResults
-                        .map((item) => `${item.email}|${item.status}`)
-                        .join('\n');
-                    if (emailOutput) {
-                        emailOutput += `\n${emailJoin}`;
-                    } else {
-                        emailOutput = emailJoin;
-                    }
-                    editorOutput.setValue(emailOutput);
-                    viewModel.emailChunkResults([]);
-                    break;
-                }
-            }
-        });
-        $("#ckeck-now").prop('disabled', false);
+        var emailSplits = SplitArray(emailChecks, emailLimitRequest);
+        window.localStorage.setItem('emailSplits', JSON.stringify(emailSplits));
+        var first = emailSplits[0];
+        gmailServer.controllers.checkerReport.inputEmailCheck(first).then(() => { return; });
+        //connection.invoke("InputEmailCheckAsync", first);
+        viewModel.countItemInRequest(first.length);
+        viewModel.countEmailSplit(emailSplits.length);
+        console.log(`first: ${viewModel.countItemInRequest()}`);
+        console.log(`currentIndex: ${viewModel.currentIndex()}`);
     });
 
     $("#clear-input").on("click", function (e) {
@@ -158,6 +163,9 @@ $(function () {
     });
 
     function ClearResult() {
+        viewModel.countEmailSplit(0);
+        viewModel.currentIndex(0);
+        viewModel.countItemInRequest(0);
         viewModel.countResult(0);
         viewModel.totalEmail(0);
         viewModel.emailResultGood(new EmailResultGroup(``, 'Good', 0));
@@ -173,6 +181,9 @@ function EmailCheck(id, email) {
 }
 
 function CheckMailViewModel() {
+    this.countEmailSplit = ko.observable(0);
+    this.currentIndex = ko.observable(0);
+    this.countItemInRequest = ko.observable(0);
     this.totalEmail = ko.observable(0);
     this.countResult = ko.observable(0);
     this.emailChunkResults = ko.observable([]);

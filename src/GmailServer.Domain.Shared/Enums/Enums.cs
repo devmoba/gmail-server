@@ -29,7 +29,7 @@
         Failed = -1,
         NA = 0,
         Checking = 1,
-        //Done = 2    
+        Done = 2    
     }
 
     public enum TypeCheck

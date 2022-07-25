@@ -18,7 +18,7 @@ namespace GmailServer.Repositories
 
         public IQueryable<FakeSetting> FullTextSearch(IQueryable<FakeSetting> query, Expression<Func<FakeSetting, string>> keySelector, string value)
         {
-            return query.FullTextContains(keySelector, value);
+            return query.FullTextFreeText(keySelector, value);
         }
     }
 }

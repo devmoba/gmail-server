@@ -66,5 +66,10 @@ namespace GmailServer.ApplicationServices
         {
             return base.GetAsync(id);
         }
+
+        public async Task DeleteAsync(long id)
+        {
+            await Repository.DeleteAsync(id, true);
+        }
     }
 }

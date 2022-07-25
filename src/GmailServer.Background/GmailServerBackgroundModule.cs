@@ -18,6 +18,7 @@ namespace GmailServer.Background
         {
             context.AddBackgroundWorker<CheckMailReportWorker>();
             context.AddBackgroundWorker<UncheckMailWorker>();
+            context.AddBackgroundWorker<UpdateCheckerStatusWorker>();
         }
     }
 }

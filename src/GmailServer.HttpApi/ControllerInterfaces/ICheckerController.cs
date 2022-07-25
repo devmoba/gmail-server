@@ -9,5 +9,7 @@ namespace GmailServer.ControllerInterfaces
         Task<PagedResultDto<CheckerDto>> GetListAsync(CheckerFilterDto input);
 
         Task<CheckerDto> GetAsync(long id);
+
+        Task DeleteAsync(long id);
     }
 }

@@ -19,6 +19,13 @@ namespace GmailServer.Controllers
             this.checkerAppService = checkerAppService;
         }
 
+        [HttpDelete]
+        [Route("{id}")]
+        public Task DeleteAsync(long id)
+        {
+            return this.checkerAppService.DeleteAsync(id);
+        }
+
         [HttpGet]
         [Route("{id}")]
         public async Task<CheckerDto> GetAsync(long id)
