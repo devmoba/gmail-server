@@ -36,11 +36,22 @@ namespace GmailServer.Repositories
             return query.FullTextContains(keySelector, value);
         }
 
+        public async Task<List<Checker>> GetCheckerTimeoutHasTaskCheckAsync(int second)
+        {
+            var dbContext = await GetDbContextAsync();
+            var current = DateTime.Now;
+            var timeout = current.AddSeconds(-second);
+            var checkers = await dbContext.Checkers
+                .Where(x => x.LastCheck < timeout && x.TaskChecks.Count > 0)
+                .ToListAsync();
+            return checkers;
+        }
+
         public async Task<Checker> GetCheckerOnlineFirstAsync()
         {
             var dbContext = await GetDbContextAsync();
             return await dbContext.Checkers
-                .Where(x => x.Status == CheckerStatus.Online && x.UsingThread < x.MaxThread)
+                .Where(x => x.Status == CheckerStatus.Online)
                 .OrderBy(x => x.TaskChecks.Count)
                 .FirstOrDefaultAsync();
         }

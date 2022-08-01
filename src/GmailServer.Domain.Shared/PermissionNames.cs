@@ -23,7 +23,7 @@
         public const string Checker_Default = Checker + ".Checkers";
         //public const string Checker_Create = Checker + ".Create";
         //public const string Checker_Update = Checker + ".Update";
-        //public const string Checker_Delete = Checker + ".Delete";
+        public const string Checker_Delete = Checker + ".Delete";
 
         public const string TaskCheck = "TaskCheckGroup";
         public const string TaskCheck_Default = TaskCheck + ".TaskChecks";

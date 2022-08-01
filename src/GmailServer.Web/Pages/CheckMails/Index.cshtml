@@ -17,9 +17,9 @@
 }
 
 @section scripts {
-    <script>
-        var emailLimitRequest = @Html.Raw(ViewData["emailLimitRequest"]);
-    </script>
+<script>
+    var emailLimitRequest = @Html.Raw(ViewData["emailLimitRequest"]);
+</script>
 <abp-script type="typeof(SignalRBrowserScriptContributor)" />
 <abp-script-bundle name="codemirror" />
 <abp-script-bundle name="knockout" />
@@ -101,7 +101,7 @@
                                 <b data-bind="text: emailResultGood().count"></b>
                             </button>
                         </div>
-                       <div class="col-md-6 summary-result">
+                        <div class="col-md-6 summary-result">
                             <h3 class="float-left" data-bind="text: emailResultVerify().status"></h3>
                             <button class="btn btn-sm btn" data-bind="class: `btn-${emailResultVerify().status.toLowerCase()}`, click: downloadResult.bind(emailResultVerify())" title="download">
                                 <b data-bind="text: emailResultVerify().count"></b>
@@ -119,3 +119,6 @@
         </form>
     </abp-card-body>
 </abp-card>
+<div id="loadingAnimation">
+    <div class="modal-loading"><!-- Place at bottom of page --></div>
+</div>

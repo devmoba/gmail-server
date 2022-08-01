@@ -29,6 +29,7 @@ namespace GmailServer.ApplicationServices
             GetPolicyName = GmailServerPermissions.Checkers.Default;
         }
 
+        [Authorize(GmailServerPermissions.Checkers.Default)]
         public override async Task<PagedResultDto<CheckerDto>> GetListAsync(CheckerFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -62,11 +63,13 @@ namespace GmailServer.ApplicationServices
             return new PagedResultDto<CheckerDto>(count, res);
         }
 
+        [Authorize(GmailServerPermissions.Checkers.Default)]
         public override Task<CheckerDto> GetAsync(long id)
         {
             return base.GetAsync(id);
         }
 
+        [Authorize(GmailServerPermissions.Checkers.Delete)]
         public async Task DeleteAsync(long id)
         {
             await Repository.DeleteAsync(id, true);

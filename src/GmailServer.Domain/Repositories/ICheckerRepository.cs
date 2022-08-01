@@ -16,6 +16,8 @@ namespace GmailServer.Repositories
 
         Task UpdateStatusByTimeoutAsync(int second);
 
+        Task<List<Checker>> GetCheckerTimeoutHasTaskCheckAsync(int second);
+
         Task<Checker> GetCheckerOnlineFirstAsync();
     }
 }

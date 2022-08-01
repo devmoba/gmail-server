@@ -11,5 +11,9 @@ namespace GmailServer.Repositories
     public interface ITaskCheckRepository : IRepository<TaskCheck, long>
     {
         Task BulkUpdateAsync(List<TaskCheck> taskChecks, List<string> propertiesToInclude);
+
+        Task DeleteTaskCheckFailedAsync(int timeCheckDelete);
+
+        Task<List<TaskCheck>> GetByCheckerIdAsync(long checkerId);
     }
 }

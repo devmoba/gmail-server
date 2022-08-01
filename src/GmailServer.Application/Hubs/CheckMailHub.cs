@@ -1,19 +1,8 @@
-﻿using GmailServer.CheckMails;
-using GmailServer.EmailChecks;
-using GmailServer.Entities;
-using GmailServer.Enums;
-using GmailServer.Extensions;
-using GmailServer.Repositories;
-using GmailServer.TaskPools;
+﻿using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Volo.Abp;
 using Volo.Abp.AspNetCore.SignalR;
 
 namespace GmailServer.Hubs

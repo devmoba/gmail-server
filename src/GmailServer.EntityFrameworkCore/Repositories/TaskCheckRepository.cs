@@ -1,10 +1,10 @@
 ﻿using EFCore.BulkExtensions;
 using GmailServer.Entities;
 using GmailServer.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -24,6 +24,25 @@ namespace GmailServer.Repositories
             {
                 PropertiesToInclude = propertiesToInclude
             });
+        }
+
+        public async Task DeleteTaskCheckFailedAsync(int timeCheckDelete)
+        {
+            var dbContext = await GetDbContextAsync();
+            var conditionTime = DateTime.Now.AddMinutes(-timeCheckDelete);
+            var taskChecks = await dbContext.TaskChecks
+                .Where(x => x.Created < conditionTime)
+                .ToListAsync();
+            await dbContext.BulkDeleteAsync(taskChecks);
+        }
+
+        public async Task<List<TaskCheck>> GetByCheckerIdAsync(long checkerId)
+        {
+            var dbContext = await GetDbContextAsync();
+            var taskChecks = await dbContext.TaskChecks
+                .Where(x => x.CheckerId == checkerId)
+                .ToListAsync();
+            return taskChecks;
         }
     }
 }

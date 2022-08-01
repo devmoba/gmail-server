@@ -72,7 +72,7 @@ namespace GmailServer.Repositories
             var query = dbConetxt.Gmails.AsQueryable();
 
             query = query.Where(x => x.Created < timeToCheck && (x.TimeDiff == 0 || x.TimeDiff < hourCheck))
-                .TakeLast(maxcount);
+                .Take(maxcount);
 
             return await query.ToListAsync();
         }

@@ -32,9 +32,10 @@ namespace GmailServer.Permissions
             checkMailGroup.AddPermission(GmailServerPermissions.CheckMails.Default, L("Permission:CheckMails"));
 
             var checkerGroup = context.AddGroup(GmailServerPermissions.CheckerGroup, L("Permission:CheckerGroup"));
-            checkerGroup.AddPermission(GmailServerPermissions.Checkers.Default, L("Permission:Checkers"));
+            var checkerManagement = checkerGroup.AddPermission(GmailServerPermissions.Checkers.Default, L("Permission:Checkers"));
+            checkerManagement.AddChild(GmailServerPermissions.Checkers.Delete, L("Permission:Checkers.Delete"));
 
-            var taskCheckGroup = context.AddGroup(GmailServerPermissions.TaskCheckGroup, L("Permission:TaskCheckGropu"));
+            var taskCheckGroup = context.AddGroup(GmailServerPermissions.TaskCheckGroup, L("Permission:TaskCheckGroup"));
             var taskCheckManagement = taskCheckGroup.AddPermission(GmailServerPermissions.TaskChecks.Default, L("Permission:TaskChecks"));
             taskCheckManagement.AddChild(GmailServerPermissions.TaskChecks.Create, L("Permission:TaskChecks.Create"));
             taskCheckManagement.AddChild(GmailServerPermissions.TaskChecks.Update, L("Permission:TaskChecks.Update"));

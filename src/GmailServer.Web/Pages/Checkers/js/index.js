@@ -61,7 +61,7 @@
                                 text: l('Delete'),
                                 iconClass: "fas fa-trash-alt",
                                 visible: function (data) {
-                                    return abp.auth.isGranted('FakeSettingGroup.Delete');
+                                    return abp.auth.isGranted('CheckerGroup.Delete');
                                 },
                                 confirmMessage: data => l('DeleteConfirm'),
                                 action: data => {

@@ -10,8 +10,10 @@ using GmailServer.TaskChecks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,18 +32,22 @@ namespace GmailServer.ApplicationServices
         private readonly ITaskCheckRepository _taskCheckRepository;
         private readonly IConfiguration _cfg;
         private readonly IHubContext<CheckMailHub, ICheckMailHub> _hubContext;
+        private readonly ILogger<CheckerReportAppService> _logger;
+        //private static ConcurrentDictionary<long, SemaphoreSlim> CheckerOnlineSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
 
         public CheckerReportAppService(ICheckerRepository checkerRepository,
             IGmailRepository gmailRepository,
             ITaskCheckRepository taskCheckRepository,
             IConfiguration configuration,
-            IHubContext<CheckMailHub, ICheckMailHub> hubContext)
+            IHubContext<CheckMailHub, ICheckMailHub> hubContext,
+            ILogger<CheckerReportAppService> logger)
         {
             _gmailRepository = gmailRepository;
             _checkerRepository = checkerRepository;
             _taskCheckRepository = taskCheckRepository;
             _hubContext = hubContext;
             _cfg = configuration;
+            _logger = logger;
         }
 
         public async Task InputEmailChecksAsync(List<EmailCheck> input)
@@ -55,15 +61,24 @@ namespace GmailServer.ApplicationServices
                 var checker = await TryGetCheckerOnlineAsync();
                 if (checker != null)
                 {
-                    await _taskCheckRepository.InsertAsync(new TaskCheck()
-                    {
-                        CheckerId = checker.Id,
-                        Username = CurrentUser.UserName,
-                        EmailChecks = JsonConvert.SerializeObject(emailChecks),
-                        Status = TaskCheckStatus.NA,
-                        TypeCheck = TypeCheck.Browser,
-                        Created = DateTime.Now
-                    }, autoSave: true);
+                    //var syncLocks = CheckerOnlineSyncLocks.GetOrAdd(checker.Id, new SemaphoreSlim(1, 1));
+                    //await syncLocks.WaitAsync();
+                    //try
+                    //{
+                        await _taskCheckRepository.InsertAsync(new TaskCheck()
+                        {
+                            CheckerId = checker.Id,
+                            Username = CurrentUser.UserName,
+                            EmailChecks = JsonConvert.SerializeObject(emailChecks),
+                            Status = TaskCheckStatus.NA,
+                            TypeCheck = TypeCheck.Browser,
+                            Created = DateTime.Now
+                        }, autoSave: true);
+                    //}
+                    //finally
+                    //{
+                    //    syncLocks.Release();
+                    //}
                 }
                 else
                 {
@@ -81,6 +96,7 @@ namespace GmailServer.ApplicationServices
 
         public async Task<ReportResponseDto> ReportAsync(ReportRequestDto input)
         {
+            _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} reporting...");
             var checker = await AsyncExecuter.FirstOrDefaultAsync(
                 _checkerRepository.Where(x => x.CheckerId == input.CheckerId));
 
@@ -98,6 +114,7 @@ namespace GmailServer.ApplicationServices
                     LastCheck = DateTime.Now,
                     Created = DateTime.Now
                 }, autoSave: true);
+                _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} Creating new checker!");
             }
             else
             {
@@ -109,62 +126,52 @@ namespace GmailServer.ApplicationServices
                 checker.MaxThread = input.MaxThread;
                 checker.LastCheck = DateTime.Now;
                 await _checkerRepository.UpdateAsync(checker, autoSave: true);
+                _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} Update checker done!");
             }
-
-            foreach (var taskCheckResult in input.TaskCheckResults)
+            if (input.TaskCheckResults.Count > 0)
             {
-                if (taskCheckResult.TypeCheck == TypeCheck.OwnerDB)
+                _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} TaskCheckResult count: {input.TaskCheckResults.Count}");
+                foreach (var taskCheckResult in input.TaskCheckResults)
                 {
-                    var emailResults = taskCheckResult.EmailResults.OrderBy(x => x.Id).ToList();
-                    var ids = taskCheckResult.EmailResults.Select(x => x.Id).ToList();
-
-                    var gmails = await _gmailRepository.GetByListIdAsync(ids);
-
-                    for (int i = 0; i < gmails.Count; i++)
+                    if (taskCheckResult.TypeCheck == TypeCheck.OwnerDB)
                     {
-                        gmails[i].Status = emailResults[i].Status;
-                        gmails[i].Updated = DateTime.Now;
-                    }
+                        var emailResults = taskCheckResult.EmailResults.OrderBy(x => x.Id).ToList();
+                        var ids = taskCheckResult.EmailResults.Select(x => x.Id).ToList();
 
-                    await _gmailRepository.BulkUpdateAsync(
-                        gmails,
-                        new List<string>()
+                        var gmails = await _gmailRepository.GetByListIdAsync(ids);
+
+                        for (int i = 0; i < gmails.Count; i++)
                         {
+                            gmails[i].Status = emailResults[i].Status;
+                            gmails[i].Updated = DateTime.Now;
+                        }
+
+                        await _gmailRepository.BulkUpdateAsync(
+                            gmails,
+                            new List<string>()
+                            {
                             nameof(Gmail.Status),
                             nameof(Gmail.Updated)
-                        });
-                }
-
-                if (taskCheckResult.TypeCheck == TypeCheck.Browser)
-                {
-                    var connections = ConnectionMapping<string>
-                      .GetInstance()
-                      .GetConnections(taskCheckResult.Username)
-                      .ToList();
-                    await _hubContext
-                        .Clients
-                        .Clients(connections)
-                        .ReceiveEmailResultAsync(taskCheckResult.EmailResults);
-                    var emailResultGroups = taskCheckResult.EmailResults
-                        .GroupBy(x => x.Status)
-                        .Select(group => new EmailResultGroup()
-                        {
-                            Status = group.Key,
-                            EmailResultOuput = string.Join('\n', group.Select(x => $"{x.Email}|{Enum.GetName(typeof(Status), x.Status)}").ToList()),
-                            Count = group.Count()
-                        }).ToList();
-                    foreach (var item in emailResultGroups)
-                    {
-                        await _hubContext.Clients
-                            .Clients(connections)
-                            .ReceiveEmailResultGroupAsync(
-                                item.EmailResultOuput,
-                                item.Status,
-                                item.Count
-                            );
+                            });
+                        await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
                     }
+
+                    if (taskCheckResult.TypeCheck == TypeCheck.Browser)
+                    {
+                        _logger.LogInformation($"Get connection by {taskCheckResult.Username}");
+                        await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
+                        var connections = ConnectionMapping<string>
+                          .GetInstance()
+                          .GetConnections(taskCheckResult.Username)
+                          .ToList();
+                        await _hubContext
+                            .Clients
+                            .Clients(connections)
+                            .ReceiveEmailResultAsync(taskCheckResult.EmailResults);
+                        _logger.LogInformation($"ReceiveEmailResult done!");
+                    }
+                   
                 }
-                await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
             }
 
             var taskChecks = await AsyncExecuter.ToListAsync(
@@ -184,13 +191,13 @@ namespace GmailServer.ApplicationServices
         private async Task<Checker> TryGetCheckerOnlineAsync()
         {
             var count = 0;
-            while (count < 3)
+            while (count < 5)
             {
                 var checker = await _checkerRepository.GetCheckerOnlineFirstAsync();
                 if (checker != null)
                     return checker;
                 count++;
-                Thread.Sleep(1500);
+                Thread.Sleep(3000);
             }
             return null;
         }

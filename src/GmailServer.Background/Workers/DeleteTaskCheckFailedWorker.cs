@@ -18,14 +18,14 @@ namespace GmailServer.Background.Workers
             IConfiguration configuration) : base(timer, serviceScopeFactory)
         {
             _cfg = configuration;
-            timer.Period = _cfg.GetValue<int>("Workers:CheckMailReportWoker:Interval");
+            timer.Period = _cfg.GetValue<int>("Workers:DeleteTaskCheckFailedWorker:Interval");
         }
         protected async override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
-            Logger.LogInformation("Start check mail report worker: Do something...");
+            Logger.LogInformation("Start delete task check failed worker: Do something...");
             var taskCheckRepository = workerContext.ServiceProvider.GetRequiredService<ITaskCheckRepository>();
             var timeCheckDelete = _cfg.GetValue<int>("Workers:DeleteTaskCheckFailedWorker:CheckDelete");
-
+            await taskCheckRepository.DeleteTaskCheckFailedAsync(timeCheckDelete);
             await Task.FromResult(1);
             Logger.LogInformation("Finish worker: Something done...");
             throw new NotImplementedException();
