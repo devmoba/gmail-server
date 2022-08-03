@@ -28,7 +28,6 @@ namespace GmailServer.Background.Workers
             await taskCheckRepository.DeleteTaskCheckFailedAsync(timeCheckDelete);
             await Task.FromResult(1);
             Logger.LogInformation("Finish worker: Something done...");
-            throw new NotImplementedException();
         }
     }
 }

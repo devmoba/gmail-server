@@ -12,6 +12,8 @@ namespace GmailServer.Repositories
     {
         Task BulkUpdateAsync(List<TaskCheck> taskChecks, List<string> propertiesToInclude);
 
+        Task BulkDeleteAsync(List<long> Ids);
+
         Task DeleteTaskCheckFailedAsync(int timeCheckDelete);
 
         Task<List<TaskCheck>> GetByCheckerIdAsync(long checkerId);

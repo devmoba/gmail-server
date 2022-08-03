@@ -34,6 +34,9 @@ $(function () {
 
     connection.on("ReceiveNotiAsync", (message, type) => {
         alert(message);
+        window.localStorage.clear();
+        $("#ckeck-now").prop('disabled', false);
+        loadingAnimation.removeClass("loading");
     });
 
     connection.on("ReceiveEmailResultAsync", (res) => {

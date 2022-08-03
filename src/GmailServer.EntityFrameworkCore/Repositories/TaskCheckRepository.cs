@@ -17,12 +17,21 @@ namespace GmailServer.Repositories
         {
 
         }
+
+        public async Task BulkDeleteAsync(List<long> keys)
+        {
+            var dbContext = await GetDbContextAsync();
+            var taskChecks = await dbContext.TaskChecks.Where(x => keys.Contains(x.Id)).ToListAsync();
+            await dbContext.BulkDeleteAsync(taskChecks);
+        }
+
         public async Task BulkUpdateAsync(List<TaskCheck> taskChecks, List<string> propertiesToInclude)
         {
             var dbContext = await GetDbContextAsync();
             await dbContext.BulkUpdateAsync(taskChecks, new BulkConfig()
             {
-                PropertiesToInclude = propertiesToInclude
+                PropertiesToInclude = propertiesToInclude,
+                BatchSize = 100
             });
         }
 

@@ -33,7 +33,7 @@ namespace GmailServer.ApplicationServices
         private readonly IConfiguration _cfg;
         private readonly IHubContext<CheckMailHub, ICheckMailHub> _hubContext;
         private readonly ILogger<CheckerReportAppService> _logger;
-        //private static ConcurrentDictionary<long, SemaphoreSlim> CheckerOnlineSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
+        private static ConcurrentDictionary<long, SemaphoreSlim> CheckerOnlineSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
 
         public CheckerReportAppService(ICheckerRepository checkerRepository,
             IGmailRepository gmailRepository,
@@ -52,7 +52,7 @@ namespace GmailServer.ApplicationServices
 
         public async Task InputEmailChecksAsync(List<EmailCheck> input)
         {
-            var limit = _cfg.GetValue<int>("CheckMail:MailPerTaskCheck");
+            var limit = _cfg.GetValue<int>("CheckMail:MailPerTaskCheck"); // 50 email / TaskCheck
             var emailCheckSplit = EnumerableExtension.Split<EmailCheck>(
                         input,
                         (int)Math.Ceiling((decimal)input.Count / limit)).ToList();
@@ -61,10 +61,8 @@ namespace GmailServer.ApplicationServices
                 var checker = await TryGetCheckerOnlineAsync();
                 if (checker != null)
                 {
-                    //var syncLocks = CheckerOnlineSyncLocks.GetOrAdd(checker.Id, new SemaphoreSlim(1, 1));
-                    //await syncLocks.WaitAsync();
-                    //try
-                    //{
+                    try
+                    {
                         await _taskCheckRepository.InsertAsync(new TaskCheck()
                         {
                             CheckerId = checker.Id,
@@ -74,11 +72,12 @@ namespace GmailServer.ApplicationServices
                             TypeCheck = TypeCheck.Browser,
                             Created = DateTime.Now
                         }, autoSave: true);
-                    //}
-                    //finally
-                    //{
-                    //    syncLocks.Release();
-                    //}
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
                 }
                 else
                 {
@@ -96,6 +95,7 @@ namespace GmailServer.ApplicationServices
 
         public async Task<ReportResponseDto> ReportAsync(ReportRequestDto input)
         {
+
             _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} reporting...");
             var checker = await AsyncExecuter.FirstOrDefaultAsync(
                 _checkerRepository.Where(x => x.CheckerId == input.CheckerId));
@@ -128,6 +128,8 @@ namespace GmailServer.ApplicationServices
                 await _checkerRepository.UpdateAsync(checker, autoSave: true);
                 _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} Update checker done!");
             }
+            var syncLock = CheckerOnlineSyncLocks.GetOrAdd(checker.Id, new SemaphoreSlim(1, 1));
+
             if (input.TaskCheckResults.Count > 0)
             {
                 _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} TaskCheckResult count: {input.TaskCheckResults.Count}");
@@ -145,21 +147,16 @@ namespace GmailServer.ApplicationServices
                             gmails[i].Status = emailResults[i].Status;
                             gmails[i].Updated = DateTime.Now;
                         }
-
-                        await _gmailRepository.BulkUpdateAsync(
-                            gmails,
-                            new List<string>()
-                            {
+                        await _gmailRepository.BulkUpdateAsync(gmails, new List<string>()
+                        {
                             nameof(Gmail.Status),
                             nameof(Gmail.Updated)
-                            });
-                        await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
+                        });
                     }
 
                     if (taskCheckResult.TypeCheck == TypeCheck.Browser)
                     {
                         _logger.LogInformation($"Get connection by {taskCheckResult.Username}");
-                        await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
                         var connections = ConnectionMapping<string>
                           .GetInstance()
                           .GetConnections(taskCheckResult.Username)
@@ -170,21 +167,35 @@ namespace GmailServer.ApplicationServices
                             .ReceiveEmailResultAsync(taskCheckResult.EmailResults);
                         _logger.LogInformation($"ReceiveEmailResult done!");
                     }
-                   
+                    //await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
                 }
+                await _taskCheckRepository.BulkDeleteAsync(input.TaskCheckResults.Select(x => x.Id).ToList());
             }
-
             var taskChecks = await AsyncExecuter.ToListAsync(
-                _taskCheckRepository.Where(x => x.Status == TaskCheckStatus.NA && x.CheckerId == checker.Id));
+                   _taskCheckRepository.Where(
+                       x => x.Status == TaskCheckStatus.NA &&
+                       x.CheckerId == checker.Id)
+                   );
             var taskCheckDtos = ObjectMapper.Map<List<TaskCheck>, List<TaskCheckDto>>(taskChecks);
-            taskChecks.ForEach(x => x.Status = TaskCheckStatus.Checking);
 
-            await _taskCheckRepository.BulkUpdateAsync(
-                taskChecks,
-                new List<string>() {
+            //await syncLock.WaitAsync();
+            try
+            {
+                taskChecks.ForEach(x => x.Status = TaskCheckStatus.Checking);
+                await _taskCheckRepository.BulkUpdateAsync(
+                    taskChecks,
+                    new List<string>() {
                     nameof(TaskCheck.Status)
-                });
+                    });
+            }
+            catch (Exception ex)
+            {
 
+            }
+            //finally
+            //{
+            //    syncLock.Release();
+            //}
             return new ReportResponseDto() { TaskChecks = taskCheckDtos };
         }
 

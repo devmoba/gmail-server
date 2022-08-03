@@ -146,7 +146,15 @@ namespace GmailServer.EntityFrameworkCore
             {
                 b.ToTable(GmailServerConsts.DbTablePrefix + "TaskChecks", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
-
+                b.HasIndex(x => x.Id).IncludeProperties<TaskCheck>(tc => new
+                {
+                    tc.Username,
+                    tc.EmailChecks,
+                    tc.Status,
+                    tc.TypeCheck,
+                    tc.CheckerId,
+                    tc.Created
+                });
                 b.Property(x => x.Username).IsRequired();
                 b.Property(x => x.EmailChecks).IsRequired();
                 b.Property(x => x.Status).IsRequired();
