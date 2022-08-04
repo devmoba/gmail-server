@@ -45,7 +45,7 @@ namespace GmailServer.Background.Workers
 
                 foreach (var hour in hourToChecks)
                 {
-                    var gmails = await gmailRepository.GetByTimeToCheckAsync(hour, maxCount: 100);
+                    var gmails = await gmailRepository.GetByTimeToCheckAsync(hour, maxCount: 50);
 
                     gmailEntities.AddRange(gmails);
                     gmails.ForEach(gmail =>

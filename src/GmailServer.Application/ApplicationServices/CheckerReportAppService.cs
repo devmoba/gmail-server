@@ -33,7 +33,6 @@ namespace GmailServer.ApplicationServices
         private readonly IConfiguration _cfg;
         private readonly IHubContext<CheckMailHub, ICheckMailHub> _hubContext;
         private readonly ILogger<CheckerReportAppService> _logger;
-        private static ConcurrentDictionary<long, SemaphoreSlim> CheckerOnlineSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
 
         public CheckerReportAppService(ICheckerRepository checkerRepository,
             IGmailRepository gmailRepository,
@@ -76,7 +75,6 @@ namespace GmailServer.ApplicationServices
                     catch (Exception ex)
                     {
 
-                        throw;
                     }
                 }
                 else
@@ -128,7 +126,6 @@ namespace GmailServer.ApplicationServices
                 await _checkerRepository.UpdateAsync(checker, autoSave: true);
                 _logger.LogInformation($"{input.CheckerId} - {CurrentUser.UserName} Update checker done!");
             }
-            var syncLock = CheckerOnlineSyncLocks.GetOrAdd(checker.Id, new SemaphoreSlim(1, 1));
 
             if (input.TaskCheckResults.Count > 0)
             {
@@ -167,7 +164,6 @@ namespace GmailServer.ApplicationServices
                             .ReceiveEmailResultAsync(taskCheckResult.EmailResults);
                         _logger.LogInformation($"ReceiveEmailResult done!");
                     }
-                    //await _taskCheckRepository.DeleteAsync(taskCheckResult.Id);
                 }
                 await _taskCheckRepository.BulkDeleteAsync(input.TaskCheckResults.Select(x => x.Id).ToList());
             }
@@ -178,7 +174,6 @@ namespace GmailServer.ApplicationServices
                    );
             var taskCheckDtos = ObjectMapper.Map<List<TaskCheck>, List<TaskCheckDto>>(taskChecks);
 
-            //await syncLock.WaitAsync();
             try
             {
                 taskChecks.ForEach(x => x.Status = TaskCheckStatus.Checking);
@@ -192,10 +187,6 @@ namespace GmailServer.ApplicationServices
             {
 
             }
-            //finally
-            //{
-            //    syncLock.Release();
-            //}
             return new ReportResponseDto() { TaskChecks = taskCheckDtos };
         }
 

@@ -28,9 +28,9 @@ namespace GmailServer.Background.Workers
         protected async override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
             Logger.LogInformation("Start update checker status worker: Do something...");
+            var timeout = _cfg.GetValue<int>("Workers:UpdateCheckerStatusWorker:TimeoutOffline");
             var checkerRepository = workerContext.ServiceProvider.GetRequiredService<ICheckerRepository>();
             var taskCheckRepository = workerContext.ServiceProvider.GetRequiredService<ITaskCheckRepository>();
-            var timeout = _cfg.GetValue<int>("Workers:UpdateCheckerStatusWorker:TimeoutOffline");
             var checkers = await checkerRepository.GetCheckerTimeoutHasTaskCheckAsync(timeout);
             if (checkers.Count > 0)
             {
