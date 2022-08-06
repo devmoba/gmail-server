@@ -33,7 +33,7 @@ namespace GmailServer.Background.Workers
         {
             Logger.LogInformation("Start check mail report worker: Do something...");
             var hourToChecks = _cfg.GetSection("Workers:AutoCreateTaskCheckWorker:HourToChecks").Get<List<int>>();
-            var limit = _cfg.GetValue<int>("CheckMail:MailPerTaskCheck");
+            var maxCount = _cfg.GetValue<int>("Workers:AutoCreateTaskCheckWorker:MaxCount");
             var gmailRepository = workerContext.ServiceProvider.GetRequiredService<IGmailRepository>();
             var checkerRepository = workerContext.ServiceProvider.GetRequiredService<ICheckerRepository>();
             var taskCheckRepository = workerContext.ServiceProvider.GetRequiredService<ITaskCheckRepository>();
@@ -45,7 +45,7 @@ namespace GmailServer.Background.Workers
 
                 foreach (var hour in hourToChecks)
                 {
-                    var gmails = await gmailRepository.GetByTimeToCheckAsync(hour, maxCount: 50);
+                    var gmails = await gmailRepository.GetByTimeToCheckAsync(hour, maxCount);
 
                     gmailEntities.AddRange(gmails);
                     gmails.ForEach(gmail =>
