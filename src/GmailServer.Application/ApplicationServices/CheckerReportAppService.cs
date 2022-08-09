@@ -172,21 +172,21 @@ namespace GmailServer.ApplicationServices
                        x => x.Status == TaskCheckStatus.NA &&
                        x.CheckerId == checker.Id)
                    );
-            var taskCheckDtos = ObjectMapper.Map<List<TaskCheck>, List<TaskCheckDto>>(taskChecks);
-
-            try
+            if (taskChecks.Count > 0)
             {
-                taskChecks.ForEach(x => x.Status = TaskCheckStatus.Checking);
-                await _taskCheckRepository.BulkUpdateAsync(
-                    taskChecks,
-                    new List<string>() {
+                try
+                {
+                    taskChecks.ForEach(x => x.Status = TaskCheckStatus.Checking);
+                    await _taskCheckRepository.BulkUpdateAsync(
+                        taskChecks,
+                        new List<string>() {
                     nameof(TaskCheck.Status)
-                    });
+                        });
+                }
+                catch (Exception ex) { }
             }
-            catch (Exception ex)
-            {
 
-            }
+            var taskCheckDtos = ObjectMapper.Map<List<TaskCheck>, List<TaskCheckDto>>(taskChecks);
             return new ReportResponseDto() { TaskChecks = taskCheckDtos };
         }
 
