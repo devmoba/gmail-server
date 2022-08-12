@@ -33,9 +33,23 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
+        [Route("reports")]
+        public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
+        {
+            return await _appService.GetGmailReportsAsync(input);
+        }
+
+        [HttpGet]
         public async Task<PagedResultDto<GmailDto>> GetListAsync(GmailFilterDto input)
         {
             return await _appService.GetListAsync(input);
+        }
+
+        [HttpGet]
+        [Route("reportByStatus")]
+        public async Task<ReportbyStatusDto> GetReportbyStatusAsync()
+        {
+            return await _appService.GetReportbyStatusAsync();
         }
     }
 }

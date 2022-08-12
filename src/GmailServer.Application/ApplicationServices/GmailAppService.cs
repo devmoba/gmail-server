@@ -1,4 +1,5 @@
 ﻿using GmailServer.Entities;
+using GmailServer.Enums;
 using GmailServer.Gmails;
 using GmailServer.Permissions;
 using GmailServer.Repositories;
@@ -15,6 +16,7 @@ using Volo.Abp.Domain.Repositories;
 namespace GmailServer.ApplicationServices
 {
     [RemoteService(IsEnabled = false)]
+    [Authorize]
     public class GmailAppService : ReadOnlyAppService<
         Gmail,
         GmailDto,
@@ -102,6 +104,50 @@ namespace GmailServer.ApplicationServices
         public async Task DeleteAsync(long id)
         {
             await Repository.DeleteAsync(id);
+        }
+
+        public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(input.CreatedMax.HasValue, x => x.Created <= input.CreatedMax.Value);
+            query = query.WhereIf(input.CreatedMin.HasValue, x => x.Created >= input.CreatedMin.Value);
+
+            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new GmailReportDto()
+            {
+                Created = g.Key.Created.Date,
+                TotalDaily = g.Count(),
+                Unknown = g.Where(x => x.Status == Status.Unknown).Count(),
+                Good = g.Where(x => x.Status == Status.Good).Count(),
+                Disable = g.Where(x => x.Status == Status.Disable).Count(),
+                Notexist = g.Where(x => x.Status == Status.Notexist).Count(),
+                Verify = g.Where(x => x.Status == Status.Verify).Count(),
+                Checking = g.Where(x => x.Status == Status.Checking).Count(),
+                Uncheck = g.Where(x => x.Status == Status.Uncheck).Count()
+            });
+            var count = await AsyncExecuter.CountAsync(queryGroupBy);
+            var res = await AsyncExecuter.ToListAsync(queryGroupBy);
+
+            return new PagedResultDto<GmailReportDto>(count, res);
+        }
+
+        public async Task<ReportbyStatusDto> GetReportbyStatusAsync()
+        {
+            
+            var query = Repository.AsQueryable();
+            var total = await AsyncExecuter.CountAsync(query);
+            var queryGroupByStatus = query.GroupBy(x => x.Status).Select(x => new StatusPoint()
+            {
+                Name = Enum.GetName(typeof(Status), x.Key),
+                Y = x.Count(),
+                Exploded = false
+            });
+            var statusPoints = await AsyncExecuter.ToListAsync(queryGroupByStatus);
+
+            return new ReportbyStatusDto()
+            {
+                Total = total,
+                StatusPoints = statusPoints
+            };
         }
     }
 }
