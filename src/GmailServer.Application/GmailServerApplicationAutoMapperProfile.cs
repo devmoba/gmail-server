@@ -3,6 +3,7 @@ using GmailServer.Checkers;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
 using GmailServer.Gmails;
+using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
 
 namespace GmailServer
@@ -25,6 +26,9 @@ namespace GmailServer
             CreateMap<CreateUpdateTaskCheckDto, TaskCheck>();
 
             CreateMap<Checker, CheckerDto>();
+
+            CreateMap<RecoveryEmail, RecoveryEmailDto>();
+            CreateMap<CreateUpdateRecoveryEmailDto, RecoveryEmail>();
         }
     }
 }

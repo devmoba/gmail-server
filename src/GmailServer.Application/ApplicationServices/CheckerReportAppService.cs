@@ -1,5 +1,4 @@
 ﻿using GmailServer.CheckerReports;
-using GmailServer.CheckMails;
 using GmailServer.EmailChecks;
 using GmailServer.Entities;
 using GmailServer.Enums;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

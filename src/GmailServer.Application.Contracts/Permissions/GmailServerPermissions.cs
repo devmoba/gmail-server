@@ -55,5 +55,14 @@ namespace GmailServer.Permissions
             public const string Update = PermissionNames.TaskCheck_Update;
             public const string Delete = PermissionNames.TaskCheck_Delete;
         }
+
+        public const string RecoveryEmailGroup = PermissionNames.RecoveryEmail;
+        public static class RecoveryEmails
+        {
+            public const string Default = PermissionNames.RecoveryEmail_Default;
+            public const string Create = PermissionNames.RecoveryEmail_Create;
+            public const string Update = PermissionNames.RecoveryEmail_Update;
+            public const string Delete = PermissionNames.RecoveryEmail_Delete;
+        }
     }
 }

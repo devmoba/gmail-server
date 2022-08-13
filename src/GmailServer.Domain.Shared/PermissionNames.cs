@@ -31,5 +31,11 @@
         public const string TaskCheck_Update = TaskCheck + ".Update";
         public const string TaskCheck_Delete = TaskCheck + ".Delete";
 
+        public const string RecoveryEmail = "RecoveryEmailGroup";
+        public const string RecoveryEmail_Default = RecoveryEmail + ".RecoveryEmails";
+        public const string RecoveryEmail_Create = RecoveryEmail + ".Create";
+        public const string RecoveryEmail_Update = RecoveryEmail + ".Update";
+        public const string RecoveryEmail_Delete = RecoveryEmail + ".Delete";
+
     }
 }

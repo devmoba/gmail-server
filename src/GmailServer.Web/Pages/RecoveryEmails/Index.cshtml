@@ -1,0 +1,64 @@
+﻿@page
+@model GmailServer.Web.Pages.RecoveryEmails.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Recovery Email"];
+    PageLayout.Content.Title = L["Recovery Email"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.RecoveryEmail;
+}
+
+@section scripts {
+    <abp-script src="/Pages/RecoveryEmails/js/index.js"/>
+}
+@section styles {
+<style>
+    .modal-dialog {
+        max-width: 1000px;
+    }
+    .text-ellipsis {
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        text-overflow: ellipsis;
+        width: 500px;
+    }
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Recovery Emails</h4>
+            </abp-column>
+            <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Create))
+                {
+                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="recoveryEmailTable" class="table-bordered">
+            <thead> 
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Username"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Emails"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

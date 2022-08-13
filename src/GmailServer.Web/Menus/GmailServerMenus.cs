@@ -19,5 +19,7 @@
         public const string CheckMail = Prefix + ".CheckMail";
 
         public const string Checker = Prefix + ".Checker";
+
+        public const string RecoveryEmail = Prefix + ".RecoveryEmail";
     }
 }

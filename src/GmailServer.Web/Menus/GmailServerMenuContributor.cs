@@ -107,6 +107,19 @@ namespace GmailServer.Web.Menus
                    )
                );
             }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.RecoveryEmail,
+                       "RecoveryEmail",
+                       "/RecoveryEmails",
+                       icon: "fa fa-registered",
+                       order: 7
+                   )
+               );
+            }
             //HostDashboard
             //context.Menu.AddItem(
             //    new ApplicationMenuItem(
@@ -129,11 +142,11 @@ namespace GmailServer.Web.Menus
             //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
             //);
 
-            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 7);
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 8);
 
             //Administration
             //var administration = context.Menu.GetAdministration();
-            administration.Order = 8;
+            administration.Order = 9;
 
             //Administration->Identity
             administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);

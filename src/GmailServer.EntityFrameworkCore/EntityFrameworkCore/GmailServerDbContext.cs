@@ -67,6 +67,8 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<TaskCheck> TaskChecks { get; set; }
 
+        public DbSet<RecoveryEmail> RecoveryEmails { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -162,6 +164,21 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Created).IsRequired();
                 b.HasOne(x => x.Checker).WithMany(x => x.TaskChecks).HasForeignKey(x => x.CheckerId);
                 
+            });
+
+            builder.Entity<RecoveryEmail>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "RecoveryEmails", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Id).IncludeProperties<RecoveryEmail>(re => new
+                {
+                    re.Username,
+                    re.Status
+                });
+                b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Emails).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.Created).IsRequired();
             });
         }
     }

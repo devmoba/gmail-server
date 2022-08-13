@@ -40,6 +40,12 @@ namespace GmailServer.Permissions
             taskCheckManagement.AddChild(GmailServerPermissions.TaskChecks.Create, L("Permission:TaskChecks.Create"));
             taskCheckManagement.AddChild(GmailServerPermissions.TaskChecks.Update, L("Permission:TaskChecks.Update"));
             taskCheckManagement.AddChild(GmailServerPermissions.TaskChecks.Delete, L("Permission:TaskChecks.Delete"));
+
+            var recoveryEmailGroup = context.AddGroup(GmailServerPermissions.RecoveryEmailGroup, L("Permission:RecoveryEmailGroup"));
+            var recoveryEmailManagement = recoveryEmailGroup.AddPermission(GmailServerPermissions.RecoveryEmails.Default, L("Permission:RecoveryEmails"));
+            recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Create, L("Permission:RecoveryEmails.Create"));
+            recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Update, L("Permission:RecoveryEmails.Update"));
+            recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Delete, L("Permission:RecoveryEmails.Delete"));
         }
 
         private static LocalizableString L(string name)

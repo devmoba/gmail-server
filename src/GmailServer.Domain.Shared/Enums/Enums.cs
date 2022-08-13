@@ -37,4 +37,10 @@
         OwnerDB = 1,
         Browser = 2
     }
+    
+    public enum RecoveryEmailStatus
+    {
+        Ready = 0,
+        Completed = 1
+    }
 }
