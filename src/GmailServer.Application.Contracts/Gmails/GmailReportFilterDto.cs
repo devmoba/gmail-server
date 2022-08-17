@@ -5,8 +5,8 @@ namespace GmailServer.Gmails
 {
     public class GmailReportFilterDto : PagedAndSortedResultRequestDto
     {
-        public DateTime? CreatedMin { get; set; }
+        public DateTime? CreatedFrom { get; set; }
 
-        public DateTime? CreatedMax { get; set; }
+        public DateTime? CreatedTo { get; set; }
     }
 }

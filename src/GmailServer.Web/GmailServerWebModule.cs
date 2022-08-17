@@ -142,6 +142,11 @@ namespace GmailServer.Web
                       "/libs/crypto-js/decrypt.js"
                   ));
 
+                options.ScriptBundles.Add("canvasjs",
+                 bundle => bundle.AddFiles(
+                     "/libs/canvasjs/canvasjs.min.js"
+                 ));
+
                 options.ScriptBundles.Add("codemirror",
                  bundle => bundle.AddFiles(
                      "/libs/codemirror/codemirror.js"

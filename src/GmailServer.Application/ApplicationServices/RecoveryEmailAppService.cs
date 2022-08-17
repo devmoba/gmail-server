@@ -70,8 +70,11 @@ namespace GmailServer.ApplicationServices
             var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready);
             var recoveryEmails = await AsyncExecuter.ToArrayAsync(query);
             var index = random.Next(recoveryEmails.Count());
-            var res = recoveryEmails[index];
-            return ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(res);
+            var recoveryEmail = recoveryEmails[index];
+            var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
+            recoveryEmail.Status = RecoveryEmailStatus.Completed;
+            await Repository.UpdateAsync(recoveryEmail, autoSave: true);
+            return res;
         }
     }
 }

@@ -113,7 +113,7 @@ namespace GmailServer.Web.Menus
                 context.Menu.AddItem(
                    new ApplicationMenuItem(
                        GmailServerMenus.RecoveryEmail,
-                       "RecoveryEmail",
+                       "Recovery Email",
                        "/RecoveryEmails",
                        icon: "fa fa-registered",
                        order: 7

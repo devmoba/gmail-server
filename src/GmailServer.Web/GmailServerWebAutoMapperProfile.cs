@@ -2,7 +2,9 @@ using AutoMapper;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
 using GmailServer.Gmails;
+using GmailServer.RecoveryEmails;
 using GmailServer.Web.Pages.FakeSettings.ViewModels;
+using GmailServer.Web.Pages.RecoveryEmails.ViewModels;
 
 namespace GmailServer.Web
 {
@@ -19,6 +21,8 @@ namespace GmailServer.Web
             CreateMap<FakeSetting, FakeSettingDto>();
             CreateMap<FakeSettingViewModel, CreateUpdateFakeSettingDto>();
             CreateMap<FakeSettingDto, FakeSettingViewModel>();
+            CreateMap<RecoveryEmailViewModel, CreateUpdateRecoveryEmailDto>();
+            CreateMap<RecoveryEmailDto, RecoveryEmailViewModel>();
         }
     }
 }

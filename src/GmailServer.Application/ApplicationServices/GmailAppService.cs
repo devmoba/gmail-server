@@ -16,7 +16,6 @@ using Volo.Abp.Domain.Repositories;
 namespace GmailServer.ApplicationServices
 {
     [RemoteService(IsEnabled = false)]
-    [Authorize]
     public class GmailAppService : ReadOnlyAppService<
         Gmail,
         GmailDto,
@@ -31,7 +30,7 @@ namespace GmailServer.ApplicationServices
 
         [Authorize(GmailServerPermissions.Gmails.Default)]
         public async override Task<PagedResultDto<GmailDto>> GetListAsync(GmailFilterDto input)
-        { 
+        {
             var query = Repository.AsQueryable();
 
             if (!string.IsNullOrEmpty(input.Email))
@@ -106,11 +105,12 @@ namespace GmailServer.ApplicationServices
             await Repository.DeleteAsync(id);
         }
 
+        [Authorize]
         public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
         {
             var query = Repository.AsQueryable();
-            query = query.WhereIf(input.CreatedMax.HasValue, x => x.Created <= input.CreatedMax.Value);
-            query = query.WhereIf(input.CreatedMin.HasValue, x => x.Created >= input.CreatedMin.Value);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created <= input.CreatedTo.Value);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value);
 
             var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new GmailReportDto()
             {
@@ -124,22 +124,27 @@ namespace GmailServer.ApplicationServices
                 Checking = g.Where(x => x.Status == Status.Checking).Count(),
                 Uncheck = g.Where(x => x.Status == Status.Uncheck).Count()
             });
-            var count = await AsyncExecuter.CountAsync(queryGroupBy);
-            var res = await AsyncExecuter.ToListAsync(queryGroupBy);
+            queryGroupBy = queryGroupBy.OrderByDescending(x => x.Created);
 
+            var count = await AsyncExecuter.CountAsync(queryGroupBy);
+            if (input.MaxResultCount > 0 || input.SkipCount > 0)
+                queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
+
+            var res = await AsyncExecuter.ToListAsync(queryGroupBy);
             return new PagedResultDto<GmailReportDto>(count, res);
         }
 
+        [Authorize]
         public async Task<ReportbyStatusDto> GetReportbyStatusAsync()
         {
-            
+
             var query = Repository.AsQueryable();
             var total = await AsyncExecuter.CountAsync(query);
             var queryGroupByStatus = query.GroupBy(x => x.Status).Select(x => new StatusPoint()
             {
-                Name = Enum.GetName(typeof(Status), x.Key),
+                Name = x.Key.ToString(),
                 Y = x.Count(),
-                Exploded = false
+                Exploded = x.Key == Status.Good ? true : false
             });
             var statusPoints = await AsyncExecuter.ToListAsync(queryGroupByStatus);
 

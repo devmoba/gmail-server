@@ -66,7 +66,7 @@
                 targets: [12],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
-                        let m = moment.utc(data);
+                        let m = moment(data);
                         data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
                     }
                     return data;
@@ -76,7 +76,7 @@
                 targets: [13],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
-                        let m = moment.utc(data);
+                        let m = moment(data);
                         data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
                     }
                     return data;
