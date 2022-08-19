@@ -6,7 +6,7 @@ namespace GmailServer.Entities
 {
     public class RecoveryEmail : Entity<long>
     {
-        public string Emails { get; set; }
+        public string Email { get; set; }
 
         public string Username { get; set; }
 

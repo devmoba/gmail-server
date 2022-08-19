@@ -11,5 +11,9 @@ namespace GmailServer.RecoveryEmails
         CreateUpdateRecoveryEmailDto>
     {
         Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync();
+
+        Task CreateManyAsync(CreateManyRecoveryEmailInputDto input);
+
+        Task DeleteAllAsync();
     }
 }

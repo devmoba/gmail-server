@@ -19,8 +19,8 @@ namespace GmailServer.Web.Pages.RecoveryEmails
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var recoveryEmail = ObjectMapper.Map<RecoveryEmailViewModel, CreateUpdateRecoveryEmailDto>(RecoveryEmail);
-            await this.recoveryEmailAppService.CreateAsync(recoveryEmail);
+            var input = ObjectMapper.Map<RecoveryEmailViewModel, CreateManyRecoveryEmailInputDto>(RecoveryEmail);
+            await this.recoveryEmailAppService.CreateManyAsync(input);
             return NoContent();
         }
     }

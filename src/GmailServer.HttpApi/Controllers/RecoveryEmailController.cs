@@ -21,6 +21,13 @@ namespace GmailServer.Controllers
         }
 
         [HttpDelete]
+        [Route("deleteAll")]
+        public Task DeleteAllAsync()
+        {
+            return _recoveryEmailAppService.DeleteAllAsync();
+        }
+
+        [HttpDelete]
         [Route("{id}")]
         public Task DeleteAsync(long id)
         {

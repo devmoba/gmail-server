@@ -44,6 +44,10 @@
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
                 }
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Delete))
+                {
+                    <abp-button class="float-right btn btn-small btn-primary" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
+                }
             </abp-column>
         </abp-row>
     </abp-card-header>
@@ -55,7 +59,7 @@
                     <th>@L["Username"]</th>
                     <th>@L["Status"]</th>
                     <th>@L["Created"]</th>
-                    <th>@L["Emails"]</th>
+                    <th>@L["Email"]</th>
                     <th>@L["Action"]</th>
                 </tr>
             </thead>

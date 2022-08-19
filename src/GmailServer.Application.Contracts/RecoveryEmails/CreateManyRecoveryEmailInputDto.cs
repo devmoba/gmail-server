@@ -2,10 +2,10 @@
 
 namespace GmailServer.RecoveryEmails
 {
-    public class CreateUpdateRecoveryEmailDto
+    public class CreateManyRecoveryEmailInputDto
     {
         [Required]
-        public string Email { get; set; }
+        public string Emails { get; set; }
 
         [Required]
         public string Username { get; set; }

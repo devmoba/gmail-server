@@ -11,5 +11,7 @@ namespace GmailServer.ControllerInterfaces
         Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync();
 
         Task DeleteAsync(long id);
+
+        Task DeleteAllAsync();
     }
 }

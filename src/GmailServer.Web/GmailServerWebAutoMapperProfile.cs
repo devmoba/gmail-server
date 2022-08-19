@@ -21,7 +21,7 @@ namespace GmailServer.Web
             CreateMap<FakeSetting, FakeSettingDto>();
             CreateMap<FakeSettingViewModel, CreateUpdateFakeSettingDto>();
             CreateMap<FakeSettingDto, FakeSettingViewModel>();
-            CreateMap<RecoveryEmailViewModel, CreateUpdateRecoveryEmailDto>();
+            CreateMap<RecoveryEmailViewModel, CreateManyRecoveryEmailInputDto>();
             CreateMap<RecoveryEmailDto, RecoveryEmailViewModel>();
         }
     }
