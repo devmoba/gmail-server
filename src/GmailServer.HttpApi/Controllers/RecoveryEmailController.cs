@@ -20,6 +20,13 @@ namespace GmailServer.Controllers
             _recoveryEmailAppService = recoveryEmailAppService;
         }
 
+        [HttpPost]
+        [Route("create")]
+        public Task<RecoveryEmailDto> CreateAsync(CreateUpdateRecoveryEmailDto input)
+        {
+            return _recoveryEmailAppService.CreateAsync(input);
+        }
+
         [HttpDelete]
         [Route("deleteAll")]
         public Task DeleteAllAsync()
@@ -32,6 +39,13 @@ namespace GmailServer.Controllers
         public Task DeleteAsync(long id)
         {
             return _recoveryEmailAppService.DeleteAsync(id);
+        }
+
+        [HttpGet]
+        [Route("getFirst")]
+        public Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync()
+        {
+            return _recoveryEmailAppService.GetFirstRecoveryEmailAsync();
         }
 
         [HttpGet]

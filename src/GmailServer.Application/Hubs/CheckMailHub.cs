@@ -12,20 +12,10 @@ namespace GmailServer.Hubs
     public class CheckMailHub : AbpHub<ICheckMailHub>
     {
         private const string ConnectionName = "CheckMailTool";
-        private readonly IGmailRepository _gmailRepository;
-        private readonly ICheckerRepository _checkerRepository;
-        private readonly ITaskCheckRepository _taskCheckRepository;
-        private readonly IConfiguration _cfg;
 
-        public CheckMailHub(IGmailRepository gmailRepository,
-            ICheckerRepository checkerRepository,
-            ITaskCheckRepository taskCheckRepository,
-            IConfiguration configuration)
+        public CheckMailHub()
         {
-            _gmailRepository = gmailRepository;
-            _checkerRepository = checkerRepository;
-            _taskCheckRepository = taskCheckRepository;
-            _cfg = configuration;
+
         }
 
         public override Task OnConnectedAsync()

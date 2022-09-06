@@ -177,6 +177,7 @@ namespace GmailServer.EntityFrameworkCore
                 });
                 b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
                 b.Property(x => x.Status).IsRequired();
                 b.Property(x => x.Created).IsRequired();
             });

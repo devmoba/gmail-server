@@ -5,11 +5,11 @@
 $(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'RecoveryEmails/CreateModal');
-    var editModal = new abp.ModalManager(abp.appPath + 'RecoveryEmails/EditModal');
 
     devmoba.datatables.enableIndividualColumnSearch("#recoveryEmailTable", [
         { searchDisabled: true },
         { name: "username" },
+        { searchDisabled: true },
         { name: "status", options: Status },
         { searchDisabled: true },
         { searchDisabled: true },
@@ -32,7 +32,7 @@ $(function () {
         }),
         columnDefs: [
             {
-                targets: [2],
+                targets: [3],
                 render: function (data, type, row, meta) {
                     if (data == 0) {
                         return '<span>Ready</span>';
@@ -44,7 +44,7 @@ $(function () {
                 }
             },
             {
-                targets: [3],
+                targets: [4],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -55,24 +55,16 @@ $(function () {
             },
             {
                 orderable: false,
-                targets: [4],
+                targets: [5],
                 render: function (data, type, row, meta) {
                     return `<span class="text-ellipsis">${data}</span>`;
                 }
             },
             {
-                targets: [5],
+                targets: [6],
                 rowAction: {
                     items:
                         [
-                            //{
-                            //    text: l(`Edit`),
-                            //    iconClass: "fa fa-pencil-square-o",
-                            //    visible: data => {
-                            //        return abp.auth.isGranted('RecoveryEmailGroup.Update');
-                            //    },
-                            //    action: data => editModal.open({ id: data.record.id })
-                            //},
                             {
                                 text: l('Delete'),
                                 iconClass: "fas fa-trash-alt",
@@ -94,6 +86,7 @@ $(function () {
         columns: [
             { data: "id", width: "100px" },
             { data: "username", width: "150px" },
+            { data: "password", width: "150px" },
             { data: "status", width: "150px" },
             { data: "created", width: "250px" },
             { data: "email" },
@@ -104,10 +97,6 @@ $(function () {
     var dataTable = $('#recoveryEmailTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
 
     createModal.onResult(() => {
-        dataTable.ajax.reload();
-    });
-
-    editModal.onResult(() => {
         dataTable.ajax.reload();
     });
 

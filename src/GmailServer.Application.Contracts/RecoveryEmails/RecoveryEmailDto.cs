@@ -10,6 +10,8 @@ namespace GmailServer.RecoveryEmails
 
         public string Username { get; set; }
 
+        public string Password { get; set; }
+
         public DateTime Created { get; set; }
 
         public RecoveryEmailStatus Status { get; set; }

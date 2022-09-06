@@ -33,7 +33,6 @@ namespace GmailServer.ApplicationServices
 
             GetPolicyName = GmailServerPermissions.RecoveryEmails.Default;
             GetListPolicyName = GmailServerPermissions.RecoveryEmails.Default;
-            CreatePolicyName = GmailServerPermissions.RecoveryEmails.Create;
             UpdatePolicyName = GmailServerPermissions.RecoveryEmails.Update;
             DeletePolicyName = GmailServerPermissions.RecoveryEmails.Delete;
         }
@@ -77,32 +76,46 @@ namespace GmailServer.ApplicationServices
             return new RecoveryEmailDto();
         }
 
-        private bool ValidateEmail(string str)
+        private bool ValidateRecoveryEmailInput(string str)
         {
-            return Regex.IsMatch(str, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+            return Regex.IsMatch(str, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\|(.+)");
 
         }
 
+        public override async Task<RecoveryEmailDto> CreateAsync(CreateUpdateRecoveryEmailDto input)
+        {
+            var recoveryEmail = ObjectMapper.Map<CreateUpdateRecoveryEmailDto, RecoveryEmail>(input);
+            recoveryEmail.Created = DateTime.Now;
+            recoveryEmail.Status = RecoveryEmailStatus.Ready;
+            var res = await Repository.InsertAsync(recoveryEmail, autoSave: true);
+
+            return await MapToGetOutputDtoAsync(res);
+        }
+
+        [Authorize(GmailServerPermissions.RecoveryEmails.Create)]
         public async Task CreateManyAsync(CreateManyRecoveryEmailInputDto input)
         {
-            var emails = input.Emails.Split("\r\n").ToList();
-            var recoveryEmails = new List<RecoveryEmail>();
-            emails.ForEach(email =>
+            var recoveryEmails = input.Emails.Split("\r\n").ToList();
+            var entities = new List<RecoveryEmail>();
+            recoveryEmails.ForEach((Action<string>)(re =>
             {
-                if (ValidateEmail(email))
+                if (ValidateRecoveryEmailInput(re))
                 {
-                    recoveryEmails.Add(new RecoveryEmail()
+                    var reSplit = re.Split('|').ToArray();
+                    var entity = new RecoveryEmail()
                     {
                         Username = input.Username,
-                        Email = email,
+                        Email = reSplit[0],
+                        Password = reSplit[1],
                         Status = RecoveryEmailStatus.Ready,
-                        Created = DateTime.Now, 
-                    });
+                        Created = DateTime.Now,
+                    };
+                    entities.Add(entity);
                 }
-            });
+            }));
             if (recoveryEmails.Count > 0)
             {
-                await Repository.BulkInsertAsync(recoveryEmails);
+                await Repository.BulkInsertAsync(entities);
             }
         }
 
@@ -110,6 +123,21 @@ namespace GmailServer.ApplicationServices
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
+        }
+
+        public async Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync()
+        {
+            var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready);
+            query = query.OrderByDescending(x => x.Created);
+            var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (recoveryEmail != null)
+            {
+                var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
+                recoveryEmail.Status = RecoveryEmailStatus.Completed;
+                await Repository.UpdateAsync(recoveryEmail, autoSave: true);
+                return res;
+            }
+            return new RecoveryEmailDto();
         }
     }
 }

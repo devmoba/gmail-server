@@ -10,6 +10,10 @@ namespace GmailServer.ControllerInterfaces
 
         Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync();
 
+        Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync();
+
+        Task<RecoveryEmailDto> CreateAsync(CreateUpdateRecoveryEmailDto input);
+
         Task DeleteAsync(long id);
 
         Task DeleteAllAsync();
