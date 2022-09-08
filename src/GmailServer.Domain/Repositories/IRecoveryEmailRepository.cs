@@ -12,5 +12,7 @@ namespace GmailServer.Repositories
         Task DeleteRecoveryEmailCompleted(int timeCheckDelete);
 
         Task DeleteAllAsync();
+
+        Task<bool> IsReserveQuantityEnoughAsync(int reserveQuantity);
     }
 }

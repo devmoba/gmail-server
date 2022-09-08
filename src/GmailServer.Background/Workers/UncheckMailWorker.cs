@@ -40,7 +40,9 @@ namespace GmailServer.Background.Workers
             });
             await gmailRepository.BulkUpdateAsync(gmails, new List<string>()
             {
-                nameof(Gmail.Status)
+                nameof(Gmail.Status),
+                nameof(Gmail.TimeDiff),
+                nameof(Gmail.Updated),
             });
             await Task.FromResult(1);
             Logger.LogInformation("Finish worker: Something done...");

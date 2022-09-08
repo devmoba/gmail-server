@@ -20,6 +20,7 @@ namespace GmailServer.Background
             context.AddBackgroundWorker<UncheckMailWorker>();
             context.AddBackgroundWorker<UpdateCheckerStatusWorker>();
             context.AddBackgroundWorker<DeleteTaskCheckFailedWorker>();
+            context.AddBackgroundWorker<GetAndInsertHotmailWorker>();
         }
     }
 }

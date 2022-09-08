@@ -1,6 +1,7 @@
 ﻿using EFCore.BulkExtensions;
 using GmailServer.Entities;
 using GmailServer.EntityFrameworkCore;
+using GmailServer.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,13 @@ namespace GmailServer.Repositories
                 .Where(x => x.Created < timeCheck && x.Status == Enums.RecoveryEmailStatus.Completed)
                 .ToListAsync();
             await dbContext.BulkDeleteAsync(recoveryEmails);    
+        }
+
+        public async Task<bool> IsReserveQuantityEnoughAsync(int reserveQuantity)
+        {
+            var dbContext = await GetDbContextAsync();
+            var count = await dbContext.RecoveryEmails.Where(x => x.Status == RecoveryEmailStatus.Ready).CountAsync();
+            return count > reserveQuantity; // true
         }
     }
 }
