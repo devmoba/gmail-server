@@ -23,7 +23,7 @@ namespace GmailServer.Background.Workers
         {
             Logger.LogInformation("Start delete recovery email completed worker: Do something...");
             var recoveryEmailRepository = workerContext.ServiceProvider.GetRequiredService<IRecoveryEmailRepository>();
-            var timeCheckDelete = _cfg.GetValue<int>("Workers:DeleteTaskCheckFailedWorker:CheckDelete");
+            var timeCheckDelete = _cfg.GetValue<int>("Workers:DeleteRecoveryEmailCompletedWorker:CheckDelete");
             await recoveryEmailRepository.DeleteRecoveryEmailCompleted(timeCheckDelete);
             await Task.FromResult(1);
             Logger.LogInformation("Finish worker: Something done...");
