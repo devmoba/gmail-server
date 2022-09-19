@@ -64,5 +64,23 @@ namespace GmailServer.Permissions
             public const string Update = PermissionNames.RecoveryEmail_Update;
             public const string Delete = PermissionNames.RecoveryEmail_Delete;
         }
+
+        public const string GmailPremiumGroup = PermissionNames.GmailPremium;
+        public static class GmailPremiums
+        {
+            public const string Default = PermissionNames.GmailPremium_Default;
+            public const string Create = PermissionNames.GmailPremium_Create;
+            public const string Update = PermissionNames.GmailPremium_Update;
+            public const string Delete = PermissionNames.GmailPremium_Delete;
+        }
+
+        public const string AppleIdGroup = PermissionNames.AppleId;
+        public static class AppleIds
+        {
+            public const string Default = PermissionNames.AppleId_Default;  
+            public const string Create = PermissionNames.AppleId_Create;  
+            public const string Update = PermissionNames.AppleId_Update;  
+            public const string Delete = PermissionNames.AppleId_Delete;  
+        }
     }
 }

@@ -113,7 +113,7 @@ namespace GmailServer.ApplicationServices
                     entities.Add(entity);
                 }
             }));
-            if (recoveryEmails.Count > 0)
+            if (entities.Count > 0)
             {
                 await Repository.BulkInsertAsync(entities);
             }

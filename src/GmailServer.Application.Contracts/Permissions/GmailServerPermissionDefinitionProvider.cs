@@ -46,6 +46,18 @@ namespace GmailServer.Permissions
             recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Create, L("Permission:RecoveryEmails.Create"));
             recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Update, L("Permission:RecoveryEmails.Update"));
             recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Delete, L("Permission:RecoveryEmails.Delete"));
+
+            var gmailPremiumGroup = context.AddGroup(GmailServerPermissions.GmailPremiumGroup, L("Permission:GmailPremiumGroup "));
+            var gmailPremiumManagement = gmailPremiumGroup.AddPermission(GmailServerPermissions.GmailPremiums.Default, L("Permission:GmailPremiums"));
+            gmailPremiumManagement.AddChild(GmailServerPermissions.GmailPremiums.Create, L("Permission:GmailPremiums.Create"));
+            gmailPremiumManagement.AddChild(GmailServerPermissions.GmailPremiums.Update, L("Permission:GmailPremiums.Update"));
+            gmailPremiumManagement.AddChild(GmailServerPermissions.GmailPremiums.Delete, L("Permission:GmailPremiums.Delete"));
+
+            var appleIdGroup = context.AddGroup(GmailServerPermissions.AppleIdGroup, L("Permission:AppleIdGroup "));
+            var appleIdManagement = appleIdGroup.AddPermission(GmailServerPermissions.AppleIds.Default, L("Permission:AppleIds"));
+            appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Create, L("Permission:AppleIds.Create"));
+            appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Update, L("Permission:AppleIds.Update"));
+            appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Delete, L("Permission:AppleIds.Delete"));
         }
 
         private static LocalizableString L(string name)

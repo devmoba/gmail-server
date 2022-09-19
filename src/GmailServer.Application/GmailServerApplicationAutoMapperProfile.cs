@@ -1,7 +1,9 @@
 using AutoMapper;
+using GmailServer.AppleIds;
 using GmailServer.Checkers;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
+using GmailServer.GmailPremiums;
 using GmailServer.Gmails;
 using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
@@ -29,6 +31,12 @@ namespace GmailServer
 
             CreateMap<RecoveryEmail, RecoveryEmailDto>();
             CreateMap<CreateUpdateRecoveryEmailDto, RecoveryEmail>();
+
+            CreateMap<GmailPremium, GmailPremiumDto>();
+            CreateMap<CreateUpdateGmailPremiumDto, GmailPremium>();
+
+            CreateMap<AppleId, AppleIdDto>();
+            CreateMap<CreateUpdateAppleIdDto, AppleId>();
         }
     }
 }

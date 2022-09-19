@@ -37,5 +37,17 @@
         public const string RecoveryEmail_Update = RecoveryEmail + ".Update";
         public const string RecoveryEmail_Delete = RecoveryEmail + ".Delete";
 
+        public const string GmailPremium = "GmailPremiumGroup";
+        public const string GmailPremium_Default = GmailPremium + ".GmailPremiums";
+        public const string GmailPremium_Create = GmailPremium + ".Create";
+        public const string GmailPremium_Update = GmailPremium + ".Update";
+        public const string GmailPremium_Delete = GmailPremium + ".Delete";
+
+        public const string AppleId = "AppleIdGroup";
+        public const string AppleId_Default = AppleId + ".AppleIds";
+        public const string AppleId_Create = AppleId + ".Create";
+        public const string AppleId_Update = AppleId + ".Update";
+        public const string AppleId_Delete = AppleId + ".Delete";
+
     }
 }

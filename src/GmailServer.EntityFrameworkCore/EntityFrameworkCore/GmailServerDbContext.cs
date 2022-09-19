@@ -61,6 +61,7 @@ namespace GmailServer.EntityFrameworkCore
         // Use
 
         public DbSet<Gmail> Gmails { get; set; }
+
         public DbSet<FakeSetting> FakeSettings { get; set; }
 
         public DbSet<Checker> Checkers { get; set; }
@@ -68,6 +69,10 @@ namespace GmailServer.EntityFrameworkCore
         public DbSet<TaskCheck> TaskChecks { get; set; }
 
         public DbSet<RecoveryEmail> RecoveryEmails { get; set; }
+
+        public DbSet<GmailPremium> GmailPremiums { get; set; }
+
+        public DbSet<AppleId> AppleIds { get; set; }
 
         #endregion
 
@@ -171,6 +176,39 @@ namespace GmailServer.EntityFrameworkCore
                 b.ToTable(GmailServerConsts.DbTablePrefix + "RecoveryEmails", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
                 b.HasIndex(x => x.Id).IncludeProperties<RecoveryEmail>(re => new
+                {
+                    re.Username,
+                    re.Status
+                });
+                b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+            });
+
+            builder.Entity<GmailPremium>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "GmailPremiums", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Id).IncludeProperties<GmailPremium>(re => new
+                {
+                    re.Username,
+                    re.Status
+                });
+                b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+            });
+
+            builder.Entity<AppleId>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "AppleIds", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Id).IncludeProperties<AppleId>(re => new
                 {
                     re.Username,
                     re.Status

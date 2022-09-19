@@ -43,4 +43,16 @@
         Ready = 0,
         Completed = 1
     }
+
+    public enum GmailPremiumStatus
+    {
+        Ready = 0,
+        Completed = 1
+    }
+
+    public enum AppleIdStatus
+    {
+        Ready = 0,
+        Completed = 1
+    }
 }
