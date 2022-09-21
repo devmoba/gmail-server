@@ -4,9 +4,9 @@
 ];
 $(function () {
     var l = abp.localization.getResource('GmailServer');
-    var createModal = new abp.ModalManager(abp.appPath + 'RecoveryEmails/CreateModal');
+    var createModal = new abp.ModalManager(abp.appPath + 'AppleIds/CreateModal');
 
-    devmoba.datatables.enableIndividualColumnSearch("#recoveryEmailTable", [
+    devmoba.datatables.enableIndividualColumnSearch("#appleIdTable", [
         { searchDisabled: true },
         { name: "username" },
         { searchDisabled: true },
@@ -27,7 +27,7 @@ $(function () {
         orderCellsTop: true,
         order: [[0, "desc"]],
 
-        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.recoveryEmail.getList, () => {
+        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.appleId.getList, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();
         }),
         columnDefs: [
@@ -69,11 +69,11 @@ $(function () {
                                 text: l('Delete'),
                                 iconClass: "fas fa-trash-alt",
                                 visible: function (data) {
-                                    return abp.auth.isGranted('RecoveryEmailGroup.Delete');
+                                    return abp.auth.isGranted('GmailPremiumGroup.Delete');
                                 },
                                 confirmMessage: data => l('DeleteConfirm'),
                                 action: data => {
-                                    gmailServer.controllers.recoveryEmail.delete(data.record.id).then(() => {
+                                    gmailServer.controllers.appleId.delete(data.record.id).then(() => {
                                         abp.notify.info(l('SuccessfullyDeleted'));
                                         dataTable.ajax.reload();
                                     });
@@ -86,7 +86,7 @@ $(function () {
         columns: [
             { data: "id", width: "100px" },
             { data: "username", width: "150px" },
-            { data: "email", width: "400px" },
+            { data: "email", width: "300px" },
             { data: "password", width: "150px" },
             { data: "status", width: "150px" },
             { data: "created", width: "250px" },
@@ -94,7 +94,7 @@ $(function () {
         ]
     });
 
-    var dataTable = $('#recoveryEmailTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
+    var dataTable = $('#appleIdTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
 
     createModal.onResult(() => {
         dataTable.ajax.reload();
@@ -110,7 +110,7 @@ $(function () {
         abp.message.confirm('Are you sure to remove all recovery emails?')
             .then(function (confirmed) {
                 if (confirmed) {
-                    gmailServer.controllers.recoveryEmail.deleteAll().then(() => {
+                    gmailServer.controllers.appleId.deleteAll().then(() => {
                         dataTable.ajax.reload();
                     });
                 }

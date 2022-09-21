@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\AppleIds\js\index.js" />
     <None Remove="Pages\Checkers\js\index.js" />
     <None Remove="Pages\CheckMails\css\index.css" />
     <None Remove="Pages\CheckMails\js\checkMailViewModel.js" />
@@ -39,6 +40,7 @@
     <None Remove="Pages\Decrypt\js\index.js" />
     <None Remove="Pages\FakeSettings\js\index.js" />
     <None Remove="Pages\FakeSettings\js\jsonView.js" />
+    <None Remove="Pages\GmailPremiums\js\index.js" />
     <None Remove="Pages\Gmails\js\download.js" />
     <None Remove="Pages\Gmails\js\downloadFormViewModel.js" />
     <None Remove="Pages\Gmails\js\index.js" />

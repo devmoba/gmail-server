@@ -4,11 +4,12 @@
 ];
 $(function () {
     var l = abp.localization.getResource('GmailServer');
-    var createModal = new abp.ModalManager(abp.appPath + 'RecoveryEmails/CreateModal');
+    var createModal = new abp.ModalManager(abp.appPath + 'GmailPremiums/CreateModal');
 
-    devmoba.datatables.enableIndividualColumnSearch("#recoveryEmailTable", [
+    devmoba.datatables.enableIndividualColumnSearch("#gmailPremiumTable", [
         { searchDisabled: true },
         { name: "username" },
+        { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true },
         { name: "status", options: Status },
@@ -27,7 +28,7 @@ $(function () {
         orderCellsTop: true,
         order: [[0, "desc"]],
 
-        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.recoveryEmail.getList, () => {
+        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.gmailPremium.getList, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();
         }),
         columnDefs: [
@@ -39,7 +40,7 @@ $(function () {
                 }
             },
             {
-                targets: [4],
+                targets: [5],
                 render: function (data, type, row, meta) {
                     if (data == 0) {
                         return '<span>Ready</span>';
@@ -51,7 +52,7 @@ $(function () {
                 }
             },
             {
-                targets: [5],
+                targets: [6],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -61,7 +62,7 @@ $(function () {
                 }
             },
             {
-                targets: [6],
+                targets: [7],
                 rowAction: {
                     items:
                         [
@@ -69,11 +70,11 @@ $(function () {
                                 text: l('Delete'),
                                 iconClass: "fas fa-trash-alt",
                                 visible: function (data) {
-                                    return abp.auth.isGranted('RecoveryEmailGroup.Delete');
+                                    return abp.auth.isGranted('GmailPremiumGroup.Delete');
                                 },
                                 confirmMessage: data => l('DeleteConfirm'),
                                 action: data => {
-                                    gmailServer.controllers.recoveryEmail.delete(data.record.id).then(() => {
+                                    gmailServer.controllers.gmailPremium.delete(data.record.id).then(() => {
                                         abp.notify.info(l('SuccessfullyDeleted'));
                                         dataTable.ajax.reload();
                                     });
@@ -86,15 +87,16 @@ $(function () {
         columns: [
             { data: "id", width: "100px" },
             { data: "username", width: "150px" },
-            { data: "email", width: "400px" },
+            { data: "email", width: "300px" },
             { data: "password", width: "150px" },
+            { data: "recoveryEmail", width: "300px" },
             { data: "status", width: "150px" },
             { data: "created", width: "250px" },
             { data: null, width: "100px" },
         ]
     });
 
-    var dataTable = $('#recoveryEmailTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
+    var dataTable = $('#gmailPremiumTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
 
     createModal.onResult(() => {
         dataTable.ajax.reload();
@@ -110,7 +112,7 @@ $(function () {
         abp.message.confirm('Are you sure to remove all recovery emails?')
             .then(function (confirmed) {
                 if (confirmed) {
-                    gmailServer.controllers.recoveryEmail.deleteAll().then(() => {
+                    gmailServer.controllers.gmailPremium.deleteAll().then(() => {
                         dataTable.ajax.reload();
                     });
                 }

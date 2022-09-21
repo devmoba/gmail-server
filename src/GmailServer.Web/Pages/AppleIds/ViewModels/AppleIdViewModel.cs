@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
 
-namespace GmailServer.Web.Pages.RecoveryEmails.ViewModels
+namespace GmailServer.Web.Pages.AppleIds.ViewModels
 {
-    public class RecoveryEmailViewModel
+    public class AppleIdViewModel
     {
         [Required]
         public string Username { get; set; }

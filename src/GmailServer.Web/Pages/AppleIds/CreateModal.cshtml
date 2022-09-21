@@ -1,14 +1,14 @@
 ﻿@page
-@model GmailServer.Web.Pages.RecoveryEmails.CreateModalModel
+@model GmailServer.Web.Pages.AppleIds.CreateModalModel
 @using Microsoft.AspNetCore.Mvc.Localization
 @using GmailServer.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @{
     Layout = null;
 }
-<abp-dynamic-form abp-model="RecoveryEmail" data-ajaxForm="true" asp-page="/RecoveryEmails/CreateModal">
+<abp-dynamic-form abp-model="AppleId" data-ajaxForm="true" asp-page="/AppleIds/CreateModal">
      <abp-modal>
-        <abp-modal-header title="Create many recovery emails"></abp-modal-header>
+        <abp-modal-header title="Create many Apple ID"></abp-modal-header>
         <abp-modal-body>
             <abp-form-content />
         </abp-modal-body>

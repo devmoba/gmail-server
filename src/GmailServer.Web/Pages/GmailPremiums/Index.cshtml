@@ -1,5 +1,5 @@
 ﻿@page
-@model GmailServer.Web.Pages.RecoveryEmails.IndexModel
+@model GmailServer.Web.Pages.GmailPremiums.IndexModel
 @using GmailServer.Web.Menus
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -10,13 +10,13 @@
 @inject IHtmlLocalizer<GmailServerResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewBag.PageTitle = L["Recovery Email"];
-    PageLayout.Content.Title = L["Recovery Email"].Value;
-    PageLayout.Content.MenuItemName = GmailServerMenus.RecoveryEmail;
+    ViewBag.PageTitle = L["Gmail Premium"];
+    PageLayout.Content.Title = L["Gmail Premium"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.GmailPremium;
 }
 
 @section scripts {
-    <abp-script src="/Pages/RecoveryEmails/js/index.js"/>
+    <abp-script src="/Pages/GmailPremiums/js/index.js"/>
 }
 @section styles {
 <style>
@@ -37,14 +37,14 @@
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
-               <h4>Recovery Email</h4>
+                <h4>Gmail Premimum</h4>
             </abp-column>
             <abp-column size-md="_6">
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Create))
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailPremiums.Create))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
                 }
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Delete))
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailPremiums.Delete))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
                 }
@@ -52,13 +52,14 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" id="recoveryEmailTable" class="table-bordered">
+        <abp-table striped-rows="true" id="gmailPremiumTable" class="table-bordered">
             <thead> 
                 <tr>
                     <th>@L["ID"]</th>
                     <th>@L["Username"]</th>
                     <th>@L["Email"]</th>
                     <th>@L["Password"]</th>
+                    <th>@L["Recovery Email"]</th>
                     <th>@L["Status"]</th>
                     <th>@L["Created"]</th>
                     <th>@L["Action"]</th>

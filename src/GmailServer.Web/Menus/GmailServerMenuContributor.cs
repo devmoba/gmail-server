@@ -50,60 +50,34 @@ namespace GmailServer.Web.Menus
                        GmailServerMenus.Gmail,
                        "Gmail",
                        "/Gmails",
-                       icon: "fa fa-list-ul",
+                       icon: "fa fa-google",
                        order: 2
                    )
                );
             }
 
-            if (await context.IsGrantedAsync(GmailServerPermissions.FakeSettings.Default))
+            if (await context.IsGrantedAsync(GmailServerPermissions.GmailPremiums.Default))
             {
                 context.Menu.AddItem(
                    new ApplicationMenuItem(
-                       GmailServerMenus.FakeSetting,
-                       "Fake Setting",
-                       "/FakeSettings",
-                       icon: "fa fa-cogs",
+                       GmailServerMenus.GmailPremium,
+                       "Gmail Premium",
+                       "/GmailPremiums",
+                       icon: "fa fa-google-plus-official",
                        order: 3
                    )
                );
             }
 
-            if (await context.IsGrantedAsync(GmailServerPermissions.Decrypts.Default))
+            if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Default))
             {
                 context.Menu.AddItem(
                    new ApplicationMenuItem(
-                       GmailServerMenus.Decrypt,
-                       "Decrypt",
-                       "/Decrypt",
-                       icon: "fa fa-object-ungroup",
+                       GmailServerMenus.AppleId,
+                       "Apple ID",
+                       "/AppleIds",
+                       icon: "fa fa-apple",
                        order: 4
-                   )
-               );
-            }
-
-            if (await context.IsGrantedAsync(GmailServerPermissions.CheckMails.Default))
-            {
-                context.Menu.AddItem(
-                   new ApplicationMenuItem(
-                       GmailServerMenus.CheckMail,
-                       "Check Mail",
-                       "/CheckMails",
-                       icon: "fa-check-square",
-                       order: 5
-                   )
-               );
-            }
-
-            if (await context.IsGrantedAsync(GmailServerPermissions.Checkers.Default))
-            {
-                context.Menu.AddItem(
-                   new ApplicationMenuItem(
-                       GmailServerMenus.Checker,
-                       "Checker",
-                       "/Checkers",
-                       icon: "fa fa-cog",
-                       order: 6
                    )
                );
             }
@@ -116,10 +90,64 @@ namespace GmailServer.Web.Menus
                        "Recovery Email",
                        "/RecoveryEmails",
                        icon: "fa fa-registered",
+                       order: 5
+                   )
+               );
+            }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.FakeSettings.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.FakeSetting,
+                       "Fake Setting",
+                       "/FakeSettings",
+                       icon: "fa fa-cogs",
+                       order: 6
+                   )
+               );
+            }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.Decrypts.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.Decrypt,
+                       "Decrypt",
+                       "/Decrypt",
+                       icon: "fa fa-object-ungroup",
                        order: 7
                    )
                );
             }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.CheckMails.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.CheckMail,
+                       "Check Mail",
+                       "/CheckMails",
+                       icon: "fa-check-square",
+                       order: 8
+                   )
+               );
+            }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.Checkers.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.Checker,
+                       "Checker",
+                       "/Checkers",
+                       icon: "fa fa-cog",
+                       order: 9
+                   )
+               );
+            }
+
+           
             //HostDashboard
             //context.Menu.AddItem(
             //    new ApplicationMenuItem(
@@ -142,11 +170,11 @@ namespace GmailServer.Web.Menus
             //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
             //);
 
-            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 8);
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 10);
 
             //Administration
             //var administration = context.Menu.GetAdministration();
-            administration.Order = 9;
+            administration.Order = 11;
 
             //Administration->Identity
             administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);

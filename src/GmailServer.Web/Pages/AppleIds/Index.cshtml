@@ -1,5 +1,5 @@
 ﻿@page
-@model GmailServer.Web.Pages.RecoveryEmails.IndexModel
+@model GmailServer.Web.Pages.AppleIds.IndexModel
 @using GmailServer.Web.Menus
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -10,13 +10,13 @@
 @inject IHtmlLocalizer<GmailServerResource> L
 @inject IAuthorizationService AuthorizationService
 @{
-    ViewBag.PageTitle = L["Recovery Email"];
-    PageLayout.Content.Title = L["Recovery Email"].Value;
-    PageLayout.Content.MenuItemName = GmailServerMenus.RecoveryEmail;
+    ViewBag.PageTitle = L["Apple ID"];
+    PageLayout.Content.Title = L["Apple ID"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.AppleId;
 }
 
 @section scripts {
-    <abp-script src="/Pages/RecoveryEmails/js/index.js"/>
+    <abp-script src="/Pages/AppleIds/js/index.js"/>
 }
 @section styles {
 <style>
@@ -37,14 +37,14 @@
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
-               <h4>Recovery Email</h4>
+                <h4>Apple ID</h4>
             </abp-column>
             <abp-column size-md="_6">
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Create))
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Create))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
                 }
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Delete))
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Delete))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
                 }
@@ -52,7 +52,7 @@
         </abp-row>
     </abp-card-header>
     <abp-card-body>
-        <abp-table striped-rows="true" id="recoveryEmailTable" class="table-bordered">
+        <abp-table striped-rows="true" id="appleIdTable" class="table-bordered">
             <thead> 
                 <tr>
                     <th>@L["ID"]</th>
