@@ -53,6 +53,22 @@
     public enum AppleIdStatus
     {
         Ready = 0,
-        Completed = 1
+        Completed = 1,
+        Pending = 2,
+        WrongPass = 3,
+        Subed = 4,
+        Locked1 = 5,
+        Locked2 = 6,
+        Review = 7
+    }
+
+    public enum GmailResourceStatus
+    {
+        Ready = 0,
+        Success = 1,
+        Pending = 2,
+        Used = 3,
+        Error = 4,
+        Failed = 5
     }
 }

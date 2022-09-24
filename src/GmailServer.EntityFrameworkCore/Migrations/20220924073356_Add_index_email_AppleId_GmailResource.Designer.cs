@@ -4,15 +4,17 @@ using GmailServer.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace GmailServer.Migrations
 {
     [DbContext(typeof(GmailServerDbContext))]
-    partial class GmailServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220924073356_Add_index_email_AppleId_GmailResource")]
+    partial class Add_index_email_AppleId_GmailResource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

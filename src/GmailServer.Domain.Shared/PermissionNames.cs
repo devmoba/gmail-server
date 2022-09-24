@@ -49,5 +49,11 @@
         public const string AppleId_Update = AppleId + ".Update";
         public const string AppleId_Delete = AppleId + ".Delete";
 
+        public const string GmailResource = "GmailResourceGroup";
+        public const string GmailResource_Default = GmailResource + ".GmailResources";
+        public const string GmailResource_Create = GmailResource + ".Create";
+        public const string GmailResource_Update = GmailResource + ".Update";
+        public const string GmailResource_Delete = GmailResource + ".Delete";
+
     }
 }

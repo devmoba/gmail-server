@@ -1,4 +1,5 @@
 ﻿using GmailServer.AppleIds;
+using GmailServer.Enums;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
@@ -13,5 +14,7 @@ namespace GmailServer.ControllerInterfaces
         Task DeleteAsync(long id);
 
         Task DeleteAllAsync();
+
+        Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
     }
 }

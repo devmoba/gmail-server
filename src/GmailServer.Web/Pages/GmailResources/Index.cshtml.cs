@@ -1,22 +1,24 @@
 using GmailServer.Enums;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
 
-namespace GmailServer.Web.Pages.AppleIds
+namespace GmailServer.Web.Pages.GmailResources
 {
     public class IndexModel : GmailServerPageModel
     {
         public void OnGet()
         {
-            var appleIdStatusSelections = Enum.GetValues(typeof(AppleIdStatus)).Cast<AppleIdStatus>()
+            var gmailResourceStatusSelections = Enum.GetValues(typeof(GmailResourceStatus)).Cast<GmailResourceStatus>()
                .Select(item => new SelectListItem()
                {
                    Text = item.ToString(),
                    Value = $"{(int)item}"
                });
 
-            ViewData.Add("appleIdStatusSelections", SerializeObject(appleIdStatusSelections));
+            ViewData.Add("gmailResourceStatusSelections", SerializeObject(gmailResourceStatusSelections));
         }
     }
 }

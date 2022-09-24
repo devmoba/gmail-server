@@ -1,7 +1,10 @@
 ﻿using GmailServer.AppleIds;
 using GmailServer.Entities;
+using GmailServer.Enums;
+using GmailServer.Extensions;
 using GmailServer.Permissions;
 using GmailServer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,32 +70,41 @@ namespace GmailServer.ApplicationServices
             return await MapToGetOutputDtoAsync(res);
         }
 
+        [Authorize(GmailServerPermissions.AppleIds.Create)]
         public async Task CreateManyAsync(CreateManyAppleIdInputDto input)
         {
             var appleIds = input.Emails.Split("\r\n").ToList();
+            if (appleIds.Count == 0)
+                throw new UserFriendlyException("Input empty!");
             var entities = new List<AppleId>();
-            appleIds.ForEach(gp =>
+            foreach (var gp in appleIds)
             {
                 if (ValidateAppleIdInput(gp))
                 {
                     var gpSplit = gp.Split('|').ToArray();
-                    var entity = new AppleId()
+                    var hasEmail = await Repository.AnyAsync(x => x.Email == gpSplit[0]);
+                    if (!hasEmail)
                     {
-                        Username = input.Username,
-                        Email = gpSplit[0],
-                        Password = gpSplit[1],
-                        Status = Enums.AppleIdStatus.Ready,
-                        Created = DateTime.Now
-                    };
-                    entities.Add(entity);
+                        var entity = new AppleId()
+                        {
+                            Username = input.Username,
+                            Email = gpSplit[0],
+                            Password = gpSplit[1],
+                            Status = Enums.AppleIdStatus.Ready,
+                            Created = DateTime.Now
+                        };
+                        entities.Add(entity);
+                    }
                 }
-            });
+            }
+
             if (entities.Count > 0)
             {
-                await Repository.BulkInsertAsync(entities);
+                await Repository.BulkInsertAsync(entities.DistinctBy(x => x.Email).ToList());
             }
         }
 
+        [Authorize(GmailServerPermissions.AppleIds.Delete)]
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
@@ -106,17 +118,29 @@ namespace GmailServer.ApplicationServices
             if (appleId != null)
             {
                 var res = ObjectMapper.Map<AppleId, AppleIdDto>(appleId);
-                appleId.Status = Enums.AppleIdStatus.Completed;
+                appleId.Status = Enums.AppleIdStatus.Pending;
                 await Repository.UpdateAsync(appleId, autoSave: true);
                 return res;
             }
             return new AppleIdDto();
-        } 
+        }
 
         private bool ValidateAppleIdInput(string str)
         {
             return Regex.IsMatch(str, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\|(.+)");
 
+        }
+
+        public async Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status)
+        {
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleId != null)
+            {
+                appleId.Status = status;
+                var res = await Repository.UpdateAsync(appleId);
+                return await MapToGetOutputDtoAsync(res);
+            }
+            return new AppleIdDto();
         }
     }
 }

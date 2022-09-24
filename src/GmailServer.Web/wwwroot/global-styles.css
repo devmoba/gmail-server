@@ -19,6 +19,7 @@
 #recoveryEmailTable_wrapper .dataTables_scrollBody,
 #appleIdTable_wrapper .dataTables_scrollBody,
 #gmailPremiumTable_wrapper .dataTables_scrollBody,
+#gmailResourceTable_wrapper .dataTables_scrollBody,
 #gmailReportTable_wrapper .dataTables_scrollBody,
 #checkerTable_wrapper .dataTables_scrollBody,
 #gmailTable_wrapper .dataTables_scrollBody {
@@ -34,6 +35,7 @@
 #recoveryEmailTable_wrapper table.dataTable thead tr th input[type="text"],
 #appleIdTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailPremiumTable_wrapper table.dataTable thead tr th input[type="text"],
+#gmailResourceTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailReportTable_wrapper table.dataTable thead tr th input[type="text"],
 #checkerTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailTable_wrapper table.dataTable thead tr th input[type="text"] {

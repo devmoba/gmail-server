@@ -82,5 +82,14 @@ namespace GmailServer.Permissions
             public const string Update = PermissionNames.AppleId_Update;  
             public const string Delete = PermissionNames.AppleId_Delete;  
         }
+
+        public const string GmailResourceGroup = PermissionNames.GmailResource;
+        public static class GmailResources
+        {
+            public const string Default = PermissionNames.GmailResource_Default;
+            public const string Create = PermissionNames.GmailResource_Create;
+            public const string Update = PermissionNames.GmailResource_Update;
+            public const string Delete = PermissionNames.GmailResource_Delete;
+        }
     }
 }

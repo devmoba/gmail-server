@@ -69,6 +69,19 @@ namespace GmailServer.Web.Menus
                );
             }
 
+            if (await context.IsGrantedAsync(GmailServerPermissions.GmailResources.Default))
+            {
+                context.Menu.AddItem(
+                  new ApplicationMenuItem(
+                      GmailServerMenus.GmailResource,
+                      "Gmail Resource",
+                      "/GmailResources",
+                      icon: "fa fa-glide",
+                      order: 4
+                  )
+              );
+            }
+
             if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Default))
             {
                 context.Menu.AddItem(
@@ -77,7 +90,7 @@ namespace GmailServer.Web.Menus
                        "Apple ID",
                        "/AppleIds",
                        icon: "fa fa-apple",
-                       order: 4
+                       order: 5
                    )
                );
             }
@@ -90,7 +103,7 @@ namespace GmailServer.Web.Menus
                        "Recovery Email",
                        "/RecoveryEmails",
                        icon: "fa fa-registered",
-                       order: 5
+                       order: 6
                    )
                );
             }
@@ -103,7 +116,7 @@ namespace GmailServer.Web.Menus
                        "Fake Setting",
                        "/FakeSettings",
                        icon: "fa fa-cogs",
-                       order: 6
+                       order: 7
                    )
                );
             }
@@ -116,7 +129,7 @@ namespace GmailServer.Web.Menus
                        "Decrypt",
                        "/Decrypt",
                        icon: "fa fa-object-ungroup",
-                       order: 7
+                       order: 8
                    )
                );
             }
@@ -129,7 +142,7 @@ namespace GmailServer.Web.Menus
                        "Check Mail",
                        "/CheckMails",
                        icon: "fa-check-square",
-                       order: 8
+                       order: 9
                    )
                );
             }
@@ -142,7 +155,7 @@ namespace GmailServer.Web.Menus
                        "Checker",
                        "/Checkers",
                        icon: "fa fa-cog",
-                       order: 9
+                       order: 10
                    )
                );
             }
@@ -170,11 +183,11 @@ namespace GmailServer.Web.Menus
             //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
             //);
 
-            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 10);
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 11);
 
             //Administration
             //var administration = context.Menu.GetAdministration();
-            administration.Order = 11;
+            administration.Order = 12;
 
             //Administration->Identity
             administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);

@@ -1,13 +1,16 @@
 ﻿$(function () {
     var l = abp.localization.getResource('GmailServer');
-    var createModal = new abp.ModalManager(abp.appPath + 'AppleIds/CreateModal');
+    var createModal = new abp.ModalManager(abp.appPath + 'GmailResources/CreateModal');
 
-    devmoba.datatables.enableIndividualColumnSearch("#appleIdTable", [
+    devmoba.datatables.enableIndividualColumnSearch("#gmailResourceTable", [
         { searchDisabled: true },
         { name: "username" },
         { searchDisabled: true },
         { searchDisabled: true },
-        { name: "status", options: appleIdStatusSelections },
+        { searchDisabled: true },
+        { name: "status", options: gmailResourceStatusSelections },
+        { searchDisabled: true },
+        { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true }
     ]);
@@ -23,7 +26,7 @@
         orderCellsTop: true,
         order: [[0, "desc"]],
 
-        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.appleId.getList, () => {
+        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.gmailResource.getList, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();
         }),
         columnDefs: [
@@ -35,17 +38,17 @@
                 }
             },
             {
-                targets: [4],
+                targets: [5],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
-                        var status = appleIdStatusSelections.find(x => x.value == data).text;
+                        var status = gmailResourceStatusSelections.find(x => x.value == data).text;
                         return status;
                     }
                     return data;
                 }
             },
             {
-                targets: [5],
+                targets: [6, 7, 8],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -55,7 +58,7 @@
                 }
             },
             {
-                targets: [6],
+                targets: [9],
                 rowAction: {
                     items:
                         [
@@ -63,11 +66,11 @@
                                 text: l('Delete'),
                                 iconClass: "fas fa-trash-alt",
                                 visible: function (data) {
-                                    return abp.auth.isGranted('GmailPremiumGroup.Delete');
+                                    return abp.auth.isGranted('GmailResourceGroup.Delete');
                                 },
                                 confirmMessage: data => l('DeleteConfirm'),
                                 action: data => {
-                                    gmailServer.controllers.appleId.delete(data.record.id).then(() => {
+                                    gmailServer.controllers.gmailResource.delete(data.record.id).then(() => {
                                         abp.notify.info(l('SuccessfullyDeleted'));
                                         dataTable.ajax.reload();
                                     });
@@ -82,13 +85,16 @@
             { data: "username", width: "150px" },
             { data: "email", width: "300px" },
             { data: "password", width: "150px" },
+            { data: "recoveryEmail", width: "300px" },
             { data: "status", width: "150px" },
+            { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },
+            { data: "updated", width: "250px" },
             { data: null, width: "100px" },
         ]
     });
 
-    var dataTable = $('#appleIdTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
+    var dataTable = $('#gmailResourceTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
 
     createModal.onResult(() => {
         dataTable.ajax.reload();
@@ -104,7 +110,7 @@
         abp.message.confirm('Are you sure to remove all recovery emails?')
             .then(function (confirmed) {
                 if (confirmed) {
-                    gmailServer.controllers.appleId.deleteAll().then(() => {
+                    gmailServer.controllers.gmailResource.deleteAll().then(() => {
                         dataTable.ajax.reload();
                     });
                 }

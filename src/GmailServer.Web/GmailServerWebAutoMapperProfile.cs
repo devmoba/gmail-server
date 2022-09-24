@@ -3,11 +3,13 @@ using GmailServer.AppleIds;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
 using GmailServer.GmailPremiums;
+using GmailServer.GmailResources;
 using GmailServer.Gmails;
 using GmailServer.RecoveryEmails;
 using GmailServer.Web.Pages.AppleIds.ViewModels;
 using GmailServer.Web.Pages.FakeSettings.ViewModels;
 using GmailServer.Web.Pages.GmailPremiums.ViewModels;
+using GmailServer.Web.Pages.GmailResources.ViewModels;
 using GmailServer.Web.Pages.RecoveryEmails.ViewModels;
 
 namespace GmailServer.Web
@@ -29,6 +31,7 @@ namespace GmailServer.Web
             CreateMap<RecoveryEmailDto, RecoveryEmailViewModel>();
             CreateMap<GmailPremiumViewModel, CreateManyGmailPremiumInputDto>();
             CreateMap<AppleIdViewModel, CreateManyAppleIdInputDto>();
+            CreateMap<GmailResourceViewModel, CreateManyGmailResourceInputDto>();
         }
     }
 }

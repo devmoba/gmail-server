@@ -1,6 +1,8 @@
 ﻿using GmailServer.AppleIds;
 using GmailServer.ControllerInterfaces;
+using GmailServer.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -43,6 +45,13 @@ namespace GmailServer.Controllers
         public Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input)
         {
             return _appleIdAppService.GetListAsync(input);
+        }
+
+        [HttpPut]
+        [Route("updateStatus")]
+        public Task<AppleIdDto> UpdateStatusAsync([Required] string email, [Required] AppleIdStatus status)
+        {
+            return _appleIdAppService.UpdateStatusAsync(email, status);
         }
     }
 }

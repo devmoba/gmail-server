@@ -25,5 +25,8 @@
         public const string GmailPremium = Prefix + ".GmailPremium";
 
         public const string AppleId = Prefix + ".AppledId";
+
+        public const string GmailResource = Prefix + ".GmailResource";
+
     }
 }

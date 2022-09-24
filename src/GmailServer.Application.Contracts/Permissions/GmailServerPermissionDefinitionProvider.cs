@@ -58,6 +58,12 @@ namespace GmailServer.Permissions
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Create, L("Permission:AppleIds.Create"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Update, L("Permission:AppleIds.Update"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Delete, L("Permission:AppleIds.Delete"));
+
+            var GmailResourceGroup = context.AddGroup(GmailServerPermissions.GmailResourceGroup, L("Permission:GmailResourceGroup "));
+            var GmailResourceManagement = GmailResourceGroup.AddPermission(GmailServerPermissions.GmailResources.Default, L("Permission:GmailResources"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Create, L("Permission:GmailResource.Create"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Update, L("Permission:GmailResource.Update"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Delete, L("Permission:GmailResource.Delete"));
         }
 
         private static LocalizableString L(string name)

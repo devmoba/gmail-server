@@ -1,5 +1,6 @@
 ﻿using GmailServer.Entities;
 using GmailServer.Enums;
+using GmailServer.Extensions;
 using GmailServer.Permissions;
 using GmailServer.RecoveryEmails;
 using GmailServer.Repositories;
@@ -96,8 +97,10 @@ namespace GmailServer.ApplicationServices
         public async Task CreateManyAsync(CreateManyRecoveryEmailInputDto input)
         {
             var recoveryEmails = input.Emails.Split("\r\n").ToList();
+            if (recoveryEmails.Count == 0)
+                throw new UserFriendlyException("Input empty!");
             var entities = new List<RecoveryEmail>();
-            recoveryEmails.ForEach((Action<string>)(re =>
+            foreach (var re in recoveryEmails)
             {
                 if (ValidateRecoveryEmailInput(re))
                 {
@@ -112,10 +115,10 @@ namespace GmailServer.ApplicationServices
                     };
                     entities.Add(entity);
                 }
-            }));
+            };
             if (entities.Count > 0)
             {
-                await Repository.BulkInsertAsync(entities);
+                await Repository.BulkInsertAsync(EnumerableExtension.DistinctBy(entities, x => x.Email).ToList());
             }
         }
 

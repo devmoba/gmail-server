@@ -1,4 +1,5 @@
 ﻿using GmailServer.Entities;
+using GmailServer.Extensions;
 using GmailServer.GmailPremiums;
 using GmailServer.Permissions;
 using GmailServer.Repositories;
@@ -71,8 +72,10 @@ namespace GmailServer.ApplicationServices
         public async Task CreateManyAsync(CreateManyGmailPremiumInputDto input)
         {
             var gmailPremiums = input.Emails.Split("\r\n").ToList();
+            if (gmailPremiums.Count == 0)
+                throw new UserFriendlyException("Input empty!");
             var entities = new List<GmailPremium>();
-            gmailPremiums.ForEach(gp =>
+            foreach (var gp in gmailPremiums) 
             {
                 if (ValidateGmailPremiumInput(gp))
                 {
@@ -85,14 +88,13 @@ namespace GmailServer.ApplicationServices
                         Status = Enums.GmailPremiumStatus.Ready,
                         Created = DateTime.Now
                     };
-                    entity.RecoveryEmail = gpSplit.Length >= 2 ? gpSplit[2] : string.Empty;
+                    entity.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2] : string.Empty;
                     entities.Add(entity);
                 }
-               
-            });
+            };
             if (entities.Count > 0)
             {
-                await Repository.BulkInsertAsync(entities);
+                await Repository.BulkInsertAsync(EnumerableExtension.DistinctBy(entities, x => x.Email).ToList());
             }
         }
 

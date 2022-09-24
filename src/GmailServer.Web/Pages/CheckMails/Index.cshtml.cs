@@ -11,18 +11,10 @@ namespace GmailServer.Web.Pages.CheckMails
     [Authorize(GmailServerPermissions.CheckMails.Default)]
     public class IndexModel : GmailServerPageModel
     {
-        private readonly IHubContext<CheckMailHub, ICheckMailHub> hubContext;
         private readonly IConfiguration configuration;
 
-        [BindProperty]
-        public string EmailCheckInput { get; set; }
-
-        public string EmailResultOutput { get; set; }
-
-        public IndexModel(IHubContext<CheckMailHub, ICheckMailHub> hubContext,
-            IConfiguration configuration)
+        public IndexModel(IConfiguration configuration)
         {
-            this.hubContext = hubContext;
             this.configuration = configuration;
         }
 
@@ -30,12 +22,6 @@ namespace GmailServer.Web.Pages.CheckMails
         {
             var emailLimitRequest = this.configuration.GetValue<int>("CheckMail:MailPerRequest");
             ViewData.Add("emailLimitRequest", SerializeObject(emailLimitRequest));
-        }
-
-        public async Task<IActionResult> OnPost()
-        {
-          
-            return NoContent();
         }
     }
 }

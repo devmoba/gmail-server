@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using GmailServer.Enums;
+using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 
 namespace GmailServer.AppleIds
@@ -15,5 +16,7 @@ namespace GmailServer.AppleIds
         Task DeleteAllAsync();
 
         Task<AppleIdDto> GetFirstAppleIdAsync();
+
+        Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
     }
 }

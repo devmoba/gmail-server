@@ -74,6 +74,8 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<AppleId> AppleIds { get; set; }
 
+        public DbSet<GmailResource> GmailResources { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -208,6 +210,7 @@ namespace GmailServer.EntityFrameworkCore
             {
                 b.ToTable(GmailServerConsts.DbTablePrefix + "AppleIds", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
+                b.HasIndex(x => x.Email).IsUnique();
                 b.HasIndex(x => x.Id).IncludeProperties<AppleId>(re => new
                 {
                     re.Username,
@@ -216,6 +219,24 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+            });
+
+            builder.Entity<GmailResource>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "GmailResources", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Email).IsUnique();
+                b.HasIndex(x => x.Id).IncludeProperties<GmailResource>(re => new
+                {
+                    re.Username,
+                    re.Status
+                });
+                b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128);
                 b.Property(x => x.Status).IsRequired();
                 b.Property(x => x.Created).IsRequired();
             });

@@ -4,6 +4,7 @@ using GmailServer.Checkers;
 using GmailServer.Entities;
 using GmailServer.FakeSettings;
 using GmailServer.GmailPremiums;
+using GmailServer.GmailResources;
 using GmailServer.Gmails;
 using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
@@ -37,6 +38,9 @@ namespace GmailServer
 
             CreateMap<AppleId, AppleIdDto>();
             CreateMap<CreateUpdateAppleIdDto, AppleId>();
+
+            CreateMap<GmailResource, GmailResourceDto>();
+            CreateMap<CreateUpdateGmailResourceDto, GmailResource>();
         }
     }
 }

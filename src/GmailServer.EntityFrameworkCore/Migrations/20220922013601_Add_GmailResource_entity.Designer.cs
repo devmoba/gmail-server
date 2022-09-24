@@ -4,15 +4,17 @@ using GmailServer.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace GmailServer.Migrations
 {
     [DbContext(typeof(GmailServerDbContext))]
-    partial class GmailServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220922013601_Add_GmailResource_entity")]
+    partial class Add_GmailResource_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,9 +55,6 @@ namespace GmailServer.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("Id")
                         .HasAnnotation("SqlServer:Include", new[] { "Username", "Status" });
@@ -311,9 +310,6 @@ namespace GmailServer.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("Id")
                         .HasAnnotation("SqlServer:Include", new[] { "Username", "Status" });

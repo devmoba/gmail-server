@@ -81,19 +81,19 @@ namespace GmailServer.Background.Workers
                         Created = DateTime.Now
                     }, autoSave: true);
 
-                    gmailEntities.ForEach(gmail =>
-                    {
-                        gmail.Status = Status.Checking;
-                        gmail.LastCheck = current;
-                        gmail.TimeDiff = current.Subtract(gmail.Created).TotalHours;
-                    });
+                    //gmailEntities.ForEach(gmail =>
+                    //{
+                    //    gmail.Status = Status.Checking;
+                    //    gmail.LastCheck = current;
+                    //    gmail.TimeDiff = current.Subtract(gmail.Created).TotalHours;
+                    //});
 
-                    await gmailRepository.BulkUpdateAsync(gmailEntities, new List<string>()
-                    {
-                        nameof(Gmail.Status),
-                        nameof(Gmail.LastCheck),
-                        nameof(Gmail.TimeDiff)
-                    });
+                    //await gmailRepository.BulkUpdateAsync(gmailEntities, new List<string>()
+                    //{
+                    //    nameof(Gmail.Status),
+                    //    nameof(Gmail.LastCheck),
+                    //    nameof(Gmail.TimeDiff)
+                    //});
                 }
             }
             await Task.FromResult(1);
