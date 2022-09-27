@@ -77,21 +77,23 @@ namespace GmailServer.ApplicationServices
             if (appleIds.Count == 0)
                 throw new UserFriendlyException("Input empty!");
             var entities = new List<AppleId>();
-            foreach (var gp in appleIds)
+            foreach (var appleId in appleIds)
             {
-                if (ValidateAppleIdInput(gp))
+                if (ValidateAppleIdInput(appleId))
                 {
-                    var gpSplit = gp.Split('|').ToArray();
-                    var hasEmail = await Repository.AnyAsync(x => x.Email == gpSplit[0]);
+                    var appleIdSplit = appleId.Split('|').ToArray();
+                    var hasEmail = await Repository.AnyAsync(x => x.Email == appleIdSplit[0]);
                     if (!hasEmail)
                     {
                         var entity = new AppleId()
                         {
                             Username = input.Username,
-                            Email = gpSplit[0],
-                            Password = gpSplit[1],
+                            Email = appleIdSplit[0],
+                            Password = appleIdSplit[1],
                             Status = Enums.AppleIdStatus.Ready,
-                            Created = DateTime.Now
+                            Created = DateTime.Now,
+                            Updated = DateTime.Now,
+                            TakenTime = DateTime.Now
                         };
                         entities.Add(entity);
                     }
@@ -119,6 +121,8 @@ namespace GmailServer.ApplicationServices
             {
                 var res = ObjectMapper.Map<AppleId, AppleIdDto>(appleId);
                 appleId.Status = Enums.AppleIdStatus.Pending;
+                appleId.TakenTime = DateTime.Now;
+                appleId.Updated = DateTime.Now;
                 await Repository.UpdateAsync(appleId, autoSave: true);
                 return res;
             }
@@ -137,6 +141,7 @@ namespace GmailServer.ApplicationServices
             if (appleId != null)
             {
                 appleId.Status = status;
+                appleId.Updated = DateTime.Now;
                 var res = await Repository.UpdateAsync(appleId);
                 return await MapToGetOutputDtoAsync(res);
             }

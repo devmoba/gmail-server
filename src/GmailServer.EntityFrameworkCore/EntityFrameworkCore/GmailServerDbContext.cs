@@ -193,6 +193,7 @@ namespace GmailServer.EntityFrameworkCore
             {
                 b.ToTable(GmailServerConsts.DbTablePrefix + "GmailPremiums", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
+                b.HasIndex(x => x.Email).IsUnique();
                 b.HasIndex(x => x.Id).IncludeProperties<GmailPremium>(re => new
                 {
                     re.Username,
@@ -204,6 +205,8 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128).IsRequired();
                 b.Property(x => x.Status).IsRequired();
                 b.Property(x => x.Created).IsRequired();
+                b.Property(x => x.Updated).IsRequired();
+                b.Property(x => x.TakenTime).IsRequired();
             });
 
             builder.Entity<AppleId>(b =>
@@ -221,6 +224,8 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
                 b.Property(x => x.Status).IsRequired();
                 b.Property(x => x.Created).IsRequired();
+                b.Property(x => x.Updated).IsRequired();
+                b.Property(x => x.TakenTime).IsRequired();
             });
 
             builder.Entity<GmailResource>(b =>
@@ -239,6 +244,8 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128);
                 b.Property(x => x.Status).IsRequired();
                 b.Property(x => x.Created).IsRequired();
+                b.Property(x => x.Updated).IsRequired();
+                b.Property(x => x.TakenTime).IsRequired();
             });
         }
     }

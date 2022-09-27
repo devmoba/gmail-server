@@ -77,6 +77,7 @@ namespace GmailServer.ApplicationServices
             gmail.Updated = DateTime.Now;
             gmail.LastCheck = DateTime.Now;
             gmail.TimeDiff = 0;
+            gmail.RecoveryEmail = string.IsNullOrEmpty(input.RecoveryEmail) ? string.Empty : input.RecoveryEmail;
 
             var res = await Repository.InsertAsync(gmail);
             return ObjectMapper.Map<Gmail, GmailDto>(res);

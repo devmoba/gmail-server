@@ -40,11 +40,8 @@
             {
                 targets: [5],
                 render: function (data, type, row, meta) {
-                    if (data && type === 'display') {
-                        var status = gmailResourceStatusSelections.find(x => x.value == data).text;
-                        return status;
-                    }
-                    return data;
+                    var status = gmailResourceStatusSelections.find(x => x.value == data).text;
+                    return status;
                 }
             },
             {

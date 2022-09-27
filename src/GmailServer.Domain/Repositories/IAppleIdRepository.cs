@@ -9,9 +9,12 @@ namespace GmailServer.Repositories
     {
         Task BulkInsertAsync(List<AppleId> appleIds);
 
-        Task DeleteAppleIdCompleted(int timeCheckDelete);
+        Task DeleteAppleIdCompletedAsync(int timeCheckDelete);
 
         Task DeleteAllAsync();
+
+        Task UpdateStatusByTimeoutAsync(int hour);
+
     }
 
 }

@@ -47,7 +47,9 @@
     public enum GmailPremiumStatus
     {
         Ready = 0,
-        Completed = 1
+        Completed = 1,
+        Error = 8,
+        Unknown = 9
     }
 
     public enum AppleIdStatus
@@ -59,7 +61,9 @@
         Subed = 4,
         Locked1 = 5,
         Locked2 = 6,
-        Review = 7
+        Review = 7,
+        Error = 8,
+        Unknown = 9
     }
 
     public enum GmailResourceStatus
@@ -68,7 +72,8 @@
         Success = 1,
         Pending = 2,
         Used = 3,
-        Error = 4,
-        Failed = 5
+        Failed = 5,
+        Error = 8,
+        Unknown = 9
     }
 }

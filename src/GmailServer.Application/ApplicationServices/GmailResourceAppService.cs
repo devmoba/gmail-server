@@ -94,7 +94,8 @@ namespace GmailServer.ApplicationServices
                             Password = gpSplit[1],
                             Status = Enums.GmailResourceStatus.Ready,
                             Created = DateTime.Now,
-                            Updated = DateTime.Now
+                            Updated = DateTime.Now,
+                            TakenTime = DateTime.Now
                         };
                         entity.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2] : string.Empty;
                         entities.Add(entity);
@@ -124,6 +125,7 @@ namespace GmailServer.ApplicationServices
                 var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
                 gmailResource.Status = Enums.GmailResourceStatus.Pending;
                 gmailResource.TakenTime = DateTime.Now;
+                gmailResource.Updated = DateTime.Now;
                 await Repository.UpdateAsync(gmailResource, autoSave: true);
                 return res;
             }

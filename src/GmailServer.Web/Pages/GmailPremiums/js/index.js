@@ -12,7 +12,9 @@ $(function () {
         { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true },
-        { name: "status", options: Status },
+        { name: "status", options: gmailPremiumStatusSelections },
+        { searchDisabled: true },
+        { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true }
     ]);
@@ -42,17 +44,12 @@ $(function () {
             {
                 targets: [5],
                 render: function (data, type, row, meta) {
-                    if (data == 0) {
-                        return '<span>Ready</span>';
-                    }
-                    if (data == 1) {
-                        return '<span>Completed</span>';
-                    }
-                    return data;
+                    var status = gmailPremiumStatusSelections.find((status) => status.value == data.toString());
+                    return status.text;
                 }
             },
             {
-                targets: [6],
+                targets: [6, 7, 8],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -62,7 +59,7 @@ $(function () {
                 }
             },
             {
-                targets: [7],
+                targets: [9],
                 rowAction: {
                     items:
                         [
@@ -91,7 +88,9 @@ $(function () {
             { data: "password", width: "150px" },
             { data: "recoveryEmail", width: "300px" },
             { data: "status", width: "150px" },
+            { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },
+            { data: "updated", width: "250px" },
             { data: null, width: "100px" },
         ]
     });

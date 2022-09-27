@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
 
 namespace GmailServer.ApplicationServices
 {
@@ -75,26 +76,32 @@ namespace GmailServer.ApplicationServices
             if (gmailPremiums.Count == 0)
                 throw new UserFriendlyException("Input empty!");
             var entities = new List<GmailPremium>();
-            foreach (var gp in gmailPremiums) 
+            foreach (var gmailPremium in gmailPremiums) 
             {
-                if (ValidateGmailPremiumInput(gp))
+                if (ValidateGmailPremiumInput(gmailPremium))
                 {
-                    var gpSplit = gp.Split('|').ToArray();
-                    var entity = new GmailPremium()
+                    var gmailPremiumSplit = gmailPremium.Split('|').ToArray();
+                    var hasEmail = await Repository.AnyAsync(x => x.Email == gmailPremiumSplit[0]);
+                    if (!hasEmail)
                     {
-                        Username = input.Username,
-                        Email = gpSplit[0],
-                        Password = gpSplit[1],
-                        Status = Enums.GmailPremiumStatus.Ready,
-                        Created = DateTime.Now
-                    };
-                    entity.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2] : string.Empty;
-                    entities.Add(entity);
+                        var entity = new GmailPremium()
+                        {
+                            Username = input.Username,
+                            Email = gmailPremiumSplit[0],
+                            Password = gmailPremiumSplit[1],
+                            Status = Enums.GmailPremiumStatus.Ready,
+                            Created = DateTime.Now,
+                            Updated = DateTime.Now,
+                            TakenTime = DateTime.Now
+                        };
+                        entity.RecoveryEmail = gmailPremiumSplit.Length >= 3 ? gmailPremiumSplit[2] : string.Empty;
+                        entities.Add(entity);
+                    }
                 }
             };
             if (entities.Count > 0)
             {
-                await Repository.BulkInsertAsync(EnumerableExtension.DistinctBy(entities, x => x.Email).ToList());
+                await Repository.BulkInsertAsync(entities.DistinctBy(x => x.Email).ToList());
             }
         }
 
@@ -113,6 +120,8 @@ namespace GmailServer.ApplicationServices
             {
                 var res = ObjectMapper.Map<GmailPremium, GmailPremiumDto>(gmailPremium);
                 gmailPremium.Status = Enums.GmailPremiumStatus.Completed;
+                gmailPremium.TakenTime = DateTime.Now;
+                gmailPremium.Updated = DateTime.Now;
                 await Repository.UpdateAsync(gmailPremium, autoSave: true);
                 return res;
             }

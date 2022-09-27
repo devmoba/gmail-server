@@ -20,8 +20,6 @@ namespace GmailServer.Gmails
         [MaxLength(64)]
         public string Password { get; set; }
 
-        [Required]
-        [MaxLength(128)]
         public string RecoveryEmail { get; set; }
 
         public string DateOfBirth { get; set; }

@@ -14,6 +14,10 @@ namespace GmailServer.AppleIds
 
         public DateTime Created { get; set; }
 
+        public DateTime Updated { get; set; }
+
+        public DateTime TakenTime { get; set; }
+
         public AppleIdStatus Status { get; set; }
     }
 }

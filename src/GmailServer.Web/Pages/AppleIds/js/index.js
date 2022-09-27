@@ -9,6 +9,8 @@
         { searchDisabled: true },
         { name: "status", options: appleIdStatusSelections },
         { searchDisabled: true },
+        { searchDisabled: true },
+        { searchDisabled: true },
         { searchDisabled: true }
     ]);
 
@@ -37,15 +39,12 @@
             {
                 targets: [4],
                 render: function (data, type, row, meta) {
-                    if (data && type === 'display') {
-                        var status = appleIdStatusSelections.find(x => x.value == data).text;
-                        return status;
-                    }
-                    return data;
+                    var status = appleIdStatusSelections.find(x => x.value == data.toString()).text;
+                    return status;
                 }
             },
             {
-                targets: [5],
+                targets: [5, 6, 7],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -55,7 +54,7 @@
                 }
             },
             {
-                targets: [6],
+                targets: [8],
                 rowAction: {
                     items:
                         [
@@ -83,7 +82,9 @@
             { data: "email", width: "300px" },
             { data: "password", width: "150px" },
             { data: "status", width: "150px" },
+            { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },
+            { data: "updated", width: "250px" },
             { data: null, width: "100px" },
         ]
     });

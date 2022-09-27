@@ -22,6 +22,7 @@ namespace GmailServer.Background
             context.AddBackgroundWorker<DeleteTaskCheckFailedWorker>();
             context.AddBackgroundWorker<DeleteRecoveryEmailCompletedWorker>();
             context.AddBackgroundWorker<GetAndInsertHotmailWorker>();
+            context.AddBackgroundWorker<UpdateAppleIdStatusWorker>();
         }
     }
 }
