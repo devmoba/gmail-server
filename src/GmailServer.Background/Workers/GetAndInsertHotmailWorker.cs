@@ -36,11 +36,11 @@ namespace GmailServer.Background.Workers
             _cfg = configuration;
             _httpClientFactory = httpClientFactory;
             _username = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:Username");
-            _apiUrl = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:Hotmail:ApiUrl");
-            _apiKey = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:Hotmail:ApiKey");
-            _quantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:Hotmail:Quantity");
+            _apiUrl = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiUrl");
+            _apiKey = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiKey");
+            _quantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ApiConfig:Quantity");
             _reserveQuantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ReserveQuantity");
-            _mailCodes = _cfg.GetSection("Workers:GetAndInsertHotmailWorker:Hotmail:MailCodes").Get<List<string>>(); 
+            _mailCodes = _cfg.GetSection("Workers:GetAndInsertHotmailWorker:ApiConfig:MailCodes").Get<List<string>>(); 
             timer.Period = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:Interval");
         }
 

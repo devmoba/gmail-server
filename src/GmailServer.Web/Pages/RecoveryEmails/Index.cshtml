@@ -40,9 +40,13 @@
                <h4>Recovery Email</h4>
             </abp-column>
             <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Config))
+                {
+                    <abp-button class="float-right btn btn-small btn-secondary" id="configGetRecoveryEmail" icon="cog" text="Config"></abp-button>
+                }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Create))
                 {
-                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
+                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create" style="margin-right: 15px;"></abp-button>
                 }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Delete))
                 {

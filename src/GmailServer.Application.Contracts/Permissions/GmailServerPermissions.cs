@@ -63,6 +63,7 @@ namespace GmailServer.Permissions
             public const string Create = PermissionNames.RecoveryEmail_Create;
             public const string Update = PermissionNames.RecoveryEmail_Update;
             public const string Delete = PermissionNames.RecoveryEmail_Delete;
+            public const string Config = PermissionNames.RecoveryEmail_Config;
         }
 
         public const string GmailPremiumGroup = PermissionNames.GmailPremium;

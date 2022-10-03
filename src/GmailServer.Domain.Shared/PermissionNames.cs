@@ -36,6 +36,7 @@
         public const string RecoveryEmail_Create = RecoveryEmail + ".Create";
         public const string RecoveryEmail_Update = RecoveryEmail + ".Update";
         public const string RecoveryEmail_Delete = RecoveryEmail + ".Delete";
+        public const string RecoveryEmail_Config = RecoveryEmail + ".Config";
 
         public const string GmailPremium = "GmailPremiumGroup";
         public const string GmailPremium_Default = GmailPremium + ".GmailPremiums";

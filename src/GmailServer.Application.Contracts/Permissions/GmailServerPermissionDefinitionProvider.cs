@@ -46,6 +46,7 @@ namespace GmailServer.Permissions
             recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Create, L("Permission:RecoveryEmails.Create"));
             recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Update, L("Permission:RecoveryEmails.Update"));
             recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Delete, L("Permission:RecoveryEmails.Delete"));
+            recoveryEmailManagement.AddChild(GmailServerPermissions.RecoveryEmails.Config, L("Permission:RecoveryEmails.Config"));
 
             var gmailPremiumGroup = context.AddGroup(GmailServerPermissions.GmailPremiumGroup, L("Permission:GmailPremiumGroup "));
             var gmailPremiumManagement = gmailPremiumGroup.AddPermission(GmailServerPermissions.GmailPremiums.Default, L("Permission:GmailPremiums"));
