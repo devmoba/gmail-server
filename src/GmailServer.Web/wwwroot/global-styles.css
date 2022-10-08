@@ -22,6 +22,7 @@
 #gmailResourceTable_wrapper .dataTables_scrollBody,
 #gmailReportTable_wrapper .dataTables_scrollBody,
 #checkerTable_wrapper .dataTables_scrollBody,
+#gmailTypeTable_wrapper .dataTables_scrollBody,
 #gmailTable_wrapper .dataTables_scrollBody {
     min-height: 500px;
 }
@@ -38,6 +39,7 @@
 #gmailResourceTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailReportTable_wrapper table.dataTable thead tr th input[type="text"],
 #checkerTable_wrapper table.dataTable thead tr th input[type="text"],
+#gmailTypeTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailTable_wrapper table.dataTable thead tr th input[type="text"] {
     margin: 0px;
     width: calc(100%);

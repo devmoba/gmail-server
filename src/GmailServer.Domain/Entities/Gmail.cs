@@ -49,5 +49,9 @@ namespace GmailServer.Entities
         public DateTime LastCheck { get; set; }
 
         public double TimeDiff { get; set; } //hour
+
+        public long? GmailTypeId { get; set; }
+
+        public virtual GmailType GmailType { get; set; }
     }
 }

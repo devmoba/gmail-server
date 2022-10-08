@@ -18,6 +18,7 @@
 @section scripts {
     <script>
         var gmailStatusSelections = @Html.Raw(ViewData["gmailStatusSelections"]);
+        var gmailTypeSelections = @Html.Raw(ViewData["gmailTypeSelections"]);
     </script>
 
     <abp-script src="/Pages/Gmails/js/index.js"/>
@@ -54,8 +55,9 @@
                     <th>@L["Timezone"]</th>
                     <th>@L["Country"]</th>
                     <th>@L["Status"]</th>
+                    <th>@L["Gmail Type"]</th>
                     <th>@L["Created"]</th>
-                    <th>@L["Updated"]</th>
+                    @*<th>@L["Updated"]</th>*@
                     <th>@L["Command"]</th>
                 </tr>
             </thead>

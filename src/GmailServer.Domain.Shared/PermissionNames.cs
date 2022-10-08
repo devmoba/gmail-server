@@ -7,6 +7,12 @@
         public const string Gmail_Download = Gmail + ".Download";
         public const string Gmail_Delete = Gmail + ".Delete";
 
+        public const string GmailType = "GmailTypeGroup";
+        public const string GmailType_Default = GmailType + ".GmailTypes";
+        public const string GmailType_Create = GmailType + ".Create";
+        public const string GmailType_Update = GmailType + ".Update";
+        public const string GmailType_Delete = GmailType + ".Delete";
+
         public const string FakeSetting = "FakeSettingGroup";
         public const string FakeSetting_Default = FakeSetting + ".FakeSettings";
         public const string FakeSetting_Create = FakeSetting + ".Create";

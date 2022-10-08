@@ -22,16 +22,19 @@ namespace GmailServer.ApplicationServices
         long,
         GmailFilterDto>, IGmailAppService
     {
-        private new readonly IGmailRepository Repository;
-        public GmailAppService(IGmailRepository repository) : base(repository)
+        private readonly new IGmailRepository Repository;
+        private readonly new IGmailTypeRepository gmailTypeRepository;
+
+        public GmailAppService(IGmailRepository repository, IGmailTypeRepository gmailTypeRepository) : base(repository)
         {
             Repository = repository;
+            this.gmailTypeRepository = gmailTypeRepository;
         }
 
         [Authorize(GmailServerPermissions.Gmails.Default)]
         public async override Task<PagedResultDto<GmailDto>> GetListAsync(GmailFilterDto input)
         {
-            var query = Repository.AsQueryable();
+            var query = await Repository.WithDetailsAsync(x => x.GmailType);
 
             if (!string.IsNullOrEmpty(input.Email))
                 query = Repository.FullTextSearch(query, x => x.Email, input.Email);
@@ -43,6 +46,7 @@ namespace GmailServer.ApplicationServices
                 query = Repository.FullTextSearch(query, x => x.Country, input.Country);
 
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status);
+            query = query.WhereIf(input.GmailTypeId.HasValue, x => x.GmailTypeId == input.GmailTypeId);
 
             var count = await AsyncExecuter.CountAsync(query);
 
@@ -78,7 +82,20 @@ namespace GmailServer.ApplicationServices
             gmail.LastCheck = DateTime.Now;
             gmail.TimeDiff = 0;
             gmail.RecoveryEmail = string.IsNullOrEmpty(input.RecoveryEmail) ? string.Empty : input.RecoveryEmail;
+            var gmailTypes = await this.gmailTypeRepository.GetListAsync();
+            foreach (var gmailType in gmailTypes)
+            {
+                if ((!string.IsNullOrEmpty(gmailType.DeviceType) && gmailType.DeviceType != gmail.DeviceType) || 
+                    (!string.IsNullOrEmpty(gmailType.Version) && gmailType.Version != gmail.Version) || 
+                    (!string.IsNullOrEmpty(gmailType.FakeVersion) && gmailType.FakeVersion != gmail.FakeVersion) ||
+                    (!string.IsNullOrEmpty(gmailType.Country) && gmailType.Country != gmail.Country))
+                {
+                    break;
+                }
 
+                gmail.GmailTypeId = gmailType.Id;
+                break;
+            }
             var res = await Repository.InsertAsync(gmail);
             return ObjectMapper.Map<Gmail, GmailDto>(res);
         }

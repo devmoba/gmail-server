@@ -19,6 +19,12 @@ namespace GmailServer.Permissions
             gmailGroupManagement.AddChild(GmailServerPermissions.Gmails.Download, L("Permission:GmailGroups.Download"));
             gmailGroupManagement.AddChild(GmailServerPermissions.Gmails.Delete, L("Permission:GmailGroups.Delete"));
 
+            var gmailTypeGroup = context.AddGroup(GmailServerPermissions.GmailTypeGroup, L("Permission:GmailTypeGroup"));
+            var gmailTypeManagement = gmailTypeGroup.AddPermission(GmailServerPermissions.GmailTypes.Default, L("Permission:GmailTypes"));
+            gmailTypeManagement.AddChild(GmailServerPermissions.GmailTypes.Create, L("Permission:GmailTypes.Create"));
+            gmailTypeManagement.AddChild(GmailServerPermissions.GmailTypes.Update, L("Permission:GmailTypes.Update"));
+            gmailTypeManagement.AddChild(GmailServerPermissions.GmailTypes.Delete, L("Permission:GmailTypes.Delete"));
+
             var fakeSettingGroup = context.AddGroup(GmailServerPermissions.FakeSettingGroup, L("Permission:FakeSettingGroup"));
             var fakeSettingManagement = fakeSettingGroup.AddPermission(GmailServerPermissions.FakeSettings.Default, L("Permission:FakeSettings"));
             fakeSettingManagement.AddChild(GmailServerPermissions.FakeSettings.Create, L("Permission:FakeSettings.Create"));

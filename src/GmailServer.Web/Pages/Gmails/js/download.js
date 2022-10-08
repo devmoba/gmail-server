@@ -1,4 +1,4 @@
 ﻿$(function () {
-    var viewModel = new DownloadFormViewModel();
+    var viewModel = new DownloadFormViewModel(gmailTypeSelections);
     ko.applyBindings(viewModel);
 });

@@ -20,6 +20,13 @@ namespace GmailServer.Controllers
             _appleIdAppService = appleIdAppService;
         }
 
+        [HttpPost]
+        [Route("create")]
+        public Task<AppleIdDto> CreateAsync(CreateUpdateAppleIdDto input)
+        {
+            return _appleIdAppService.CreateAsync(input);
+        }
+
         [HttpDelete]
         [Route("deleteAll")]
         public Task DeleteAllAsync()

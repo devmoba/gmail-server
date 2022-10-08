@@ -76,6 +76,8 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<GmailResource> GmailResources { get; set; }
 
+        public DbSet<GmailType> GmailTypes { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -124,6 +126,20 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Updated).IsRequired();
                 b.Property(x => x.LastCheck).IsRequired();  
                 b.Property(x => x.TimeDiff).IsRequired();  
+            });
+
+            builder.Entity<GmailType>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "GmailTypes", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Name).IsUnique();
+                b.Property(x => x.Name).HasMaxLength(128).IsRequired();
+                b.Property(x => x.FakeVersion).HasMaxLength(128);
+                b.Property(x => x.Country).HasMaxLength(26);
+                b.Property(x => x.DeviceType).HasMaxLength(128);
+                b.Property(x => x.Version).HasMaxLength(128);
+
+                b.HasMany(x => x.Gmails).WithOne(x => x.GmailType).HasForeignKey(x => x.GmailTypeId).OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<FakeSetting>(b =>

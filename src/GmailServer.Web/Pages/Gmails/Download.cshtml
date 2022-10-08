@@ -16,10 +16,24 @@
 }
 
 @section scripts {
+<script>
+    var gmailTypeSelections = @Html.Raw(ViewData["gmailTypeSelections"]);
+</script>
 <abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
 <abp-script src="/Pages/Gmails/js/downloadFormViewModel.js" />
 <abp-script src="/Pages/Gmails/js/download.js" />
 }
+
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    #downloadGmailForm .row {
+        margin-bottom: 20px;
+    }
+</style>
+}
+
 
 <abp-card>
     <abp-card-header>
@@ -66,6 +80,21 @@
                                        asp-for="@Model.DateTo"
                                        value="@Model.DateTo"
                                        style="margin-left: 15px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                     <div class="row">
+                        <div class="col-md-12">
+                            <label><input type="checkbox" style="transform: scale(1.8);" asp-for="@Model.CheckedGmailType" data-bind="checked: checkedGmailType" />&nbsp;&nbsp;&nbsp;Gmail Type</label>
+                        </div>
+                    </div>
+                     <!-- ko if: checkedGmailType -->
+                    <div class="row" style="padding-top: 15px;">
+                        <div class="col-md-8">
+                            <div style="padding-left: 30px;">
+                                <select asp-for="@Model.GmailTypeId" asp-for="@Model.GmailTypeId" class="form-control"
+                                        data-bind="options: gmailTypeSelections, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
                             </div>
                         </div>
                     </div>

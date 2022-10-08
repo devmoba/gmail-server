@@ -14,7 +14,7 @@
         { searchDisabled: true },
         { name: "country" },
         { name: "status", options: gmailStatusSelections },
-        { searchDisabled: true },
+        { name: "gmailTypeId", options: gmailTypeSelections },
         { searchDisabled: true },
         { searchDisabled: true }
     ]);
@@ -65,11 +65,10 @@
             {
                 targets: [12],
                 render: function (data, type, row, meta) {
-                    if (data && type === 'display') {
-                        let m = moment(data);
-                        data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
+                    if (row.gmailType) {
+                        return row.gmailType.name;
                     }
-                    return data;
+                    return "null";
                 }
             },
             {
@@ -82,6 +81,16 @@
                     return data;
                 }
             },
+            //{
+            //    targets: [13],
+            //    render: function (data, type, row, meta) {
+            //        if (data && type === 'display') {
+            //            let m = moment(data);
+            //            data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
+            //        }
+            //        return data;
+            //    }
+            //},
             {
                 targets: [14],
                 rowAction: {
@@ -119,8 +128,9 @@
             { data: "timezone", width: "100px" },
             { data: "country", width: "100px" },
             { data: "status", width: "150px" },
+            { data: null, width: "150px" },
             { data: "created", width: "130px" },
-            { data: "updated", width: "130px" },
+            //{ data: "updated", width: "130px" },
             { data: null, width: "100px" }
         ]
     });

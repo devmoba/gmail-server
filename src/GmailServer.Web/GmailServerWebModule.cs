@@ -129,6 +129,12 @@ namespace GmailServer.Web
                       "/libs/knockout-js/number-formatting.js"
                   ));
 
+                options.ScriptBundles.Add("chosen",
+                   bundle => bundle.AddFiles(
+                       "/libs/chosen/chosen.jquery.js",
+                       "/libs/chosen/chosen.ko.js"
+                   ));
+
 
                 options.ScriptBundles.Add("pretty-json",
                   bundle => bundle.AddFiles(
@@ -151,6 +157,8 @@ namespace GmailServer.Web
                  bundle => bundle.AddFiles(
                      "/libs/codemirror/codemirror.js"
                  ));
+
+                options.StyleBundles.Add("chosen", bundle => bundle.AddFiles("/styles/chosen/component-chosen.css"));
 
                 options.StyleBundles.Add("pretty-json",
                     bundle => bundle.AddFiles(

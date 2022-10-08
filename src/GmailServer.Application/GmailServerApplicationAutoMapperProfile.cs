@@ -6,6 +6,7 @@ using GmailServer.FakeSettings;
 using GmailServer.GmailPremiums;
 using GmailServer.GmailResources;
 using GmailServer.Gmails;
+using GmailServer.GmailTypes;
 using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
 
@@ -41,6 +42,10 @@ namespace GmailServer
 
             CreateMap<GmailResource, GmailResourceDto>();
             CreateMap<CreateUpdateGmailResourceDto, GmailResource>();
+
+            CreateMap<GmailType, GmailTypeDto>();
+            CreateMap<GmailType, GmailTypeSelectionDto>();
+            CreateMap<CreateUpdateGmailTypeDto, GmailType>();
         }
     }
 }

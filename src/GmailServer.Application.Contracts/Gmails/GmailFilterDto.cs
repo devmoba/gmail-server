@@ -1,5 +1,4 @@
 ﻿using GmailServer.Enums;
-using System;
 using Volo.Abp.Application.Dtos;
 
 namespace GmailServer.Gmails
@@ -13,5 +12,7 @@ namespace GmailServer.Gmails
         public string RecoveryEmail { get; set; }   
 
         public Status? Status { get; set; }
+
+        public long? GmailTypeId { get; set; }
     }
 }

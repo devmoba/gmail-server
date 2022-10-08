@@ -45,11 +45,14 @@
     <None Remove="Pages\Gmails\js\download.js" />
     <None Remove="Pages\Gmails\js\downloadFormViewModel.js" />
     <None Remove="Pages\Gmails\js\index.js" />
+    <None Remove="Pages\GmailTypes\js\index.js" />
     <None Remove="Pages\index.js" />
     <None Remove="Pages\RecoveryEmails\js\index.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\libs\chosen\chosen.jquery.js" />
+    <None Include="wwwroot\libs\chosen\chosen.ko.js" />
     <None Include="wwwroot\libs\devmoba\core\devmoba.js" />
     <None Include="wwwroot\libs\knockout-js\knockout.js" />
     <None Include="wwwroot\libs\knockout-js\number-formatting.js" />
@@ -212,6 +215,10 @@
     <PackageReference Include="Volo.Saas.Host.Web" Version="4.4.1" />
     <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Lepton" Version="4.4.1" />
     <PackageReference Include="Volo.Abp.TextTemplateManagement.Web" Version="4.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\styles\" />
   </ItemGroup>
 
 </Project>

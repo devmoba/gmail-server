@@ -19,6 +19,15 @@ namespace GmailServer.Permissions
             public const string Delete = PermissionNames.Gmail_Delete;
         }
 
+        public const string GmailTypeGroup = PermissionNames.GmailType;
+        public static class GmailTypes
+        {
+            public const string Default = PermissionNames.GmailType_Default;
+            public const string Create = PermissionNames.GmailType_Create;
+            public const string Update = PermissionNames.GmailType_Update;
+            public const string Delete = PermissionNames.GmailType_Delete;
+        }
+
         public const string FakeSettingGroup = PermissionNames.FakeSetting;
         public static class FakeSettings
         {

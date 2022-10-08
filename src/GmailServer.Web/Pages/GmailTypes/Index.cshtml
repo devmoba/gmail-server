@@ -1,0 +1,55 @@
+﻿@page
+@model GmailServer.Web.Pages.GmailTypes.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Gmail Type"];
+    PageLayout.Content.Title = L["Gmail Type"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.GmailType;
+}
+
+@section scripts {
+<abp-script src="/Pages/GmailTypes/js/index.js" />
+}
+
+@section styles {
+
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+
+            </abp-column>
+            <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailTypes.Create))
+                {
+                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="gmailTypeTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Name"]</th>
+                    <th>@L["DeviceType"]</th>
+                    <th>@L["Version"]</th>
+                    <th>@L["FakeVersion"]</th>
+                    <th>@L["Country"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

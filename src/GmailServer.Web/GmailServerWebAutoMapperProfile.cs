@@ -5,6 +5,7 @@ using GmailServer.FakeSettings;
 using GmailServer.GmailPremiums;
 using GmailServer.GmailResources;
 using GmailServer.Gmails;
+using GmailServer.GmailTypes;
 using GmailServer.RecoveryEmails;
 using GmailServer.Web.Pages.AppleIds.ViewModels;
 using GmailServer.Web.Pages.FakeSettings.ViewModels;
@@ -22,6 +23,8 @@ namespace GmailServer.Web
             CreateMap<Gmail, GmailExcelModel>()
                 .AfterMap((a,b) => b.Date = a.Date.ToString("dd/MM/yyyy HH:mm"))
                 .AfterMap((a,b) => b.Status = (int)a.Status);
+
+            CreateMap<GmailTypeDto, CreateUpdateGmailTypeDto>();
 
             CreateMap<FakeSettingDto, CreateUpdateFakeSettingDto>();
             CreateMap<FakeSetting, FakeSettingDto>();

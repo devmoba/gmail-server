@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -20,12 +19,12 @@ namespace GmailServer.Background.Workers
     {
         private readonly IConfiguration _cfg;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly int _reserveQuantity;
-        private readonly string _username;
-        private readonly string _apiKey;
-        private readonly string _apiUrl;
-        private readonly int _quantity;
-        private readonly List<string> _mailCodes;
+        private int _reserveQuantity;
+        private string _username;
+        private string _apiKey;
+        private string _apiUrl;
+        private int _quantity;
+        private List<string> _mailCodes;
         private readonly Random random = new Random();
 
         public GetAndInsertHotmailWorker(AbpAsyncTimer timer, 
@@ -35,18 +34,18 @@ namespace GmailServer.Background.Workers
         {
             _cfg = configuration;
             _httpClientFactory = httpClientFactory;
-            _username = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:Username");
-            _apiUrl = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiUrl");
-            _apiKey = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiKey");
-            _quantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ApiConfig:Quantity");
-            _reserveQuantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ReserveQuantity");
-            _mailCodes = _cfg.GetSection("Workers:GetAndInsertHotmailWorker:ApiConfig:MailCodes").Get<List<string>>(); 
             timer.Period = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:Interval");
         }
 
         protected async override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
             Logger.LogInformation("Start get and insert hotmail worker: Do something...");
+            _username = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:Username");
+            _apiUrl = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiUrl");
+            _apiKey = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiKey");
+            _quantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ApiConfig:Quantity");
+            _reserveQuantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ReserveQuantity");
+            _mailCodes = _cfg.GetSection("Workers:GetAndInsertHotmailWorker:ApiConfig:MailCodes").Get<List<string>>();
             var recoveryEmailRepository = workerContext.ServiceProvider.GetRequiredService<IRecoveryEmailRepository>();
             var checkReserveQuantity = await recoveryEmailRepository.IsReserveQuantityEnoughAsync(_reserveQuantity);
             if (!checkReserveQuantity)

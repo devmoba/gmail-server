@@ -1,4 +1,5 @@
 ﻿using GmailServer.Enums;
+using GmailServer.GmailTypes;
 using System;
 using Volo.Abp.Application.Dtos;
 
@@ -41,6 +42,10 @@ namespace GmailServer.Gmails
         public string Arg2 { get; set; }
 
         public string Arg3 { get; set; }
+
+        public long GmailTypeId { get; set; }
+
+        public GmailTypeDto GmailType { get; set; }
 
         public DateTime Created { get; set; }
 
