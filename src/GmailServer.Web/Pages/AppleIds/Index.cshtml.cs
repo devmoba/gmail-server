@@ -1,3 +1,4 @@
+using GmailServer.AppleIds;
 using GmailServer.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -7,8 +8,22 @@ namespace GmailServer.Web.Pages.AppleIds
 {
     public class IndexModel : GmailServerPageModel
     {
-        public void OnGet()
+        private readonly IAppleIdAppService _appleIdAppService;
+
+        public IndexModel(IAppleIdAppService appleIdAppService)
         {
+            _appleIdAppService = appleIdAppService;
+        }
+
+        public async void OnGet()
+        {
+            var usernames = await _appleIdAppService.GetUsernameSelectionAsync();
+            var usernameSelections = usernames.Select(item => new SelectListItem()
+            {
+                Text = item,
+                Value = item
+            });
+
             var appleIdStatusSelections = Enum.GetValues(typeof(AppleIdStatus)).Cast<AppleIdStatus>()
                .Select(item => new SelectListItem()
                {
@@ -16,7 +31,11 @@ namespace GmailServer.Web.Pages.AppleIds
                    Value = $"{(int)item}"
                });
 
+            var isRoleNameAppleIdMember = CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember);
+
             ViewData.Add("appleIdStatusSelections", SerializeObject(appleIdStatusSelections));
+            ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
+            ViewData.Add("isRoleNameAppleIdMember", SerializeObject(isRoleNameAppleIdMember));
         }
     }
 }

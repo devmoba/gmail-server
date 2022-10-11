@@ -1,6 +1,8 @@
 ﻿@page
 @model GmailServer.Web.Pages.IndexModel
+@using GmailServer.Permissions
 @using GmailServer.Web.Menus
+@using Microsoft.AspNetCore.Authorization
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using Microsoft.AspNetCore.Mvc.Localization
 @using GmailServer.Localization
@@ -8,11 +10,14 @@
 @inject IPageLayout PageLayout
 @inject IHtmlLocalizer<GmailServerResource> L
 @inject ICurrentUser CurrentUser
+@inject IAuthorizationService AuthorizationService
 @{
     ViewBag.PageTitle = L["Home"];
     PageLayout.Content.Title = L["Home"].Value;
     PageLayout.Content.MenuItemName = GmailServerMenus.Home;
 }
+@if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.Dashboard.Home))
+{
 
 @section scripts {
 <abp-script-bundle name="canvasjs" />
@@ -20,41 +25,57 @@
 }
 
 @section styles {
-<style>
-    .row {
-        margin-top: 30px;
-    }
-    #gmailReportTable_wrapper {
-        font-size: 19px;
-    }
-</style>
+<abp-style src="/Pages/index.css" />
 }
 
-<div class="row">
-    <div class="col-md-6">
-        <div id="chartContainer" style="height: 450px; width: 100%;"></div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="chartContainer" style="height: 450px; width: 100%;"></div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="recovery-email-info">
+                       <div class="row">
+                           <div class="col-md-12 left-info">
+                               <p class="title">Recovery emails</p>
+                               <p class="total-count">Total @string.Format("{0:#,0}", Model.ReadyCount + Model.CompletedCount)</p>
+                               <p class="status-count">
+                                   <span class="ready">Ready @string.Format("{0:#,0}", Model.ReadyCount)</span>
+                                   <span class="completed">Completed @string.Format("{0:#,0}", Model.CompletedCount)</span>
+                               </p>
+                           </div>
+                          @* <div class="col-md-3 right-info">
+                               <div class="icon"><i class="fa fa-registered" aria-hidden="true"></i></div>
+                           </div>*@
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <abp-table striped-rows="true" id="gmailReportTable" class="table-bordered">
-            <thead>
-                <tr>
-                    <th>@L["#"]</th>
-                    <th>@L["Created"]</th>
-                    <th>@L["Total Daily"]</th>
-                    <th>@L["Good"]</th>
-                    <th>@L["Verify"]</th>
-                    <th>@L["Checking"]</th>
-                    <th>@L["Uncheck"]</th>
-                    <th>@L["Disable"]</th>
-                    <th>@L["Notexist"]</th>
-                    <th>@L["Unknown"]</th>
-                </tr>
-            </thead>
-        </abp-table>
+    <div class="row">
+        <div class="col-md-12">
+            <abp-table striped-rows="true" id="gmailReportTable" class="table-bordered">
+                <thead>
+                    <tr>
+                        <th>@L["#"]</th>
+                        <th>@L["Created"]</th>
+                        <th>@L["Total Daily"]</th>
+                        <th>@L["Good"]</th>
+                        <th>@L["Verify"]</th>
+                        <th>@L["Checking"]</th>
+                        <th>@L["Uncheck"]</th>
+                        <th>@L["Disable"]</th>
+                        <th>@L["Notexist"]</th>
+                        <th>@L["Unknown"]</th>
+                    </tr>
+                </thead>
+            </abp-table>
+        </div>
     </div>
-</div>
+}
+
 @*<abp-card>
     <abp-card-header>@L["Welcome"]</abp-card-header>
     <abp-card-body>

@@ -11,6 +11,7 @@ namespace GmailServer.Permissions
         {
             var myGroup = context.AddGroup(GmailServerPermissions.GroupName);
 
+            myGroup.AddPermission(GmailServerPermissions.Dashboard.Home, L("Permission:Home"));
             myGroup.AddPermission(GmailServerPermissions.Dashboard.Host, L("Permission:Dashboard"), MultiTenancySides.Host);
             myGroup.AddPermission(GmailServerPermissions.Dashboard.Tenant, L("Permission:Dashboard"), MultiTenancySides.Tenant);
 

@@ -41,7 +41,16 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == x.Username);
+
+            var currentUser = CurrentUser;
+            if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
+            {
+                query = query.Where(x => x.Username == currentUser.UserName);
+            }
+            else
+            {
+                query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            }
 
             var count = await AsyncExecuter.CountAsync(query);
 
@@ -115,7 +124,7 @@ namespace GmailServer.ApplicationServices
         public async Task<AppleIdDto> GetFirstAppleIdAsync()
         {
             var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
-            query = query.OrderByDescending(x => x.Created);
+            query = query.OrderBy(x => Guid.NewGuid());
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
             if (appleId != null)
             {
@@ -146,6 +155,13 @@ namespace GmailServer.ApplicationServices
                 return await MapToGetOutputDtoAsync(res);
             }
             return new AppleIdDto();
+        }
+
+        public async Task<List<string>> GetUsernameSelectionAsync()
+        {
+            var query = Repository.GroupBy(x => x.Username).Select(x => x.Key);
+            var res = await AsyncExecuter.ToListAsync(query);
+            return res;
         }
     }
 }

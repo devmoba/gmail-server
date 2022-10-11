@@ -27,7 +27,6 @@ namespace GmailServer.ApplicationServices
     {
         private new readonly IRecoveryEmailRepository Repository;
 
-        private readonly Random random = new Random();
         public RecoveryEmailAppService(IRecoveryEmailRepository repository) : base(repository)
         {
             Repository = repository;
@@ -42,7 +41,7 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == x.Username);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
 
             var count = await AsyncExecuter.CountAsync(query);
 
@@ -64,11 +63,10 @@ namespace GmailServer.ApplicationServices
         public async Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync()
         {
             var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready);
-            var recoveryEmails = await AsyncExecuter.ToArrayAsync(query);
-            if (recoveryEmails.Length > 0)
+            query = query.OrderBy(x => Guid.NewGuid());
+            var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (recoveryEmail != null)
             {
-                var index = random.Next(recoveryEmails.Count());
-                var recoveryEmail = recoveryEmails[index];
                 var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
                 recoveryEmail.Status = RecoveryEmailStatus.Completed;
                 await Repository.UpdateAsync(recoveryEmail, autoSave: true);
@@ -141,6 +139,21 @@ namespace GmailServer.ApplicationServices
                 return res;
             }
             return new RecoveryEmailDto();
+        }
+
+        [Authorize]
+        public async Task<List<RecoveryEmailReportStatusDto>> GetRecoveryEmailReportAsync()
+        {
+            var query = Repository
+                .GroupBy(x => x.Status)
+                .Where(x => x.Key == RecoveryEmailStatus.Ready)
+                .Select(g => new RecoveryEmailReportStatusDto()
+                {
+                    Status = g.Key,
+                    Count = g.Count()
+                });
+            var res = await AsyncExecuter.ToListAsync(query.OrderBy(x => x.Status));
+            return res;
         }
     }
 }

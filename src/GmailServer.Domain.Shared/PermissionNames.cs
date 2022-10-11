@@ -2,6 +2,8 @@
 {
     public static class PermissionNames
     {
+        public const string Home = "Home";
+
         public const string Gmail = "GmailGroup";
         public const string Gmail_Default = Gmail + ".Gmails";
         public const string Gmail_Download = Gmail + ".Download";

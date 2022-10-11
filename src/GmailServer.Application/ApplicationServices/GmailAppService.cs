@@ -123,7 +123,7 @@ namespace GmailServer.ApplicationServices
             await Repository.DeleteAsync(id);
         }
 
-        [Authorize]
+        [Authorize(GmailServerPermissions.Dashboard.Home)]
         public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -152,7 +152,7 @@ namespace GmailServer.ApplicationServices
             return new PagedResultDto<GmailReportDto>(count, res);
         }
 
-        [Authorize]
+        [Authorize(GmailServerPermissions.Dashboard.Home)]
         public async Task<ReportbyStatusDto> GetReportbyStatusAsync()
         {
 

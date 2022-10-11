@@ -20,11 +20,16 @@ namespace GmailServer.Controllers
             _appleIdAppService = appleIdAppService;
         }
 
-        [HttpPost]
-        [Route("create")]
-        public Task<AppleIdDto> CreateAsync(CreateUpdateAppleIdDto input)
+        [HttpGet]
+        [Route("upload")]
+        public Task<AppleIdDto> CreateAsync(string email, string password, string username)
         {
-            return _appleIdAppService.CreateAsync(input);
+            return _appleIdAppService.CreateAsync(new CreateUpdateAppleIdDto()
+            {
+                Email = email,
+                Password = password,
+                Username = username
+            });
         }
 
         [HttpDelete]

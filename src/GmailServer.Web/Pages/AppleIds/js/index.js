@@ -2,9 +2,9 @@
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'AppleIds/CreateModal');
 
-    devmoba.datatables.enableIndividualColumnSearch("#appleIdTable", [
+    var searchs = [
         { searchDisabled: true },
-        { name: "username" },
+        { name: "username", options: usernameSelections },
         { searchDisabled: true },
         { searchDisabled: true },
         { name: "status", options: appleIdStatusSelections },
@@ -12,7 +12,11 @@
         { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true }
-    ]);
+    ];
+    if (isRoleNameAppleIdMember) {
+        searchs[1] = { searchDisabled: true };
+    }
+    devmoba.datatables.enableIndividualColumnSearch("#appleIdTable", searchs);
 
     var datatableConfig = abp.libs.datatables.normalizeConfiguration({
         processing: true,
@@ -24,7 +28,10 @@
         scrollCollapse: true,
         orderCellsTop: true,
         order: [[0, "desc"]],
-
+        initComplete: () => {
+            $('select.search_c_1').chosen({ disable_search_threshold: 5, search_contains: true });
+            $('select.search_c_4').chosen({ disable_search_threshold: 5, search_contains: true });
+        },
         ajax: abp.libs.datatables.createAjax(gmailServer.controllers.appleId.getList, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();
         }),

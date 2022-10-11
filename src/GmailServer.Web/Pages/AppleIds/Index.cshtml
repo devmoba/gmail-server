@@ -16,16 +16,22 @@
 }
 
 @section scripts {
-     <script>
-        var appleIdStatusSelections = @Html.Raw(ViewData["appleIdStatusSelections"]);
-    </script>
-    <abp-script src="/Pages/AppleIds/js/index.js"/>
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+    var appleIdStatusSelections = @Html.Raw(ViewData["appleIdStatusSelections"]);
+    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
+    var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
+</script>
+<abp-script src="/Pages/AppleIds/js/index.js" />
 }
 @section styles {
+<abp-style-bundle name="chosen" />
 <style>
     .modal-dialog {
         max-width: 800px;
     }
+
     .text-ellipsis {
         overflow: hidden;
         white-space: nowrap;
@@ -56,7 +62,7 @@
     </abp-card-header>
     <abp-card-body>
         <abp-table striped-rows="true" id="appleIdTable" class="table-bordered">
-            <thead> 
+            <thead>
                 <tr>
                     <th>@L["ID"]</th>
                     <th>@L["Username"]</th>

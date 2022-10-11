@@ -6,6 +6,7 @@ namespace GmailServer.Permissions
 
         public static class Dashboard
         {
+            public const string Home = GroupName + PermissionNames.Home;
             public const string DashboardGroup = GroupName + ".Dashboard";
             public const string Host = DashboardGroup + ".Host";
             public const string Tenant = DashboardGroup + ".Tenant";

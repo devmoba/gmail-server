@@ -1,0 +1,75 @@
+﻿body {
+}
+
+/*.row {
+    margin-top: 30px;
+}
+*/
+#chartContainer {
+    height: 450px;
+    width: 100%;
+}
+
+#gmailReportTable_wrapper {
+    font-size: 19px;
+    margin-top: 30px;
+}
+
+.recovery-email-info {
+    background-color: #fff;
+    height: 200px;
+    width: 100%;
+    border-left: 10px solid #6610f2;
+    border-radius: 5px;
+}
+
+    .recovery-email-info .title {
+        padding: 15px 0px 0px 30px;
+        font-size: 28px;
+        font-weight: 500;
+        color: #828282;
+        margin-bottom: 0px;
+    }
+
+    .recovery-email-info .total-count {
+        padding: 0px 0px 0px 30px;
+        font-size: 43px;
+        margin-top: 0px;
+        font-weight: 550;
+        color: #3e3d3d;
+    }
+
+    .recovery-email-info .status-count {
+        padding-left: 30px;
+        font-size: 18px;
+    }
+
+        .recovery-email-info .status-count .ready {
+            padding: 13px;
+            background-color: #009635;
+            border-radius: 11px;
+            color: #fff;
+        }
+
+        .recovery-email-info .status-count .completed {
+            margin-left: 20px;
+            padding: 13px;
+            background-color: #7b1fa2;
+            border-radius: 11px;
+            color: #fff;
+        }
+
+    .recovery-email-info .right-info {
+        position: relative;
+    }
+
+        .recovery-email-info .right-info .icon {
+            position: absolute;
+            top: 40%;
+            left: 25%;
+            color: #9C27B0;
+        }
+
+            .recovery-email-info .right-info .icon i {
+                font-size: 70px;
+            }

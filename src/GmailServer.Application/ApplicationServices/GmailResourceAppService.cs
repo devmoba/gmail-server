@@ -43,7 +43,7 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == x.Username);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
 
             var count = await AsyncExecuter.CountAsync(query);
 

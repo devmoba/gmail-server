@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 
 namespace GmailServer.RecoveryEmails
@@ -17,6 +18,8 @@ namespace GmailServer.RecoveryEmails
         Task DeleteAllAsync();
 
         Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync();
+
+        Task<List<RecoveryEmailReportStatusDto>> GetRecoveryEmailReportAsync();
 
     }
 }

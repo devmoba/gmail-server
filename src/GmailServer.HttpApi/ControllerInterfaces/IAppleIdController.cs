@@ -17,6 +17,6 @@ namespace GmailServer.ControllerInterfaces
 
         Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
 
-        Task<AppleIdDto> CreateAsync(CreateUpdateAppleIdDto input);
+        Task<AppleIdDto> CreateAsync(string email, string password, string username);
     }
 }
