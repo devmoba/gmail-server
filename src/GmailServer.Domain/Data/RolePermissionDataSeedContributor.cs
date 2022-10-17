@@ -55,8 +55,12 @@ namespace GmailServer.Data
         private async Task SeedPermissionAsync()
         {
             await _permissionManger.SetForRoleAsync(RoleName.RoleNameAppleIdMember, PermissionNames.AppleId_Default, isGranted: true);
+            await _permissionManger.SetForRoleAsync(RoleName.RoleNameAppleIdMember, PermissionNames.AppleId_StatisticDaily, isGranted: true);
 
             await _permissionManger.SetForRoleAsync(RoleName.RoleNameAppleIdManager, PermissionNames.AppleId_Default, isGranted: true);
+            await _permissionManger.SetForRoleAsync(RoleName.RoleNameAppleIdManager, PermissionNames.AppleId_Create, isGranted: true);
+            await _permissionManger.SetForRoleAsync(RoleName.RoleNameAppleIdManager, PermissionNames.AppleId_Statistic, isGranted: true);
+            await _permissionManger.SetForRoleAsync(RoleName.RoleNameAppleIdManager, PermissionNames.AppleId_StatisticDaily, isGranted: true);
         }
     }
 }

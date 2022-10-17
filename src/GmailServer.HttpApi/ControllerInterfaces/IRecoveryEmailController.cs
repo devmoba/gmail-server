@@ -1,4 +1,5 @@
 ﻿using GmailServer.RecoveryEmails;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
@@ -17,5 +18,7 @@ namespace GmailServer.ControllerInterfaces
         Task DeleteAsync(long id);
 
         Task DeleteAllAsync();
+
+        Task<RecoveryEmailReportStatusDto> GetRecoveryEmailReportAsync();
     }
 }

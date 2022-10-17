@@ -10,6 +10,8 @@ namespace GmailServer.Web.Pages.AppleIds
     {
         private readonly IAppleIdAppService _appleIdAppService;
 
+        public bool IsRoleNameAppleIdMember { get; private set; }
+
         public IndexModel(IAppleIdAppService appleIdAppService)
         {
             _appleIdAppService = appleIdAppService;
@@ -32,7 +34,7 @@ namespace GmailServer.Web.Pages.AppleIds
                });
 
             var isRoleNameAppleIdMember = CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember);
-
+            IsRoleNameAppleIdMember = isRoleNameAppleIdMember;
             ViewData.Add("appleIdStatusSelections", SerializeObject(appleIdStatusSelections));
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
             ViewData.Add("isRoleNameAppleIdMember", SerializeObject(isRoleNameAppleIdMember));

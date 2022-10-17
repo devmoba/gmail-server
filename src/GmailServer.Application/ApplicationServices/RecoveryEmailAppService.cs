@@ -142,18 +142,13 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize]
-        public async Task<List<RecoveryEmailReportStatusDto>> GetRecoveryEmailReportAsync()
+        public async Task<RecoveryEmailReportStatusDto> GetRecoveryEmailReportAsync()
         {
-            var query = Repository
-                .GroupBy(x => x.Status)
-                .Where(x => x.Key == RecoveryEmailStatus.Ready)
-                .Select(g => new RecoveryEmailReportStatusDto()
-                {
-                    Status = g.Key,
-                    Count = g.Count()
-                });
-            var res = await AsyncExecuter.ToListAsync(query.OrderBy(x => x.Status));
-            return res;
+            return new RecoveryEmailReportStatusDto()
+            {
+                ReadyCount = await AsyncExecuter.CountAsync(Repository.Where(x => x.Status == RecoveryEmailStatus.Ready)),
+                CompletedCount = await AsyncExecuter.CountAsync(Repository.Where(x => x.Status == RecoveryEmailStatus.Completed))
+            };
         }
     }
 }

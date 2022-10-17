@@ -1,0 +1,41 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleIds.ResetStatusModalModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@{
+    Layout = null;
+}
+ <form action="/AppleIds/ResetStatusModal" method="post" onSubmit="if(!confirm('Are you sure to reset?')){return false;}">
+        @(Html.AntiForgeryToken())
+     <abp-modal>
+        <abp-modal-header title="Reset Status"></abp-modal-header>
+        <abp-modal-body>
+           <div class="row" style="padding-top: 15px;">
+                <div class="col-md-2">
+                    <label>Status</label>
+                </div>
+                <div class="col-md-10">
+                    <div class="row" data-bind="foreach: { data: statuses, as: 'status' }">
+                        <div class="col-md-6" style="padding-top: 15px;">
+                            <label>
+                                <input type="checkbox" name="Statuses" data-bind="value: status.value" style="transform: scale(1.8);" />
+                                <span data-bind="text: status.text" style="font-size: 20px; margin-left: 15px;"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 15px;">
+                <div class="col-md-2">
+                    <label>Updated hours</label>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" name="UpdatedHour" class="form-control" />
+                </div>
+            </div>
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>
+   

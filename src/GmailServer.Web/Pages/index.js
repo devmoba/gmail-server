@@ -1,7 +1,15 @@
-﻿$(function () {
+﻿function HomeViewModel() {
+    this.readyCount = ko.observable(0);
+    this.completedCount = ko.observable(0);
+    this.total = ko.observable(0);
+}
+
+$(function () {
+    var viewModel = new HomeViewModel();
+    ko.applyBindings(viewModel);
     gmailServer.controllers.gmail.getReportbyStatus().done((res) => {
         var chart = new CanvasJS.Chart("chartContainer", {
-            exportEnabled: true,
+            exportEnabled: false,
             animationEnabled: true,
             title: {
                 text: "Gmail Status Chart"
@@ -21,6 +29,12 @@
         chart.render();
     });
 
+    gmailServer.controllers.recoveryEmail.getRecoveryEmailReport().done((res) => {
+        viewModel.readyCount(res.readyCount);
+        viewModel.completedCount(res.completedCount);
+        viewModel.total(res.readyCount + res.completedCount);
+    });
+
     devmoba.datatables.enableIndividualColumnSearch("#gmailReportTable", [
         { searchDisabled: true },
         { name: "created", enableDateRangeFilter: true },
@@ -38,7 +52,7 @@
         processing: true,
         serverSide: true,
         paging: true,
-        lengthMenu: [15, 30, 60, 100, 120],
+        lengthMenu: [15, 30, 60, 100, 150, 200],
         searching: true,
         autoWidth: false,
         scrollCollapse: true,

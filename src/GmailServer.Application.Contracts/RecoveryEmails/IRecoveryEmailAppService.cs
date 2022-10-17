@@ -19,7 +19,7 @@ namespace GmailServer.RecoveryEmails
 
         Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync();
 
-        Task<List<RecoveryEmailReportStatusDto>> GetRecoveryEmailReportAsync();
+        Task<RecoveryEmailReportStatusDto> GetRecoveryEmailReportAsync();
 
     }
 }

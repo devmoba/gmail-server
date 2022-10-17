@@ -15,7 +15,7 @@
         processing: true,
         serverSide: true,
         paging: true,
-        lengthMenu: [15, 25, 50, 100],
+        lengthMenu: [30, 50, 100, 150, 250],
         searching: true,
         autoWidth: false,
         scrollCollapse: true,

@@ -1,0 +1,58 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleIds.StatisticDailyModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Statistics Daily"];
+    PageLayout.Content.Title = L["Statistics Daily"].Value;
+}
+
+@section scripts {
+<script>
+    var usernameParam = @Html.Raw(ViewData["usernameParam"]);
+</script>
+<abp-script src="/Pages/AppleIds/js/statisticDaily.js" />
+}
+@section styles {
+<style>
+
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h3>Username -- @Model.Username</h3>
+            </abp-column>
+        </abp-row> 
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="appleIdStatisticDailyTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["#"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Total"]</th>
+                    <th>@L["Ready"]</th>
+                    <th>@L["Completed"]</th>
+                    <th>@L["Pending"]</th>
+                    <th>@L["WrongPass"]</th>
+                    <th>@L["Subed"]</th>
+                    <th>@L["Locked1"]</th>
+                    <th>@L["Locked2"]</th>
+                    <th>@L["Review"]</th>
+                    <th>@L["Error"]</th>
+                    <th>@L["Unknown"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

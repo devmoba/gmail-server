@@ -1,0 +1,28 @@
+using GmailServer.AppleIds;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
+
+namespace GmailServer.Web.Pages.AppleIds
+{
+    public class StatisticModel : GmailServerPageModel
+    {
+        private readonly IAppleIdAppService _appleIdAppService;
+
+        public StatisticModel(IAppleIdAppService appleIdAppService)
+        {
+            _appleIdAppService = appleIdAppService;
+        }
+
+        public async void OnGet()
+        {
+            var usernames = await _appleIdAppService.GetUsernameSelectionAsync();
+            var usernameSelections = usernames.Select(item => new SelectListItem()
+            {
+                Text = item,
+                Value = item
+            });
+
+            ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
+        }
+    }
+}

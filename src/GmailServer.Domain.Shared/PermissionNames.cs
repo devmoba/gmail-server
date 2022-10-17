@@ -57,6 +57,10 @@
         public const string AppleId_Create = AppleId + ".Create";
         public const string AppleId_Update = AppleId + ".Update";
         public const string AppleId_Delete = AppleId + ".Delete";
+        public const string AppleId_Download = AppleId + ".Download";
+        public const string AppleId_Statistic = AppleId + ".Statistic";
+        public const string AppleId_StatisticDaily = AppleId + ".StatisticDaily";
+        public const string AppleId_ResetStatus = AppleId + ".ResetStatus";
 
         public const string GmailResource = "GmailResourceGroup";
         public const string GmailResource_Default = GmailResource + ".GmailResources";

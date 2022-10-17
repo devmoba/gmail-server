@@ -2,6 +2,7 @@ using AutoMapper;
 using GmailServer.AppleIds;
 using GmailServer.Checkers;
 using GmailServer.Entities;
+using GmailServer.Enums;
 using GmailServer.FakeSettings;
 using GmailServer.GmailPremiums;
 using GmailServer.GmailResources;
@@ -9,6 +10,7 @@ using GmailServer.Gmails;
 using GmailServer.GmailTypes;
 using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
+using System;
 
 namespace GmailServer
 {
@@ -39,6 +41,8 @@ namespace GmailServer
 
             CreateMap<AppleId, AppleIdDto>();
             CreateMap<CreateUpdateAppleIdDto, AppleId>();
+            CreateMap<AppleId, AppleIdExcelModel>().AfterMap(
+                (a, b) => b.Status = Enum.GetName(typeof(AppleIdStatus), a.Status));
 
             CreateMap<GmailResource, GmailResourceDto>();
             CreateMap<CreateUpdateGmailResourceDto, GmailResource>();

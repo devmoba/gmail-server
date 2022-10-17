@@ -76,7 +76,7 @@ namespace GmailServer.Web.Pages.Gmails
             {
                 query = query.Where(x => x.Created >= DateFrom);
                 query = query.Where(x => x.Created <= DateTo);
-                fileName = $"Gmails_TimeRange_{DateFrom.ToString("dd/MM/yyyy HH:mm")}-{DateTo.ToString("dd/MM/yyyy HH:mm")}";
+                fileName = $"Gmails_TimeRange_{DateFrom.ToString("dd/MM/yyyy")}-{DateTo.ToString("dd/MM/yyyy")}";
             }
 
             if (CheckedGmailType)

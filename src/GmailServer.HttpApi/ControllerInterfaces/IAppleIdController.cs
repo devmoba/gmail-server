@@ -1,5 +1,7 @@
 ﻿using GmailServer.AppleIds;
+using GmailServer.AppleIds.Statistics;
 using GmailServer.Enums;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 
@@ -18,5 +20,13 @@ namespace GmailServer.ControllerInterfaces
         Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
 
         Task<AppleIdDto> CreateAsync(string email, string password, string username);
+
+        Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username);
+
+        Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleStatisticFilterDto input);
+
+        Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input);
+
+        Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
     }
 }

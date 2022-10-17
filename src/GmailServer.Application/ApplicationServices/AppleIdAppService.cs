@@ -1,4 +1,5 @@
 ﻿using GmailServer.AppleIds;
+using GmailServer.AppleIds.Statistics;
 using GmailServer.Entities;
 using GmailServer.Enums;
 using GmailServer.Extensions;
@@ -40,7 +41,12 @@ namespace GmailServer.ApplicationServices
         public override async Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input)
         {
             var query = Repository.AsQueryable();
+            //if (!string.IsNullOrEmpty(input.Email))
+            //    query = Repository.FullTextSearch(query, x => x.Email, input.Email);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created <= input.CreatedTo.Value);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value);
 
             var currentUser = CurrentUser;
             if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
@@ -91,13 +97,14 @@ namespace GmailServer.ApplicationServices
                 if (ValidateAppleIdInput(appleId))
                 {
                     var appleIdSplit = appleId.Split('|').ToArray();
-                    var hasEmail = await Repository.AnyAsync(x => x.Email == appleIdSplit[0]);
+                    var email = appleIdSplit[0].ToLower();
+                    var hasEmail = await Repository.AnyAsync(x => x.Email == email);
                     if (!hasEmail)
                     {
                         var entity = new AppleId()
                         {
                             Username = input.Username,
-                            Email = appleIdSplit[0],
+                            Email = email,
                             Password = appleIdSplit[1],
                             Status = Enums.AppleIdStatus.Ready,
                             Created = DateTime.Now,
@@ -147,7 +154,7 @@ namespace GmailServer.ApplicationServices
         public async Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status)
         {
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
-            if (appleId != null)
+            if (appleId != null && appleId.Status != AppleIdStatus.Completed)
             {
                 appleId.Status = status;
                 appleId.Updated = DateTime.Now;
@@ -162,6 +169,149 @@ namespace GmailServer.ApplicationServices
             var query = Repository.GroupBy(x => x.Username).Select(x => x.Key);
             var res = await AsyncExecuter.ToListAsync(query);
             return res;
+        }
+
+        public async Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            if (input.Statuses.Count > 0)
+            {
+                query = query.Where(x => input.Statuses.Contains(x.Status));
+            }
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            var res = await AsyncExecuter.ToListAsync(query);
+            return ObjectMapper.Map<List<AppleId>, List<AppleIdExcelModel>>(res);
+        }
+
+        [Authorize]
+        public async Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
+            var groupBy = query.GroupBy(x => x.Status).Select(x => new AppleIdStatusSelectionDto()
+            {
+                Text = x.Key.ToString(),
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(groupBy);
+            return res;
+        }
+
+        [Authorize(GmailServerPermissions.AppleIds.Statistic)]
+        public async Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleStatisticFilterDto input)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            var queryGroupBy = query.GroupBy(x => new { Username = x.Username }).Select(g => new AppleIdStatisticDto()
+            {
+                Username = g.Key.Username,
+                Total = g.Count(),
+                Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
+                Completed = g.Where(x => x.Status == AppleIdStatus.Completed).Count(),
+                Pending = g.Where(x => x.Status == AppleIdStatus.Pending).Count(),
+                WrongPass = g.Where(x => x.Status == AppleIdStatus.WrongPass).Count(),
+                Subed = g.Where(x => x.Status == AppleIdStatus.Subed).Count(),
+                Locked1 = g.Where(x => x.Status == AppleIdStatus.Locked1).Count(),
+                Locked2 = g.Where(x => x.Status == AppleIdStatus.Locked2).Count(),
+                Review = g.Where(x => x.Status == AppleIdStatus.Review).Count(),
+                Error = g.Where(x => x.Status == AppleIdStatus.Error).Count(),
+                Unknown = g.Where(x => x.Status == AppleIdStatus.Unknown).Count()
+            });
+
+            var count = await AsyncExecuter.CountAsync(queryGroupBy);
+            if (input.MaxResultCount > 0 || input.SkipCount > 0)
+                queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
+
+            var res = await AsyncExecuter.ToListAsync(queryGroupBy);
+            return new PagedResultDto<AppleIdStatisticDto>(count, res);
+        }
+
+        [Authorize(GmailServerPermissions.AppleIds.StatisticDaily)]
+        public async Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new AppleStatisticDailyDto()
+            {
+                Created = g.Key.Created.Date,
+                Total = g.Count(),
+                Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
+                Completed = g.Where(x => x.Status == AppleIdStatus.Completed).Count(),
+                Pending = g.Where(x => x.Status == AppleIdStatus.Pending).Count(),
+                WrongPass = g.Where(x => x.Status == AppleIdStatus.WrongPass).Count(),
+                Subed = g.Where(x => x.Status == AppleIdStatus.Subed).Count(),
+                Locked1 = g.Where(x => x.Status == AppleIdStatus.Locked1).Count(),
+                Locked2 = g.Where(x => x.Status == AppleIdStatus.Locked2).Count(),
+                Review = g.Where(x => x.Status == AppleIdStatus.Review).Count(),
+                Error = g.Where(x => x.Status == AppleIdStatus.Error).Count(),
+                Unknown = g.Where(x => x.Status == AppleIdStatus.Unknown).Count()
+            });
+            queryGroupBy = queryGroupBy.OrderByDescending(x => x.Created);
+            var count = await AsyncExecuter.CountAsync(queryGroupBy);
+
+            if (input.MaxResultCount > 0 || input.SkipCount > 0)
+                queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
+
+            var res = await AsyncExecuter.ToListAsync(queryGroupBy);
+            return new PagedResultDto<AppleStatisticDailyDto>(count, res);
+        }
+
+        [Authorize(GmailServerPermissions.AppleIds.Statistic)]
+        public async Task<StatisticByUsernameDto> GetStatisticByUsernameAsync()
+        {
+            var query = Repository.AsQueryable();
+            var total = await AsyncExecuter.CountAsync(query);
+            var queryGroupByStatus = query.GroupBy(x => x.Username).Select(x => new StatusPoint()
+            {
+                Name = x.Key.ToString(),
+                Y = x.Count()
+            });
+            var statusPoints = await AsyncExecuter.ToListAsync(queryGroupByStatus);
+            statusPoints.OrderByDescending(x => x.Y).ToList();
+            if (statusPoints.Count > 0)
+            {
+                statusPoints[0].Exploded = true;
+            }
+            return new StatisticByUsernameDto()
+            {
+                Total = total,
+                StatusPoints = statusPoints
+            };
+        }
+
+        [Authorize(GmailServerPermissions.AppleIds.ResetStatus)]
+        public async Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null)
+        {
+            if (statuses.Count > 0)
+            {
+                var query = Repository.AsQueryable();
+                query = query.Where(x => statuses.Contains(x.Status));
+
+                if (hour.HasValue)
+                {
+                    var current = DateTime.Now;
+                    var timeCheck = current.AddHours(-hour.Value);
+                    query = query.Where(x => x.Updated < timeCheck);
+                }
+                var appleIds = await AsyncExecuter.ToListAsync(query);
+                appleIds.ForEach((appleId) =>
+                {
+                    appleId.Status = AppleIdStatus.Ready;
+                    appleId.Updated = DateTime.Now;
+                });
+
+                await Repository.BulkUpdateAsync(appleIds, new List<string>()
+                {
+                    nameof(AppleId.Status),
+                    nameof(AppleId.Updated)
+                });
+            }
         }
     }
 }

@@ -95,18 +95,34 @@ namespace GmailServer.Web.Menus
               );
             }
 
+            var appleId = new ApplicationMenuItem(GmailServerMenus.AppleId, "Apple ID", order: 6, icon: "fa fa-apple");
+
             if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Default))
             {
-                context.Menu.AddItem(
+                appleId.AddItem(
                    new ApplicationMenuItem(
                        GmailServerMenus.AppleId,
                        "Apple ID",
                        "/AppleIds",
                        icon: "fa fa-apple",
-                       order: 6
+                       order: 1
                    )
                );
             }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Statistic))
+            {
+                appleId.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.AppleId,
+                       "Statistics",
+                       "/AppleIds/Statistic",
+                       order: 2
+                   )
+               );
+            }
+
+            context.Menu.AddItem(appleId);
 
             if (await context.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Default))
             {

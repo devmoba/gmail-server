@@ -2,6 +2,7 @@
 using GmailServer.RecoveryEmails;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -59,6 +60,13 @@ namespace GmailServer.Controllers
         public Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync()
         {
             return _recoveryEmailAppService.GetRecoveryEmailRandomAsync();
+        }
+
+        [HttpGet]
+        [Route("getReport")]
+        public Task<RecoveryEmailReportStatusDto> GetRecoveryEmailReportAsync()
+        {
+            return _recoveryEmailAppService.GetRecoveryEmailReportAsync();
         }
     }
 }

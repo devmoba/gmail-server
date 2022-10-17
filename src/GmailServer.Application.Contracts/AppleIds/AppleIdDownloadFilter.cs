@@ -1,16 +1,15 @@
 ﻿using GmailServer.Enums;
 using System;
-using Volo.Abp.Application.Dtos;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GmailServer.AppleIds
 {
-    public class AppleIdFilterDto : PagedAndSortedResultRequestDto
+    public class AppleIdDownloadFilter
     {
         public string Username { get; set; }
 
-        public string Email { get; set; }
-
-        public AppleIdStatus? Status { get; set; }
+        public List<AppleIdStatus> Statuses { get; set; }
 
         public DateTime? CreatedFrom { get; set; }
 

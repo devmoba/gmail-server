@@ -28,6 +28,8 @@
 
         public const string AppleId = Prefix + ".AppledId";
 
+        public const string AppleIdStatistic = Prefix + ".AppleId.Statistic";
+
         public const string GmailResource = Prefix + ".GmailResource";
 
     }

@@ -6,7 +6,9 @@
 @using GmailServer.Localization
 @using GmailServer.Permissions
 @using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.Users
 @inject IPageLayout PageLayout
+@inject ICurrentUser CurrentUser
 @inject IHtmlLocalizer<GmailServerResource> L
 @inject IAuthorizationService AuthorizationService
 @{
@@ -24,6 +26,8 @@
     var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
 </script>
 <abp-script src="/Pages/AppleIds/js/index.js" />
+<abp-script src="/Pages/AppleIds/js/downloadViewModel.js" />
+<abp-script src="/Pages/AppleIds/js/resetStatusViewModel.js" />
 }
 @section styles {
 <abp-style-bundle name="chosen" />
@@ -37,7 +41,7 @@
         white-space: nowrap;
         display: inline-block;
         text-overflow: ellipsis;
-        width: 500px;
+        width: 450px;
     }
 </style>
 }
@@ -49,13 +53,29 @@
                 <h4>Apple ID</h4>
             </abp-column>
             <abp-column size-md="_6">
+                @if (@Model.IsRoleNameAppleIdMember && await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.StatisticDaily))
+                {
+                    <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/AppleIdsStatisticDaily?Username=@CurrentUser.UserName">
+                        <i class="fa fa-calendar-o" aria-hidden="true"></i>&nbsp;Statistics Daily
+                    </a>
+                }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Create))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
                 }
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Download))
+                {
+                    <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/AppleIds/Download">
+                        <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+                    </a>
+                }
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.ResetStatus))
+                {
+                    <abp-button class="float-right btn btn-small btn-danger" id="btnResetStatus" icon="refresh" text="Reset Status" style="margin-right: 15px;"></abp-button>
+                }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Delete))
                 {
-                    <abp-button class="float-right btn btn-small btn-primary" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
+                    <abp-button class="float-right btn btn-small btn-danger" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
                 }
             </abp-column>
         </abp-row>

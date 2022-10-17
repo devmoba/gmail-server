@@ -32,7 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\AppleIds\js\downloadViewModel.js" />
     <None Remove="Pages\AppleIds\js\index.js" />
+    <None Remove="Pages\AppleIds\js\resetStatusViewModel.js" />
+    <None Remove="Pages\AppleIds\js\statistic.js" />
+    <None Remove="Pages\AppleIds\js\statisticDaily.js" />
     <None Remove="Pages\Checkers\js\index.js" />
     <None Remove="Pages\CheckMails\css\index.css" />
     <None Remove="Pages\CheckMails\js\checkMailViewModel.js" />

@@ -127,8 +127,8 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
         {
             var query = Repository.AsQueryable();
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created <= input.CreatedTo.Value);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
 
             var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new GmailReportDto()
             {

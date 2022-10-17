@@ -1,15 +1,16 @@
 ﻿$(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'AppleIds/CreateModal');
-
+    var resetStatusModal = new abp.ModalManager(abp.appPath + 'AppleIds/ResetStatusModal');
+   
     var searchs = [
         { searchDisabled: true },
         { name: "username", options: usernameSelections },
-        { searchDisabled: true },
+        { name: "email" },
         { searchDisabled: true },
         { name: "status", options: appleIdStatusSelections },
         { searchDisabled: true },
-        { searchDisabled: true },
+        { name: "created", enableDateRangeFilter: true },
         { searchDisabled: true },
         { searchDisabled: true }
     ];
@@ -22,7 +23,7 @@
         processing: true,
         serverSide: true,
         paging: true,
-        lengthMenu: [15, 25, 50, 100],
+        lengthMenu: [150, 300, 500, 1000, 2000],
         searching: true,
         autoWidth: false,
         scrollCollapse: true,
@@ -69,7 +70,7 @@
                                 text: l('Delete'),
                                 iconClass: "fas fa-trash-alt",
                                 visible: function (data) {
-                                    return abp.auth.isGranted('GmailPremiumGroup.Delete');
+                                    return abp.auth.isGranted('AppleIdGroup.Delete');
                                 },
                                 confirmMessage: data => l('DeleteConfirm'),
                                 action: data => {
@@ -105,6 +106,16 @@
     $('#createBtn').click((e) => {
         e.preventDefault();
         createModal.open();
+    });
+
+    $('#btnResetStatus').click((e) => {
+        e.preventDefault();
+        resetStatusModal.open();
+    });
+
+    resetStatusModal.onOpen(() => {
+        var viewModel = new ResetStatusViewModel(appleIdStatusSelections);
+        ko.applyBindings(viewModel);
     });
 
     $('#btnRemoveAll').click((e) => {

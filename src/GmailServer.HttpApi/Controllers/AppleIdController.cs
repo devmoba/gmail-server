@@ -1,7 +1,9 @@
 ﻿using GmailServer.AppleIds;
+using GmailServer.AppleIds.Statistics;
 using GmailServer.ControllerInterfaces;
 using GmailServer.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -47,6 +49,13 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
+        [Route("getAppleIdStatusSelection")]
+        public Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username)
+        {
+            return _appleIdAppService.GetAppleIdStatusSelectionAsync(username);
+        }
+
+        [HttpGet]
         [Route("getFirst")]
         public Task<AppleIdDto> GetFirstAppleIdAsync()
         {
@@ -57,6 +66,27 @@ namespace GmailServer.Controllers
         public Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input)
         {
             return _appleIdAppService.GetListAsync(input);
+        }
+
+        [HttpGet]
+        [Route("getStatistic")]
+        public Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleStatisticFilterDto input)
+        {
+            return _appleIdAppService.GetStatisticAsync(input);
+        }
+
+        [HttpGet]
+        [Route("statisticByUsername")]
+        public Task<StatisticByUsernameDto> GetStatisticByUsernameAsync()
+        {
+            return _appleIdAppService.GetStatisticByUsernameAsync();
+        }
+
+        [HttpGet]
+        [Route("getStatisticDaily")]
+        public Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
+        {
+            return _appleIdAppService.GetStatisticDailyAsync(input);
         }
 
         [HttpPut]

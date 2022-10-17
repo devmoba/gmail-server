@@ -23,6 +23,8 @@
 #gmailReportTable_wrapper .dataTables_scrollBody,
 #checkerTable_wrapper .dataTables_scrollBody,
 #gmailTypeTable_wrapper .dataTables_scrollBody,
+#appleIdStatisticTable_wrapper .dataTables_scrollBody,
+#appleIdStatisticDailyTable_wrapper .dataTables_scrollBody,
 #gmailTable_wrapper .dataTables_scrollBody {
     min-height: 500px;
 }
@@ -40,6 +42,8 @@
 #gmailReportTable_wrapper table.dataTable thead tr th input[type="text"],
 #checkerTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailTypeTable_wrapper table.dataTable thead tr th input[type="text"],
+#appleIdStatisticTable_wrapper table.dataTable thead tr th input[type="text"],
+#appleIdStatisticDailyTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailTable_wrapper table.dataTable thead tr th input[type="text"] {
     margin: 0px;
     width: calc(100%);

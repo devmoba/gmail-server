@@ -19,12 +19,13 @@
 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.Dashboard.Home))
 {
 
-@section scripts {
+    @section scripts {
+<abp-script-bundle name="knockout" />
 <abp-script-bundle name="canvasjs" />
 <abp-script src="/Pages/index.js" />
 }
 
-@section styles {
+    @section styles {
 <abp-style src="/Pages/index.css" />
 }
 
@@ -36,19 +37,24 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="recovery-email-info">
-                       <div class="row">
-                           <div class="col-md-12 left-info">
-                               <p class="title">Recovery emails</p>
-                               <p class="total-count">Total @string.Format("{0:#,0}", Model.ReadyCount + Model.CompletedCount)</p>
-                               <p class="status-count">
-                                   <span class="ready">Ready @string.Format("{0:#,0}", Model.ReadyCount)</span>
-                                   <span class="completed">Completed @string.Format("{0:#,0}", Model.CompletedCount)</span>
-                               </p>
-                           </div>
-                          @* <div class="col-md-3 right-info">
-                               <div class="icon"><i class="fa fa-registered" aria-hidden="true"></i></div>
-                           </div>*@
-                       </div>
+                        <div class="row">
+                            <div class="col-md-12 left-info">
+                                <p class="title">Recovery emails</p>
+                                @*<p class="total-count">Total @string.Format("{0:#,0}", Model.RecoveryEmailReportStatus.ReadyCount + Model.RecoveryEmailReportStatus.CompletedCount)</p>
+                                <p class="status-count">
+                                    <span class="ready">Ready @string.Format("{0:#,0}", Model.RecoveryEmailReportStatus.ReadyCount)</span>
+                                    <span class="completed">Completed @string.Format("{0:#,0}", Model.RecoveryEmailReportStatus.CompletedCount)</span>
+                                </p>*@
+                                <p class="total-count">Total <span data-bind="number: total"></span></p>
+                                <p class="status-count">
+                                    <span class="ready">Ready <span data-bind="number: readyCount"></span></span>
+                                    <span class="completed">Completed <span data-bind="number: completedCount"></span></span>
+                                </p>
+                            </div>
+                            @* <div class="col-md-3 right-info">
+                                <div class="icon"><i class="fa fa-registered" aria-hidden="true"></i></div>
+                                </div>*@
+                        </div>
                     </div>
                 </div>
             </div>

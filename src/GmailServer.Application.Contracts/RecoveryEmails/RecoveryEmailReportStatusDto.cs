@@ -4,8 +4,8 @@ namespace GmailServer.RecoveryEmails
 {
     public class RecoveryEmailReportStatusDto
     {
-        public RecoveryEmailStatus Status { get; set; }
+        public int ReadyCount { get; set; }
 
-        public int Count { get; set; }
+        public int CompletedCount { get; set; }
     }
 }
