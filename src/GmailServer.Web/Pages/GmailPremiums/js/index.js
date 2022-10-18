@@ -23,7 +23,7 @@ $(function () {
         processing: true,
         serverSide: true,
         paging: true,
-        lengthMenu: [100, 300, 500, 1000, 2000],
+        lengthMenu: [100, 200, 300, 500],
         searching: true,
         autoWidth: false,
         scrollCollapse: true,

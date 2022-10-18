@@ -23,7 +23,7 @@
         processing: true,
         serverSide: true,
         paging: true,
-        lengthMenu: [100, 300, 500, 1000, 2000],
+        lengthMenu: [50, 100, 200, 300],
         searching: true,
         autoWidth: false,
         scrollCollapse: true,
