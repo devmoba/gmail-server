@@ -1,9 +1,12 @@
 using GmailServer.GmailTypes;
+using GmailServer.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GmailServer.Web.Pages.GmailTypes
 {
+    [Authorize(GmailServerPermissions.GmailTypes.Update)]
     public class EditModalModel : GmailServerPageModel
     {
         [HiddenInput]

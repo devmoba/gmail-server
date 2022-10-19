@@ -1,10 +1,13 @@
 using GmailServer.Enums;
+using GmailServer.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
 
 namespace GmailServer.Web.Pages.GmailPremiums
 {
+    [Authorize(GmailServerPermissions.GmailPremiums.Default)]
     public class IndexModel : GmailServerPageModel
     {
         public void OnGet()

@@ -1,11 +1,14 @@
 using GmailServer.Enums;
 using GmailServer.GmailTypes;
+using GmailServer.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
 
 namespace GmailServer.Web.Pages.Gmails
 {
+    [Authorize(GmailServerPermissions.Gmails.Default)]
     public class IndexModel : GmailServerPageModel
     {
         private readonly IGmailTypeAppService gmailTypeAppService;

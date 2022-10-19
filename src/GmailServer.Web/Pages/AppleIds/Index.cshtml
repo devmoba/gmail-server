@@ -53,9 +53,9 @@
                 <h4>Apple ID</h4>
             </abp-column>
             <abp-column size-md="_6">
-                @if (@Model.IsRoleNameAppleIdMember && await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.StatisticDaily))
+                @if (Model.IsRoleNameAppleIdMember && await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.StatisticDaily))
                 {
-                    <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/AppleIdsStatisticDaily?Username=@CurrentUser.UserName">
+                    <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/AppleIds/StatisticDaily?Username=@CurrentUser.UserName">
                         <i class="fa fa-calendar-o" aria-hidden="true"></i>&nbsp;Statistics Daily
                     </a>
                 }

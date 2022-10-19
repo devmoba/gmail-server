@@ -1,9 +1,12 @@
 using GmailServer.AppleIds;
+using GmailServer.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 
 namespace GmailServer.Web.Pages.AppleIds
 {
+    [Authorize(GmailServerPermissions.AppleIds.Statistic)]
     public class StatisticModel : GmailServerPageModel
     {
         private readonly IAppleIdAppService _appleIdAppService;

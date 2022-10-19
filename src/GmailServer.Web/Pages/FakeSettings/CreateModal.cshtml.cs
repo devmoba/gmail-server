@@ -1,10 +1,13 @@
 using GmailServer.FakeSettings;
+using GmailServer.Permissions;
 using GmailServer.Web.Pages.FakeSettings.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GmailServer.Web.Pages.FakeSettings
 {
+    [Authorize(GmailServerPermissions.FakeSettings.Create)]
     public class CreateModalModel : GmailServerPageModel
     {
         [BindProperty]

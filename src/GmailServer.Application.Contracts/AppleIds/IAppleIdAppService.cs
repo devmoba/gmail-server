@@ -32,7 +32,7 @@ namespace GmailServer.AppleIds
 
         Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input);
 
-        Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null);
+        Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null, AppleIdStatus targetStatus = AppleIdStatus.Ready);
 
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
     }

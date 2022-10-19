@@ -108,6 +108,11 @@ namespace GmailServer.Web
             Configure<RazorPagesOptions>(options =>
             {
                 options.Conventions.AuthorizePage("/Gmails", GmailServerPermissions.Gmails.Default);
+                options.Conventions.AuthorizePage("/AppleIds", GmailServerPermissions.AppleIds.Default);
+                options.Conventions.AuthorizePage("/GmailPremiums", GmailServerPermissions.GmailPremiums.Default);
+                options.Conventions.AuthorizePage("/GmailResources", GmailServerPermissions.GmailResources.Default);
+                options.Conventions.AuthorizePage("/RecoveryEmails", GmailServerPermissions.RecoveryEmails.Default);
+                options.Conventions.AuthorizePage("/GmailTypes", GmailServerPermissions.GmailTypes.Default);
                 options.Conventions.AuthorizePage("/Gmails/Download", GmailServerPermissions.Gmails.Download);
                 options.Conventions.AuthorizePage("/FakeSettings", GmailServerPermissions.FakeSettings.Default);
                 options.Conventions.AuthorizePage("/Decrypt", GmailServerPermissions.Decrypts.Default);

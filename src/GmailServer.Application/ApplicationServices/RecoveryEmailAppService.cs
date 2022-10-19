@@ -37,6 +37,7 @@ namespace GmailServer.ApplicationServices
             DeletePolicyName = GmailServerPermissions.RecoveryEmails.Delete;
         }
 
+        [Authorize(GmailServerPermissions.RecoveryEmails.Default)]
         public override async Task<PagedResultDto<RecoveryEmailDto>> GetListAsync(RecoveryEmailFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -58,6 +59,12 @@ namespace GmailServer.ApplicationServices
             var res = ObjectMapper.Map<List<RecoveryEmail>, List<RecoveryEmailDto>>(entities);
 
             return new PagedResultDto<RecoveryEmailDto>(count, res);
+        }
+
+        [Authorize(GmailServerPermissions.RecoveryEmails.Default)]
+        public override Task<RecoveryEmailDto> GetAsync(long id)
+        {
+            return base.GetAsync(id);
         }
 
         public async Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync()
@@ -124,6 +131,12 @@ namespace GmailServer.ApplicationServices
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
+        }
+
+        [Authorize(GmailServerPermissions.RecoveryEmails.Delete)]
+        public override Task DeleteAsync(long id)
+        {
+            return base.DeleteAsync(id);
         }
 
         public async Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync()

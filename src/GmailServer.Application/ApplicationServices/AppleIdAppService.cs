@@ -38,6 +38,7 @@ namespace GmailServer.ApplicationServices
             DeletePolicyName = GmailServerPermissions.AppleIds.Delete;
         }
 
+        [Authorize(GmailServerPermissions.AppleIds.Default)]
         public override async Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -164,6 +165,7 @@ namespace GmailServer.ApplicationServices
             return new AppleIdDto();
         }
 
+        [Authorize]
         public async Task<List<string>> GetUsernameSelectionAsync()
         {
             var query = Repository.GroupBy(x => x.Username).Select(x => x.Key);
@@ -171,6 +173,7 @@ namespace GmailServer.ApplicationServices
             return res;
         }
 
+        [Authorize(GmailServerPermissions.AppleIds.Download)]
         public async Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input)
         {
             var query = Repository.AsQueryable();
@@ -286,7 +289,7 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.AppleIds.ResetStatus)]
-        public async Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null)
+        public async Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null, AppleIdStatus targetStatus = AppleIdStatus.Ready)
         {
             if (statuses.Count > 0)
             {
@@ -302,7 +305,7 @@ namespace GmailServer.ApplicationServices
                 var appleIds = await AsyncExecuter.ToListAsync(query);
                 appleIds.ForEach((appleId) =>
                 {
-                    appleId.Status = AppleIdStatus.Ready;
+                    appleId.Status = targetStatus;
                     appleId.Updated = DateTime.Now;
                 });
 

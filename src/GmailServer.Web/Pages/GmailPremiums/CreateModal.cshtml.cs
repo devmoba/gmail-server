@@ -1,10 +1,13 @@
 using GmailServer.GmailPremiums;
+using GmailServer.Permissions;
 using GmailServer.Web.Pages.GmailPremiums.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GmailServer.Web.Pages.GmailPremiums
 {
+    [Authorize(GmailServerPermissions.GmailPremiums.Create)]
     public class CreateModalModel : GmailServerPageModel
     {
         [BindProperty]

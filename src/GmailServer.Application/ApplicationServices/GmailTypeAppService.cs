@@ -35,6 +35,7 @@ namespace GmailServer.ApplicationServices
             DeletePolicyName = GmailServerPermissions.GmailTypes.Delete;
         }
 
+        [Authorize(GmailServerPermissions.GmailTypes.Default)]
         public async override Task<PagedResultDto<GmailTypeDto>> GetListAsync(GmailTypeFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -71,6 +72,7 @@ namespace GmailServer.ApplicationServices
             return new PagedResultDto<GmailTypeDto>(count, res);
         }
 
+        [Authorize(GmailServerPermissions.GmailTypes.Create)]
         public override async Task<GmailTypeDto> CreateAsync(CreateUpdateGmailTypeDto input)
         {
             try
@@ -93,6 +95,7 @@ namespace GmailServer.ApplicationServices
             }
         }
 
+        [Authorize(GmailServerPermissions.GmailTypes.Update)]
         public override async Task<GmailTypeDto> UpdateAsync(long id, CreateUpdateGmailTypeDto input)
         {
             try

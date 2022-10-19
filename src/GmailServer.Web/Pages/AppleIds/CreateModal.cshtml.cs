@@ -1,11 +1,14 @@
 using GmailServer.AppleIds;
+using GmailServer.Permissions;
 using GmailServer.Repositories;
 using GmailServer.Web.Pages.AppleIds.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace GmailServer.Web.Pages.AppleIds
 {
+    [Authorize(GmailServerPermissions.AppleIds.Create)]
     public class CreateModalModel : GmailServerPageModel
     {
         [BindProperty]

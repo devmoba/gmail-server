@@ -39,6 +39,7 @@ namespace GmailServer.ApplicationServices
             DeletePolicyName = GmailServerPermissions.GmailPremiums.Delete;
         }
 
+        [Authorize(GmailServerPermissions.GmailPremiums.Default)]
         public async override Task<PagedResultDto<GmailResourceDto>> GetListAsync(GmailResourceFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -60,6 +61,18 @@ namespace GmailServer.ApplicationServices
             var res = ObjectMapper.Map<List<GmailResource>, List<GmailResourceDto>>(entities);
 
             return new PagedResultDto<GmailResourceDto>(count, res);
+        }
+
+        [Authorize(GmailServerPermissions.GmailPremiums.Default)]
+        public override Task<GmailResourceDto> GetAsync(long id)
+        {
+            return base.GetAsync(id);
+        }
+
+        [Authorize(GmailServerPermissions.GmailPremiums.Update)]
+        public override Task<GmailResourceDto> UpdateAsync(long id, CreateUpdateGmailResourceDto input)
+        {
+            return base.UpdateAsync(id, input);
         }
 
         public async override Task<GmailResourceDto> CreateAsync(CreateUpdateGmailResourceDto input)
@@ -113,6 +126,12 @@ namespace GmailServer.ApplicationServices
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
+        }
+
+        [Authorize(GmailServerPermissions.GmailPremiums.Delete)]
+        public override Task DeleteAsync(long id)
+        {
+            return base.DeleteAsync(id);
         }
 
         public async Task<GmailResourceDto> GetFirstGmailResourceAsync()

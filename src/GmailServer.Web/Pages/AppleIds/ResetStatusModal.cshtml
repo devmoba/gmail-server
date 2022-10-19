@@ -12,10 +12,10 @@
         <abp-modal-header title="Reset Status"></abp-modal-header>
         <abp-modal-body>
            <div class="row" style="padding-top: 15px;">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label>Status</label>
                 </div>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     <div class="row" data-bind="foreach: { data: statuses, as: 'status' }">
                         <div class="col-md-6" style="padding-top: 15px;">
                             <label>
@@ -26,12 +26,21 @@
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding-top: 15px;">
-                <div class="col-md-2">
+            <div class="row" style="padding: 15px 0px;">
+                <div class="col-md-3">
                     <label>Updated hours</label>
                 </div>
                 <div class="col-md-5">
                     <input type="text" name="UpdatedHour" class="form-control" />
+                </div>
+            </div>
+            <div class="row" style="padding-top: 15px; border-top: 2px solid black">
+                <div class="col-md-3">
+                    <label>Target Status (*)</label>
+                </div>
+                <div class="col-md-5">
+                    <select asp-for="TargetStatus" class="form-control"
+                            data-bind="options: targetStatuses, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
                 </div>
             </div>
         </abp-modal-body>

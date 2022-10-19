@@ -1,11 +1,14 @@
 using GmailServer.AppleIds;
 using GmailServer.Enums;
+using GmailServer.Permissions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
 
 namespace GmailServer.Web.Pages.AppleIds
 {
+    [Authorize(GmailServerPermissions.AppleIds.Default)]
     public class IndexModel : GmailServerPageModel
     {
         private readonly IAppleIdAppService _appleIdAppService;
