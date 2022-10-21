@@ -1,13 +1,19 @@
 ﻿function DownloadViewModel(usernames) {
     var self = this;
-
     self.usernames = usernames;
     self.statuses = ko.observable([]);
+    self.createdFrom = ko.observable(null);
+    self.createdTo = ko.observable(null);
     self.selectedUsername = ko.observable(null);
-    self.getStatusByUsername = ko.computed(() => {
+    self.getStatusByConditions = ko.computed(() => {
         var username = self.selectedUsername();
-        gmailServer.controllers.appleId.getAppleIdStatusSelection(username).done((res) => {
+        var createdFrom = self.createdFrom();
+        var createdTo = self.createdTo();
+        //console.log(createdFrom);
+        //console.log(createdTo);
+        gmailServer.controllers.appleId.getAppleIdStatusSelection(username, createdFrom, createdTo).done((res) => {
             self.statuses(res);
+            //console.log(res);
         });
     });
 }

@@ -45,7 +45,7 @@ namespace GmailServer.Repositories
             var dbContext = await GetDbContextAsync();
             var timeCheck = DateTime.Now.AddHours(-timeCheckDelete);
             var appleIds = await dbContext.AppleIds
-                .Where(x => x.Created < timeCheck && x.Status == AppleIdStatus.Completed)
+                .Where(x => x.Created < timeCheck && x.Status == AppleIdStatus.Completed1)
                 .ToListAsync();
             await dbContext.BulkDeleteAsync(appleIds);
         }

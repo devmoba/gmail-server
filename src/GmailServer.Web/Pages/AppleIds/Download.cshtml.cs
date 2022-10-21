@@ -18,7 +18,6 @@ namespace GmailServer.Web.Pages.AppleIds
     [Authorize(GmailServerPermissions.AppleIds.Download)]
     public class DownloadModel : GmailServerPageModel
     {
-        [Required]
         [BindProperty]
         public string Username { get; set; }
 
@@ -30,12 +29,10 @@ namespace GmailServer.Web.Pages.AppleIds
         public string FileName { get; set; }
 
         [BindProperty]
-        [Required]
         [DataType(DataType.Date)]
         public DateTime? CreatedFrom { get; set; }
 
         [BindProperty]
-        [Required]
         [DataType(DataType.Date)]
         public DateTime? CreatedTo { get; set; }
 
@@ -53,6 +50,12 @@ namespace GmailServer.Web.Pages.AppleIds
             {
                 Text = item,
                 Value = item
+            }).ToList();
+
+            usernameSelections.AddFirst(new SelectListItem()
+            {
+                Text = "All Username",
+                Value = string.Empty
             });
 
             var appleIdStatusSelections = Enum.GetValues(typeof(AppleIdStatus)).Cast<AppleIdStatus>()
@@ -68,29 +71,24 @@ namespace GmailServer.Web.Pages.AppleIds
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!string.IsNullOrEmpty(Username))
+            var stream = new MemoryStream();
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var package = new ExcelPackage(stream))
             {
-                var stream = new MemoryStream();
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-                using (var package = new ExcelPackage(stream))
+                var appleIds = await this.appleIdAppService.GetAppleIdExcelModelsAsync(new AppleIdDownloadFilter()
                 {
-                    var appleIds = await this.appleIdAppService.GetAppleIdExcelModelsAsync(new AppleIdDownloadFilter()
-                    {
-                        Username = Username,
-                        Statuses = Statuses,
-                        CreatedFrom = CreatedFrom,
-                        CreatedTo = CreatedTo
-                    });
-                    var workSheet = package.Workbook.Worksheets.Add("Sheet1");
-                    workSheet.Cells.LoadFromCollection(appleIds, true);
-                    package.Save();
-                }
-                stream.Position = 0;
-                return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{FileName}.xlsx");
+                    Username = Username,
+                    Statuses = Statuses,
+                    CreatedFrom = CreatedFrom,
+                    CreatedTo = CreatedTo
+                });
+                var workSheet = package.Workbook.Worksheets.Add("Sheet1");
+                workSheet.Cells.LoadFromCollection(appleIds, true);
+                package.Save();
             }
-
-            return NoContent();
+            stream.Position = 0;
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{FileName}.xlsx");
         }
     }
 }

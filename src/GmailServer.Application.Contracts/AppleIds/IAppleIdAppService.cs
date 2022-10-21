@@ -1,5 +1,6 @@
 ﻿using GmailServer.AppleIds.Statistics;
 using GmailServer.Enums;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -24,7 +25,7 @@ namespace GmailServer.AppleIds
 
         Task<List<string>> GetUsernameSelectionAsync();
 
-        Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username);
+        Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo);
 
         Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input);
 

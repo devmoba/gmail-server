@@ -3,6 +3,7 @@ using GmailServer.AppleIds.Statistics;
 using GmailServer.ControllerInterfaces;
 using GmailServer.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -50,9 +51,9 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getAppleIdStatusSelection")]
-        public Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username)
+        public Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo)
         {
-            return _appleIdAppService.GetAppleIdStatusSelectionAsync(username);
+            return _appleIdAppService.GetAppleIdStatusSelectionAsync(username, createdFrom, createdTo);
         }
 
         [HttpGet]

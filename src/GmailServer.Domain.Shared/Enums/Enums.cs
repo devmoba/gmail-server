@@ -55,7 +55,8 @@
     public enum AppleIdStatus
     {
         Ready = 0,
-        Completed = 1,
+        Completed1 = 1,
+        Completed2 = 10,
         Pending = 2,
         WrongPass = 3,
         Subed = 4,

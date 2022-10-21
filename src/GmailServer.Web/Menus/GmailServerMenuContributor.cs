@@ -104,7 +104,6 @@ namespace GmailServer.Web.Menus
                        GmailServerMenus.AppleId,
                        "Apple ID",
                        "/AppleIds",
-                       icon: "fa fa-apple",
                        order: 1
                    )
                );
@@ -118,6 +117,18 @@ namespace GmailServer.Web.Menus
                        "Statistics",
                        "/AppleIds/Statistic",
                        order: 2
+                   )
+               );
+            }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Download))
+            {
+                appleId.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.AppleId,
+                       "Download",
+                       "/AppleIds/Download",
+                       order: 3
                    )
                );
             }

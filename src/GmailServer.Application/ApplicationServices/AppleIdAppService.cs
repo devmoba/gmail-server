@@ -46,8 +46,8 @@ namespace GmailServer.ApplicationServices
             //    query = Repository.FullTextSearch(query, x => x.Email, input.Email);
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created <= input.CreatedTo.Value);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
 
             var currentUser = CurrentUser;
             if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
@@ -155,7 +155,7 @@ namespace GmailServer.ApplicationServices
         public async Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status)
         {
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
-            if (appleId != null && appleId.Status != AppleIdStatus.Completed)
+            if (appleId != null && appleId.Status != AppleIdStatus.Completed1)
             {
                 appleId.Status = status;
                 appleId.Updated = DateTime.Now;
@@ -183,20 +183,23 @@ namespace GmailServer.ApplicationServices
                 query = query.Where(x => input.Statuses.Contains(x.Status));
             }
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
 
             var res = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<AppleId>, List<AppleIdExcelModel>>(res);
         }
 
         [Authorize]
-        public async Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username)
+        public async Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo)
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
+            query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
+            query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
+
             var groupBy = query.GroupBy(x => x.Status).Select(x => new AppleIdStatusSelectionDto()
             {
-                Text = x.Key.ToString(),
+                Text = $"{x.Key.ToString()} | {x.Count()}",
                 Value = x.Key
             });
             var res = await AsyncExecuter.ToListAsync(groupBy);
@@ -213,7 +216,7 @@ namespace GmailServer.ApplicationServices
                 Username = g.Key.Username,
                 Total = g.Count(),
                 Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
-                Completed = g.Where(x => x.Status == AppleIdStatus.Completed).Count(),
+                Completed = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
                 Pending = g.Where(x => x.Status == AppleIdStatus.Pending).Count(),
                 WrongPass = g.Where(x => x.Status == AppleIdStatus.WrongPass).Count(),
                 Subed = g.Where(x => x.Status == AppleIdStatus.Subed).Count(),
@@ -245,7 +248,7 @@ namespace GmailServer.ApplicationServices
                 Created = g.Key.Created.Date,
                 Total = g.Count(),
                 Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
-                Completed = g.Where(x => x.Status == AppleIdStatus.Completed).Count(),
+                Completed = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
                 Pending = g.Where(x => x.Status == AppleIdStatus.Pending).Count(),
                 WrongPass = g.Where(x => x.Status == AppleIdStatus.WrongPass).Count(),
                 Subed = g.Where(x => x.Status == AppleIdStatus.Subed).Count(),
