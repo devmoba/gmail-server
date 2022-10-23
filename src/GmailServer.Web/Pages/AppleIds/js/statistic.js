@@ -38,6 +38,7 @@
         { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true },
+        { searchDisabled: true },
     ];
 
     devmoba.datatables.enableIndividualColumnSearch("#appleIdStatisticTable", searchs);
@@ -75,13 +76,13 @@
             },
             {
                 orderable: false,
-                targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
                 render: function (data, type, row, meta) {
                     return data;
                 }
             },
             {
-                targets: [13],
+                targets: [14],
                 rowAction: {
                     items:
                         [
@@ -102,7 +103,8 @@
             { data: "username", width: "200px" },
             { data: "total", width: "150px" },
             { data: "ready", width: "150px" },
-            { data: "completed", width: "150px" },
+            { data: "completed1", width: "150px" },
+            { data: "completed2", width: "150px" },
             { data: "pending", width: "150px" },
             { data: "wrongPass", width: "150px" },
             { data: "subed", width: "150px" },

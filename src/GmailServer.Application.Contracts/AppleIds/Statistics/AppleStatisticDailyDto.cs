@@ -12,7 +12,9 @@ namespace GmailServer.AppleIds.Statistics
 
         public int Ready { get; set; }
 
-        public int Completed { get; set; }
+        public int Completed1 { get; set; }
+
+        public int Completed2 { get; set; }
 
         public int Pending { get; set; }
 

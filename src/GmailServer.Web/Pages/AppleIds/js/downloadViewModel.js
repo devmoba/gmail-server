@@ -15,5 +15,5 @@
             self.statuses(res);
             //console.log(res);
         });
-    });
+    }).extend({ notify: 'always', rateLimit: 700 });
 }

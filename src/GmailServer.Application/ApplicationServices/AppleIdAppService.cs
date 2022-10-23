@@ -80,6 +80,7 @@ namespace GmailServer.ApplicationServices
         {
             var appleId = ObjectMapper.Map<CreateUpdateAppleIdDto, AppleId>(input);
             appleId.Created = DateTime.Now;
+            appleId.Updated = DateTime.Now;
             appleId.Status = Enums.AppleIdStatus.Ready;
             var res = await Repository.InsertAsync(appleId, autoSave: true);
 
@@ -110,7 +111,7 @@ namespace GmailServer.ApplicationServices
                             Status = Enums.AppleIdStatus.Ready,
                             Created = DateTime.Now,
                             Updated = DateTime.Now,
-                            TakenTime = DateTime.Now
+                            //TakenTime = DateTime.Now
                         };
                         entities.Add(entity);
                     }
@@ -132,8 +133,18 @@ namespace GmailServer.ApplicationServices
         public async Task<AppleIdDto> GetFirstAppleIdAsync()
         {
             var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
-            query = query.OrderBy(x => Guid.NewGuid());
+            query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+            query = query.OrderBy(x => x.Updated);
+            //query = query.OrderBy(x => Guid.NewGuid());
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (appleId == null)
+            {
+                var query2 = Repository
+                    .Where(x => x.Status == Enums.AppleIdStatus.Ready)
+                    .OrderBy(x => x.TakenTime);
+                appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
+            }
+
             if (appleId != null)
             {
                 var res = ObjectMapper.Map<AppleId, AppleIdDto>(appleId);
@@ -216,7 +227,8 @@ namespace GmailServer.ApplicationServices
                 Username = g.Key.Username,
                 Total = g.Count(),
                 Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
-                Completed = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
+                Completed1 = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
+                Completed2 = g.Where(x => x.Status == AppleIdStatus.Completed2).Count(),
                 Pending = g.Where(x => x.Status == AppleIdStatus.Pending).Count(),
                 WrongPass = g.Where(x => x.Status == AppleIdStatus.WrongPass).Count(),
                 Subed = g.Where(x => x.Status == AppleIdStatus.Subed).Count(),
@@ -248,7 +260,8 @@ namespace GmailServer.ApplicationServices
                 Created = g.Key.Created.Date,
                 Total = g.Count(),
                 Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
-                Completed = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
+                Completed1 = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
+                Completed2 = g.Where(x => x.Status == AppleIdStatus.Completed2).Count(),
                 Pending = g.Where(x => x.Status == AppleIdStatus.Pending).Count(),
                 WrongPass = g.Where(x => x.Status == AppleIdStatus.WrongPass).Count(),
                 Subed = g.Where(x => x.Status == AppleIdStatus.Subed).Count(),
