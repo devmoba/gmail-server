@@ -73,13 +73,21 @@ namespace GmailServer.ApplicationServices
 
         public override async Task<GmailPremiumDto> CreateAsync(CreateUpdateGmailPremiumDto input)
         {
-            var gmailPremium = ObjectMapper.Map<CreateUpdateGmailPremiumDto, GmailPremium>(input);
-            gmailPremium.Created = DateTime.Now;
-            gmailPremium.Status = Enums.GmailPremiumStatus.Ready;
-            gmailPremium.RecoveryEmail = string.IsNullOrEmpty(input.RecoveryEmail) ? string.Empty : input.RecoveryEmail;
-            var res = await Repository.InsertAsync(gmailPremium, autoSave: true);
+            if (CommonMethod.IsValidEmail(input.Email))
+            {
+                var gmailPremium = ObjectMapper.Map<CreateUpdateGmailPremiumDto, GmailPremium>(input);
+                gmailPremium.Created = DateTime.Now;
+                gmailPremium.Status = Enums.GmailPremiumStatus.Ready;
+                gmailPremium.RecoveryEmail = string.IsNullOrEmpty(input.RecoveryEmail) ? string.Empty : input.RecoveryEmail;
+                var res = await Repository.InsertAsync(gmailPremium, autoSave: true);
 
-            return await MapToGetOutputDtoAsync(res);
+                return await MapToGetOutputDtoAsync(res);
+            }
+            else
+            {
+                throw new UserFriendlyException($"{input.Email} - invalidate!");
+            }
+           
         }
 
         [Authorize(GmailServerPermissions.GmailPremiums.Create)]
@@ -149,7 +157,7 @@ namespace GmailServer.ApplicationServices
 
         private bool ValidateGmailPremiumInput(string str)
         {
-            return Regex.IsMatch(str, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\|(.+)");
+            return Regex.IsMatch(str, @"^(\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)\|(.+)");
 
         }
     }

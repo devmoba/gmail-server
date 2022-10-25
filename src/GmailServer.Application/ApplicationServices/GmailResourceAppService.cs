@@ -77,12 +77,20 @@ namespace GmailServer.ApplicationServices
 
         public async override Task<GmailResourceDto> CreateAsync(CreateUpdateGmailResourceDto input)
         {
-            var gmailResource = ObjectMapper.Map<CreateUpdateGmailResourceDto, GmailResource>(input);
-            gmailResource.Created = DateTime.Now;
-            gmailResource.Status = Enums.GmailResourceStatus.Ready;
-            var res = await Repository.InsertAsync(gmailResource, autoSave: true);
+            if (CommonMethod.IsValidEmail(input.Email))
+            {
+                var gmailResource = ObjectMapper.Map<CreateUpdateGmailResourceDto, GmailResource>(input);
+                gmailResource.Created = DateTime.Now;
+                gmailResource.Status = Enums.GmailResourceStatus.Ready;
+                var res = await Repository.InsertAsync(gmailResource, autoSave: true);
 
-            return await MapToGetOutputDtoAsync(res);
+                return await MapToGetOutputDtoAsync(res);
+            }
+            else
+            {
+                throw new UserFriendlyException($"{input.Email} - invalidate!");
+            }
+           
         }
 
         [Authorize(GmailServerPermissions.GmailPremiums.Create)]
@@ -153,8 +161,7 @@ namespace GmailServer.ApplicationServices
 
         private bool ValidateGmailResourceInput(string str)
         {
-            return Regex.IsMatch(str, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\|(.+)");
-
+            return Regex.IsMatch(str, @"^(\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)\|(.+)");
         }
 
         public async Task<GmailResourceDto> UpdateStatusAsync(string email, GmailResourceStatus status)

@@ -78,13 +78,19 @@ namespace GmailServer.ApplicationServices
 
         public async override Task<AppleIdDto> CreateAsync(CreateUpdateAppleIdDto input)
         {
-            var appleId = ObjectMapper.Map<CreateUpdateAppleIdDto, AppleId>(input);
-            appleId.Created = DateTime.Now;
-            appleId.Updated = DateTime.Now;
-            appleId.Status = Enums.AppleIdStatus.Ready;
-            var res = await Repository.InsertAsync(appleId, autoSave: true);
-
-            return await MapToGetOutputDtoAsync(res);
+            if (CommonMethod.IsValidEmail(input.Email))
+            {
+                var appleId = ObjectMapper.Map<CreateUpdateAppleIdDto, AppleId>(input);
+                appleId.Created = DateTime.Now;
+                appleId.Updated = DateTime.Now;
+                appleId.Status = Enums.AppleIdStatus.Ready;
+                var res = await Repository.InsertAsync(appleId, autoSave: true);
+                return await MapToGetOutputDtoAsync(res);
+            }
+            else
+            {
+                throw new UserFriendlyException($"{input.Email} - invalidate!");
+            }
         }
 
         [Authorize(GmailServerPermissions.AppleIds.Create)]
@@ -157,9 +163,24 @@ namespace GmailServer.ApplicationServices
             return new AppleIdDto();
         }
 
+        public async Task<AppleIdDto> GetByStatusAsync(AppleIdStatus status)
+        {
+            var query = Repository.Where(x => x.Status == status);
+            query = query.OrderBy(x => x.TakenTime);
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (appleId != null)
+            {
+                var res = ObjectMapper.Map<AppleId, AppleIdDto>(appleId);
+                appleId.TakenTime = DateTime.Now;
+                await Repository.UpdateAsync(appleId, autoSave: true);
+                return res;
+            }
+            return new AppleIdDto();
+        }
+
         private bool ValidateAppleIdInput(string str)
         {
-            return Regex.IsMatch(str, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\|(.+)");
+            return Regex.IsMatch(str, @"^(\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)\|(.+)");
 
         }
 

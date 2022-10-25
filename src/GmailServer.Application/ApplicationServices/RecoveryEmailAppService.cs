@@ -90,12 +90,19 @@ namespace GmailServer.ApplicationServices
 
         public override async Task<RecoveryEmailDto> CreateAsync(CreateUpdateRecoveryEmailDto input)
         {
-            var recoveryEmail = ObjectMapper.Map<CreateUpdateRecoveryEmailDto, RecoveryEmail>(input);
-            recoveryEmail.Created = DateTime.Now;
-            recoveryEmail.Status = RecoveryEmailStatus.Ready;
-            var res = await Repository.InsertAsync(recoveryEmail, autoSave: true);
+            if (CommonMethod.IsValidEmail(input.Email))
+            {
+                var recoveryEmail = ObjectMapper.Map<CreateUpdateRecoveryEmailDto, RecoveryEmail>(input);
+                recoveryEmail.Created = DateTime.Now;
+                recoveryEmail.Status = RecoveryEmailStatus.Ready;
+                var res = await Repository.InsertAsync(recoveryEmail, autoSave: true);
 
-            return await MapToGetOutputDtoAsync(res);
+                return await MapToGetOutputDtoAsync(res);
+            }
+            else
+            {
+                throw new UserFriendlyException($"{input.Email} - invalidate!");
+            }
         }
 
         [Authorize(GmailServerPermissions.RecoveryEmails.Create)]

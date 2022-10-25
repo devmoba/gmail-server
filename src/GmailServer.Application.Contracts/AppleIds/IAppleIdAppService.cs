@@ -21,6 +21,8 @@ namespace GmailServer.AppleIds
 
         Task<AppleIdDto> GetFirstAppleIdAsync();
 
+        Task<AppleIdDto> GetByStatusAsync(AppleIdStatus status);
+
         Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
 
         Task<List<string>> GetUsernameSelectionAsync();
