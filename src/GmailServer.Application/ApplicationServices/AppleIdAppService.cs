@@ -239,7 +239,7 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.AppleIds.Statistic)]
-        public async Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleStatisticFilterDto input)
+        public async Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleIdStatisticFilterDto input)
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
@@ -269,14 +269,14 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.AppleIds.StatisticDaily)]
-        public async Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
+        public async Task<PagedResultDto<AppleIdStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
             query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
 
-            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new AppleStatisticDailyDto()
+            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new AppleIdStatisticDailyDto()
             {
                 Created = g.Key.Created.Date,
                 Total = g.Count(),
@@ -299,7 +299,7 @@ namespace GmailServer.ApplicationServices
                 queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
-            return new PagedResultDto<AppleStatisticDailyDto>(count, res);
+            return new PagedResultDto<AppleIdStatisticDailyDto>(count, res);
         }
 
         [Authorize(GmailServerPermissions.AppleIds.Statistic)]

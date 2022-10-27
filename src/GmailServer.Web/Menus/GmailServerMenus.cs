@@ -32,5 +32,7 @@
 
         public const string GmailResource = Prefix + ".GmailResource";
 
+        public const string GmailResourceStatistic = Prefix + ".GmailResource.Statistic";
+
     }
 }

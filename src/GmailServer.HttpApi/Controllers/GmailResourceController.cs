@@ -1,7 +1,10 @@
 ﻿using GmailServer.ControllerInterfaces;
 using GmailServer.Enums;
 using GmailServer.GmailResources;
+using GmailServer.GmailResources.Statistics;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp;
@@ -21,6 +24,13 @@ namespace GmailServer.Controllers
             _gmailResourceAppService = gmailResourceAppService;
         }
 
+        [HttpPost]
+        [Route("create")]
+        public Task<GmailResourceDto> CreateAsync(CreateUpdateGmailResourceDto input)
+        {
+            return _gmailResourceAppService.CreateAsync(input);
+        }
+
         [HttpDelete]
         [Route("deleteAll")]
         public Task DeleteAllAsync()
@@ -35,6 +45,12 @@ namespace GmailServer.Controllers
             return _gmailResourceAppService.DeleteAsync(id);
         }
 
+        [HttpGet]
+        [Route("getByStatus")]
+        public Task<GmailResourceDto> GetByStatusAsync(GmailResourceStatus status)
+        {
+            return _gmailResourceAppService.GetByStatusAsync(status);
+        }
 
         [HttpGet]
         [Route("getFirst")]
@@ -44,9 +60,37 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
+        [Route("getGmailResourceStatusSelection")]
+        public Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo)
+        {
+            return _gmailResourceAppService.GetGmailResourceStatusSelectionAsync(username, createdFrom, createdTo);
+        }
+
+        [HttpGet]
         public Task<PagedResultDto<GmailResourceDto>> GetListAsync(GmailResourceFilterDto input)
         {
             return _gmailResourceAppService.GetListAsync(input);
+        }
+
+        [HttpGet]
+        [Route("getStatistic")]
+        public Task<PagedResultDto<GmailResourceStatisticDto>> GetStatisticAsync(GmailResourceStatisticFilterDto input)
+        {
+            return _gmailResourceAppService.GetStatisticAsync(input);
+        }
+
+        [HttpGet]
+        [Route("statisticByUsername")]
+        public Task<StatisticByUsernameDto> GetStatisticByUsernameAsync()
+        {
+            return _gmailResourceAppService.GetStatisticByUsernameAsync();
+        }
+
+        [HttpGet]
+        [Route("getStatisticDaily")]
+        public Task<PagedResultDto<GmailResourceStatisticDailyDto>> GetStatisticDailyAsync(GmailResourceStatisticDailyFilterDto input)
+        {
+            return _gmailResourceAppService.GetStatisticDailyAsync(input);
         }
 
         [HttpPut]

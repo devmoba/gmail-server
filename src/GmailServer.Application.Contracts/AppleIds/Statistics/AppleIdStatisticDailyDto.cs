@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GmailServer.AppleIds.Statistics
 {
-    public class AppleStatisticDailyDto
+    public class AppleIdStatisticDailyDto
     {
         public DateTime Created { get; set; }
 

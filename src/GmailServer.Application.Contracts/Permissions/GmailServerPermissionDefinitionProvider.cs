@@ -76,6 +76,10 @@ namespace GmailServer.Permissions
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Create, L("Permission:GmailResource.Create"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Update, L("Permission:GmailResource.Update"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Delete, L("Permission:GmailResource.Delete"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Download, L("Permission:GmailResource.Download"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Statistic, L("Permission:GmailResource.Statistic"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.StatisticDaily, L("Permission:GmailResource.StatisticDaily"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ResetStatus, L("Permission:GmailResource.ResetStatus"));
         }
 
         private static LocalizableString L(string name)

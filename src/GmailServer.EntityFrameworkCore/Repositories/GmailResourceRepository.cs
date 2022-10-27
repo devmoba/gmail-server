@@ -21,6 +21,15 @@ namespace GmailServer.Repositories
             await dbContext.BulkInsertAsync(gmails);
         }
 
+        public async Task BulkUpdateAsync(List<GmailResource> gmailResources, List<string> propertiesToExclude)
+        {
+            var dbContext = await GetDbContextAsync();
+            await dbContext.BulkUpdateAsync(gmailResources, new BulkConfig()
+            {
+                PropertiesToExclude = propertiesToExclude
+            });
+        }
+
         public async Task DeleteAllAsync()
         {
             var dbContext = await GetDbContextAsync();

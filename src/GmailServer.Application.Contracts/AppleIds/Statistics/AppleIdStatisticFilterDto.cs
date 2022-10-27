@@ -2,7 +2,7 @@
 
 namespace GmailServer.AppleIds.Statistics
 {
-    public class AppleStatisticFilterDto : PagedAndSortedResultRequestDto
+    public class AppleIdStatisticFilterDto : PagedAndSortedResultRequestDto
     {
         public string Username { get; set; }
     }

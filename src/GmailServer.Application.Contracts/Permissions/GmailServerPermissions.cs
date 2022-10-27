@@ -105,6 +105,10 @@ namespace GmailServer.Permissions
             public const string Create = PermissionNames.GmailResource_Create;
             public const string Update = PermissionNames.GmailResource_Update;
             public const string Delete = PermissionNames.GmailResource_Delete;
+            public const string Download = PermissionNames.GmailResource_Download;
+            public const string Statistic = PermissionNames.GmailResource_Statistic;
+            public const string StatisticDaily = PermissionNames.GmailResource_StatisticDaily;
+            public const string ResetStatus = PermissionNames.GmailResource_ResetStatus;
         }
     }
 }

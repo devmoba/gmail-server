@@ -1,0 +1,72 @@
+﻿@page
+@model GmailServer.Web.Pages.GmailResources.StatisticModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Gmail Resource Statistics"];
+    PageLayout.Content.Title = L["Gmail Resource Statistics"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.GmailResourceStatistic;
+}
+
+@section scripts {
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<abp-script-bundle name="canvasjs" />
+<script>
+    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
+</script>
+<abp-script src="/Pages/GmailResources/js/statistic.js" />
+}
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    #gmailResourceStatisticTable_wrapper .btn {
+        padding: 5px 10px;
+    }
+    
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Apple ID Statistics</h4>
+            </abp-column>
+            <abp-column size-md="_6">
+                
+            </abp-column>
+        </abp-row> 
+        <abp-row>
+            <abp-column size-md="_8">
+                <div id="chartContainer" style="height: 550px; width: 100%;"></div>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="gmailResourceStatisticTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["#"]</th>
+                    <th>@L["Username"]</th>
+                    <th>@L["Total"]</th>
+                    <th>@L["Ready"]</th>
+                    <th>@L["Success"]</th>
+                    <th>@L["Pending"]</th>
+                    <th>@L["Used"]</th>
+                    <th>@L["Failed"]</th>
+                    <th>@L["Error"]</th>
+                    <th>@L["Unknown"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

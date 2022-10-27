@@ -77,6 +77,7 @@ namespace GmailServer.ApplicationServices
             {
                 var gmailPremium = ObjectMapper.Map<CreateUpdateGmailPremiumDto, GmailPremium>(input);
                 gmailPremium.Created = DateTime.Now;
+                gmailPremium.Updated = DateTime.Now;    
                 gmailPremium.Status = Enums.GmailPremiumStatus.Ready;
                 gmailPremium.RecoveryEmail = string.IsNullOrEmpty(input.RecoveryEmail) ? string.Empty : input.RecoveryEmail;
                 var res = await Repository.InsertAsync(gmailPremium, autoSave: true);
@@ -112,8 +113,7 @@ namespace GmailServer.ApplicationServices
                             Password = gmailPremiumSplit[1],
                             Status = Enums.GmailPremiumStatus.Ready,
                             Created = DateTime.Now,
-                            Updated = DateTime.Now,
-                            TakenTime = DateTime.Now
+                            Updated = DateTime.Now
                         };
                         entity.RecoveryEmail = gmailPremiumSplit.Length >= 3 ? gmailPremiumSplit[2] : string.Empty;
                         entities.Add(entity);

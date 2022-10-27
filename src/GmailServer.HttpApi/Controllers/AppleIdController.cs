@@ -78,7 +78,7 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getStatistic")]
-        public Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleStatisticFilterDto input)
+        public Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleIdStatisticFilterDto input)
         {
             return _appleIdAppService.GetStatisticAsync(input);
         }
@@ -92,7 +92,7 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getStatisticDaily")]
-        public Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
+        public Task<PagedResultDto<AppleIdStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
         {
             return _appleIdAppService.GetStatisticDailyAsync(input);
         }

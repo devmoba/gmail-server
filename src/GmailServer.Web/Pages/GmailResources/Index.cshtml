@@ -16,16 +16,24 @@
 }
 
 @section scripts {
-     <script>
-        var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
-    </script>
-    <abp-script src="/Pages/GmailResources/js/index.js"/>
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+    var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
+    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
+    var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
+</script>
+<abp-script src="/Pages/GmailResources/js/index.js" />
+<abp-script src="/Pages/GmailResources/js/resetStatusViewModel.js" />
+@*<abp-script src="/Pages/GmailResources/js/downloadViewModel.js" />*@
 }
 @section styles {
+<abp-style-bundle name="chosen" />
 <style>
     .modal-dialog {
         max-width: 800px;
     }
+
     .text-ellipsis {
         overflow: hidden;
         white-space: nowrap;
@@ -47,6 +55,16 @@
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
                 }
+                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.Download))
+                {
+                    <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/GmailResources/Download">
+                        <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+                    </a>
+                }
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.ResetStatus))
+                {
+                    <abp-button class="float-right btn btn-small btn-danger" id="btnResetStatus" icon="refresh" text="Reset Status" style="margin-right: 15px;"></abp-button>
+                }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.Delete))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
@@ -56,7 +74,7 @@
     </abp-card-header>
     <abp-card-body>
         <abp-table striped-rows="true" id="gmailResourceTable" class="table-bordered">
-            <thead> 
+            <thead>
                 <tr>
                     <th>@L["ID"]</th>
                     <th>@L["Username"]</th>

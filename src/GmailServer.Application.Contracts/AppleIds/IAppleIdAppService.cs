@@ -31,9 +31,9 @@ namespace GmailServer.AppleIds
 
         Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input);
 
-        Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleStatisticFilterDto input);
+        Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleIdStatisticFilterDto input);
 
-        Task<PagedResultDto<AppleStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input);
+        Task<PagedResultDto<AppleIdStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input);
 
         Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null, AppleIdStatus targetStatus = AppleIdStatus.Ready);
 

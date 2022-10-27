@@ -1,16 +1,14 @@
 ﻿using GmailServer.Enums;
 using System;
-using Volo.Abp.Application.Dtos;
+using System.Collections.Generic;
 
 namespace GmailServer.GmailResources
 {
-    public class GmailResourceFilterDto : PagedAndSortedResultRequestDto
+    public class GmailResourceDownloadFilter
     {
         public string Username { get; set; }
 
-        public string Email { get; set; }
-
-        public GmailResourceStatus? Status { get; set; }
+        public List<GmailResourceStatus> Statuses { get; set; }
 
         public DateTime? CreatedFrom { get; set; }
 

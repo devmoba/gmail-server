@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace GmailServer.Web.Pages.AppleIds
+namespace GmailServer.Web.Pages.GmailResources
 {
-    [Authorize(GmailServerPermissions.AppleIds.StatisticDaily)]
+    [Authorize(GmailServerPermissions.GmailResources.StatisticDaily)]
     public class StatisticDailyModel : GmailServerPageModel
     {
         [BindProperty(SupportsGet = true)]
@@ -16,9 +16,8 @@ namespace GmailServer.Web.Pages.AppleIds
         {
             if (string.IsNullOrEmpty(Username))
             {
-                Response.Redirect("/AppleIds/Statistic");
+                Response.Redirect("/GmailResources/Statistic");
             }
-
             ViewData.Add("usernameParam", SerializeObject(Username));
         }
     }

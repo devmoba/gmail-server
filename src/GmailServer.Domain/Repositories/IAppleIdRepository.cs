@@ -9,7 +9,7 @@ namespace GmailServer.Repositories
     {
         Task BulkInsertAsync(List<AppleId> appleIds);
 
-        Task BulkUpdateAsync(List<AppleId> appleIds, List<string> include);
+        Task BulkUpdateAsync(List<AppleId> appleIds, List<string> propertiesToExclude);
 
         Task DeleteAppleIdCompletedAsync(int timeCheckDelete);
 

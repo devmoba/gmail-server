@@ -67,6 +67,9 @@
         public const string GmailResource_Create = GmailResource + ".Create";
         public const string GmailResource_Update = GmailResource + ".Update";
         public const string GmailResource_Delete = GmailResource + ".Delete";
-
+        public const string GmailResource_Download = GmailResource + ".Download";
+        public const string GmailResource_Statistic = GmailResource + ".Statistic";
+        public const string GmailResource_StatisticDaily = GmailResource + ".StatisticDaily";
+        public const string GmailResource_ResetStatus = GmailResource + ".ResetStatus";
     }
 }

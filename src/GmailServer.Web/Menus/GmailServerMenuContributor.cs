@@ -76,24 +76,51 @@ namespace GmailServer.Web.Menus
                        GmailServerMenus.GmailPremium,
                        "Gmail Premium",
                        "/GmailPremiums",
-                       icon: "fa fa-google-plus-official",
+                       icon: "fa fa-glide",
                        order: 4
                    )
                );
             }
 
+            var gmailResource = new ApplicationMenuItem(GmailServerMenus.GmailResource, "Gmail Resource", order: 5, icon: "fa fa-google-plus-official");
+
             if (await context.IsGrantedAsync(GmailServerPermissions.GmailResources.Default))
             {
-                context.Menu.AddItem(
+                gmailResource.AddItem(
                   new ApplicationMenuItem(
                       GmailServerMenus.GmailResource,
                       "Gmail Resource",
                       "/GmailResources",
-                      icon: "fa fa-glide",
-                      order: 5
+                      order: 1
                   )
               );
             }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.GmailResources.Statistic))
+            {
+                gmailResource.AddItem(
+                  new ApplicationMenuItem(
+                      GmailServerMenus.GmailResource,
+                      "Statistics",
+                      "/GmailResources/Statistic",
+                      order: 2
+                  )
+              );
+            }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.GmailResources.Download))
+            {
+                gmailResource.AddItem(
+                  new ApplicationMenuItem(
+                      GmailServerMenus.GmailResource,
+                      "Download",
+                      "/GmailResources/Download",
+                      order: 3
+                  )
+              );
+            }
+
+            context.Menu.AddItem(gmailResource);
 
             var appleId = new ApplicationMenuItem(GmailServerMenus.AppleId, "Apple ID", order: 6, icon: "fa fa-apple");
 

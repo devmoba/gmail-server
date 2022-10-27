@@ -1,19 +1,25 @@
 ﻿$(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'GmailResources/CreateModal');
+    var resetStatusModal = new abp.ModalManager(abp.appPath + 'GmailResources/ResetStatusModal');
 
-    devmoba.datatables.enableIndividualColumnSearch("#gmailResourceTable", [
+    var searchs = [
         { searchDisabled: true },
-        { name: "username" },
-        { searchDisabled: true },
+        { name: "username", options: usernameSelections },
+        { name: "email" },
         { searchDisabled: true },
         { searchDisabled: true },
         { name: "status", options: gmailResourceStatusSelections },
         { searchDisabled: true },
-        { searchDisabled: true },
+        { name: "created", enableDateRangeFilter: true },
         { searchDisabled: true },
         { searchDisabled: true }
-    ]);
+    ];
+
+    if (isRoleNameAppleIdMember) {
+        searchs[1] = { searchDisabled: true };
+    }
+    devmoba.datatables.enableIndividualColumnSearch("#gmailResourceTable", searchs);
 
     var datatableConfig = abp.libs.datatables.normalizeConfiguration({
         processing: true,
@@ -25,7 +31,10 @@
         scrollCollapse: true,
         orderCellsTop: true,
         order: [[0, "desc"]],
-
+        initComplete: () => {
+            $('select.search_c_1').chosen({ disable_search_threshold: 5, search_contains: true });
+            $('select.search_c_5').chosen({ disable_search_threshold: 5, search_contains: true });
+        },
         ajax: abp.libs.datatables.createAjax(gmailServer.controllers.gmailResource.getList, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();
         }),
@@ -100,6 +109,16 @@
     $('#createBtn').click((e) => {
         e.preventDefault();
         createModal.open();
+    });
+
+    $('#btnResetStatus').click((e) => {
+        e.preventDefault();
+        resetStatusModal.open();
+    });
+
+    resetStatusModal.onOpen(() => {
+        var viewModel = new ResetStatusViewModel(gmailResourceStatusSelections);
+        ko.applyBindings(viewModel);
     });
 
     $('#btnRemoveAll').click((e) => {
