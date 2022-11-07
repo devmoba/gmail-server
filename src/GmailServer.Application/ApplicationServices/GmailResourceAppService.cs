@@ -33,14 +33,14 @@ namespace GmailServer.ApplicationServices
         {
             Repository = repository;
 
-            GetPolicyName = GmailServerPermissions.GmailPremiums.Default;
-            GetListPolicyName = GmailServerPermissions.GmailPremiums.Default;
-            CreatePolicyName = GmailServerPermissions.GmailPremiums.Create;
-            UpdatePolicyName = GmailServerPermissions.GmailPremiums.Update;
-            DeletePolicyName = GmailServerPermissions.GmailPremiums.Delete;
+            GetPolicyName = GmailServerPermissions.GmailResources.Default;
+            GetListPolicyName = GmailServerPermissions.GmailResources.Default;
+            CreatePolicyName = GmailServerPermissions.GmailResources.Create;
+            UpdatePolicyName = GmailServerPermissions.GmailResources.Update;
+            DeletePolicyName = GmailServerPermissions.GmailResources.Delete;
         }
 
-        [Authorize(GmailServerPermissions.GmailPremiums.Default)]
+        [Authorize(GmailServerPermissions.GmailResources.Default)]
         public async override Task<PagedResultDto<GmailResourceDto>> GetListAsync(GmailResourceFilterDto input)
         {
             var query = Repository.AsQueryable();
@@ -74,13 +74,13 @@ namespace GmailServer.ApplicationServices
             return new PagedResultDto<GmailResourceDto>(count, res);
         }
 
-        [Authorize(GmailServerPermissions.GmailPremiums.Default)]
+        [Authorize(GmailServerPermissions.GmailResources.Default)]
         public override Task<GmailResourceDto> GetAsync(long id)
         {
             return base.GetAsync(id);
         }
 
-        [Authorize(GmailServerPermissions.GmailPremiums.Update)]
+        [Authorize(GmailServerPermissions.GmailResources.Update)]
         public override Task<GmailResourceDto> UpdateAsync(long id, CreateUpdateGmailResourceDto input)
         {
             return base.UpdateAsync(id, input);
@@ -105,7 +105,7 @@ namespace GmailServer.ApplicationServices
            
         }
 
-        [Authorize(GmailServerPermissions.GmailPremiums.Create)]
+        [Authorize(GmailServerPermissions.GmailResources.Create)]
         public async Task CreateManyAsync(CreateManyGmailResourceInputDto input)
         {
             var gmailResources = input.Emails.Split("\r\n").ToList();
@@ -141,13 +141,13 @@ namespace GmailServer.ApplicationServices
             }
         }
 
-        [Authorize(GmailServerPermissions.GmailPremiums.Delete)]
+        [Authorize(GmailServerPermissions.GmailResources.Delete)]
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
         }
 
-        [Authorize(GmailServerPermissions.GmailPremiums.Delete)]
+        [Authorize(GmailServerPermissions.GmailResources.Delete)]
         public override Task DeleteAsync(long id)
         {
             return base.DeleteAsync(id);
