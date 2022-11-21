@@ -71,7 +71,9 @@
                 }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.ResetStatus))
                 {
-                    <abp-button class="float-right btn btn-small btn-danger" id="btnResetStatus" icon="refresh" text="Reset Status" style="margin-right: 15px;"></abp-button>
+                    <a class="float-right btn btn-small btn-danger" style="margin-right: 15px;" href="/AppleIds/ResetStatus">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;<span>Reset Status</span>
+                    </a>
                 }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Delete))
                 {

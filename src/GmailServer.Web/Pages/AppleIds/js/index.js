@@ -1,7 +1,6 @@
 ﻿$(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'AppleIds/CreateModal');
-    var resetStatusModal = new abp.ModalManager(abp.appPath + 'AppleIds/ResetStatusModal');
    
     var searchs = [
         { searchDisabled: true },
@@ -113,10 +112,6 @@
         resetStatusModal.open();
     });
 
-    resetStatusModal.onOpen(() => {
-        var viewModel = new ResetStatusViewModel(appleIdStatusSelections);
-        ko.applyBindings(viewModel);
-    });
 
     $('#btnRemoveAll').click((e) => {
         e.preventDefault();

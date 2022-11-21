@@ -51,9 +51,9 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getAppleIdStatusSelection")]
-        public Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo)
+        public Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null)
         {
-            return _appleIdAppService.GetAppleIdStatusSelectionAsync(username, createdFrom, createdTo);
+            return _appleIdAppService.GetAppleIdStatusSelectionAsync(username, createdFrom, createdTo, updatedHours);
         }
 
         [HttpGet]

@@ -27,7 +27,7 @@ namespace GmailServer.AppleIds
 
         Task<List<string>> GetUsernameSelectionAsync();
 
-        Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo);
+        Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null);
 
         Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input);
 
@@ -35,7 +35,7 @@ namespace GmailServer.AppleIds
 
         Task<PagedResultDto<AppleIdStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input);
 
-        Task ResetStatusAsync(List<AppleIdStatus> statuses, int? hour = null, AppleIdStatus targetStatus = AppleIdStatus.Ready);
+        Task ResetStatusAsync(ResetStatusFilter input);
 
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
     }
