@@ -26,7 +26,7 @@ namespace GmailServer.ControllerInterfaces
 
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
 
-        Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo);
+        Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null);
 
         Task<PagedResultDto<GmailResourceStatisticDto>> GetStatisticAsync(GmailResourceStatisticFilterDto input);
 

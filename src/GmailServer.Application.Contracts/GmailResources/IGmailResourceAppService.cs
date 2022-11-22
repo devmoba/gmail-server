@@ -27,7 +27,7 @@ namespace GmailServer.GmailResources
 
         Task<List<string>> GetUsernameSelectionAsync();
 
-        Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo);
+        Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null);
 
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
 
@@ -37,6 +37,8 @@ namespace GmailServer.GmailResources
 
         Task<GmailResourceDto> UpdateStatusAsync(string email, GmailResourceStatus status);
 
-        Task ResetStatusAsync(List<GmailResourceStatus> statuses, int? hour = null, GmailResourceStatus targetStatus = GmailResourceStatus.Ready);
+        Task ResetStatusAsync(ResetStatusFilter input);
+
+        Task DeleteAsync(DeleteFilter input);
     }
 }

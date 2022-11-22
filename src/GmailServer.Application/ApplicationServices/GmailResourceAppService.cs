@@ -222,13 +222,18 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize]
-        public async Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo)
+        public async Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null)
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
             query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
             query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
-
+            if (updatedHours.HasValue)
+            {
+                var current = DateTime.Now;
+                var timeCheck = current.AddHours(-updatedHours.Value);
+                query = query.Where(x => x.Updated < timeCheck);
+            }
             var groupBy = query.GroupBy(x => x.Status).Select(x => new GmailResourceStatusSelectionDto()
             {
                 Text = $"{x.Key.ToString()} | {x.Count()}",
@@ -318,23 +323,28 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.GmailResources.ResetStatus)]
-        public async Task ResetStatusAsync(List<GmailResourceStatus> statuses, int? hour = null, GmailResourceStatus targetStatus = GmailResourceStatus.Ready)
+        public async Task ResetStatusAsync(ResetStatusFilter input)
         {
-            if (statuses.Count > 0)
+            if (input.Statuses.Count > 0)
             {
                 var query = Repository.AsQueryable();
-                query = query.Where(x => statuses.Contains(x.Status));
 
-                if (hour.HasValue)
+                query = query.Where(x => input.Statuses.Contains(x.Status));
+                query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+                query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+                query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+                if (input.UpdatedHours.HasValue)
                 {
                     var current = DateTime.Now;
-                    var timeCheck = current.AddHours(-hour.Value);
+                    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
                     query = query.Where(x => x.Updated < timeCheck);
                 }
+
                 var gmailResources = await AsyncExecuter.ToListAsync(query);
                 gmailResources.ForEach((gmailResource) =>
                 {
-                    gmailResource.Status = targetStatus;
+                    gmailResource.Status = input.TargetStatus;
                     gmailResource.Updated = DateTime.Now;
                 });
 
@@ -360,6 +370,27 @@ namespace GmailServer.ApplicationServices
 
             var res = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<GmailResource>, List<GmailResourceExcelModel>>(res);
+        }
+
+        public async Task DeleteAsync(DeleteFilter input)
+        {
+            var query = Repository.AsQueryable();
+
+            query = query.Where(x => input.Statuses.Contains(x.Status));
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            if (input.UpdatedHours.HasValue)
+            {
+                var current = DateTime.Now;
+                var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                query = query.Where(x => x.Updated < timeCheck);
+            }
+
+            var gmailResources = await AsyncExecuter.ToListAsync(query);
+            await Repository.BulkDeleteAsync(gmailResources);
+
         }
     }
 }

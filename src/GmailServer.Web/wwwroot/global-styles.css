@@ -15,6 +15,10 @@
     overflow: visible !important;
 }
 
+.toggle.btn {
+    border-radius: 5px;
+}
+
 #fakeSettingTable_wrapper .dataTables_scrollBody,
 #recoveryEmailTable_wrapper .dataTables_scrollBody,
 #appleIdTable_wrapper .dataTables_scrollBody,

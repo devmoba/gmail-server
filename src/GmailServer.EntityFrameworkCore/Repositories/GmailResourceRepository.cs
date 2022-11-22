@@ -30,6 +30,12 @@ namespace GmailServer.Repositories
             });
         }
 
+        public async Task BulkDeleteAsync(List<GmailResource> gmailResources)
+        {
+            var dbContext = await GetDbContextAsync();
+            await dbContext.BulkDeleteAsync(gmailResources);
+        }
+
         public async Task DeleteAllAsync()
         {
             var dbContext = await GetDbContextAsync();

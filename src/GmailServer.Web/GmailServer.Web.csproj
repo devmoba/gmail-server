@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\AppleIds\css\reset-status.css" />
     <None Remove="Pages\AppleIds\js\downloadViewModel.js" />
     <None Remove="Pages\AppleIds\js\index.js" />
     <None Remove="Pages\AppleIds\js\resetStatusViewModel.js" />
@@ -45,6 +46,7 @@
     <None Remove="Pages\FakeSettings\js\index.js" />
     <None Remove="Pages\FakeSettings\js\jsonView.js" />
     <None Remove="Pages\GmailPremiums\js\index.js" />
+    <None Remove="Pages\GmailResources\css\reset-status.css" />
     <None Remove="Pages\GmailResources\js\downloadViewModel.js" />
     <None Remove="Pages\GmailResources\js\index.js" />
     <None Remove="Pages\GmailResources\js\resetStatusViewModel.js" />

@@ -1,5 +1,5 @@
 ﻿@page
-@model GmailServer.Web.Pages.AppleIds.ResetStatusModel
+@model GmailServer.Web.Pages.GmailResources.ResetStatusModel
 @using GmailServer.Web.Menus
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -17,32 +17,32 @@
 
 @section scripts {
 <script>
-    var appleIdStatusSelections = @Html.Raw(ViewData["appleIdStatusSelections"]);
+    var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
     var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
 </script>
 <abp-script-bundle name="knockout" />
 <abp-script-bundle name="chosen" />
-<abp-script src="/Pages/AppleIds/js/resetStatusViewModel.js" />
+<abp-script src="/Pages/GmailResources/js/resetStatusViewModel.js" />
 <script>
-    var viewModel = new ResetStatusViewModel(appleIdStatusSelections, usernameSelections);
+    var viewModel = new ResetStatusViewModel(gmailResourceStatusSelections, usernameSelections);
     ko.applyBindings(viewModel);
 </script>
 }
 
 @section styles {
 <abp-style-bundle name="chosen" />
-<abp-style src="/Pages/AppleIds/css/reset-status.css" />
+<abp-style src="/Pages/GmailResources/css/reset-status.css" />
 }
 
 <abp-card>
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
-                <h4>Apple ID</h4>
+                <h4>Gmail Resources</h4>
             </abp-column>
         </abp-row>
     </abp-card-header>
-    <form action="/AppleIds/ResetStatus" method="post" onSubmit="if(!confirm('Are you sure to reset?')){return false;}">
+    <form action="/GmailResources/ResetStatus" method="post" onSubmit="if(!confirm('Are you sure to action?')){return false;}">
         @(Html.AntiForgeryToken())
         <abp-card-body>
             <div class="row">
@@ -73,7 +73,7 @@
                                        class="form-control"
                                        asp-for="@Model.CreatedTo"
                                        autocomplete="off"
-                                       data-bind="textInput: createdTo"/>
+                                       data-bind="textInput: createdTo" />
                             </div>
                         </div>
                     </div>
@@ -102,13 +102,25 @@
                     </div>
                     <div class="row status-cb">
                         <div class="col-md-2">
+                        </div>
+                        <div class="col-md-9">
+                            <label class="lb-checkbox">
+                                <input type="checkbox" name="CheckedOnDelete" data-bind="checked: checkedOnDelete, value: checkedOnDelete" style="transform: scale(1.8);" />
+                                <span style="font-size: 20px; margin-left: 15px;">On Delete</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- ko ifnot: checkedOnDelete -->
+                    <div class="row row-top">
+                        <div class="col-md-2">
                             <label>Target Status (*)</label>
                         </div>
                         <div class="col-md-9">
-                             <select asp-for="TargetStatus" class="form-control"
-                            data-bind="options: targetStatuses, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
+                            <select asp-for="TargetStatus" class="form-control"
+                                    data-bind="options: targetStatuses, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
                         </div>
                     </div>
+                    <!-- /ko -->
                 </div>
             </div>
         </abp-card-body>

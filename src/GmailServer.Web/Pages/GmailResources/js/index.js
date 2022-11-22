@@ -1,7 +1,6 @@
 ﻿$(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'GmailResources/CreateModal');
-    var resetStatusModal = new abp.ModalManager(abp.appPath + 'GmailResources/ResetStatusModal');
 
     var searchs = [
         { searchDisabled: true },
@@ -114,11 +113,6 @@
     $('#btnResetStatus').click((e) => {
         e.preventDefault();
         resetStatusModal.open();
-    });
-
-    resetStatusModal.onOpen(() => {
-        var viewModel = new ResetStatusViewModel(gmailResourceStatusSelections);
-        ko.applyBindings(viewModel);
     });
 
     $('#btnRemoveAll').click((e) => {

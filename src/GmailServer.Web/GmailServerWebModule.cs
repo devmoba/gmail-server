@@ -163,6 +163,11 @@ namespace GmailServer.Web
                      "/libs/codemirror/codemirror.js"
                  ));
 
+                options.ScriptBundles.Add("bootstrap-toggle",
+                bundle => bundle.AddFiles(
+                    "/libs/bootstrap-toggle/bootstrap-toggle.min.js"
+                ));
+
                 options.StyleBundles.Add("chosen", bundle => bundle.AddFiles("/styles/chosen/component-chosen.css"));
 
                 options.StyleBundles.Add("pretty-json",
@@ -174,6 +179,11 @@ namespace GmailServer.Web
                     bundle => bundle.AddFiles(
                        "/libs/codemirror/codemirror.css"
                     ));
+
+                options.StyleBundles.Add("bootstrap-toggle",
+                bundle => bundle.AddFiles(
+                   "/libs/bootstrap-toggle/bootstrap-toggle.min.css"
+                ));
             });
 
         }

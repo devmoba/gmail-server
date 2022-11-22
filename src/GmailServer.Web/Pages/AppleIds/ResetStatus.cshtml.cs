@@ -21,6 +21,7 @@ namespace GmailServer.Web.Pages.AppleIds
         public string Username { get; set; }
 
         [BindProperty]
+        [Required]
         public List<AppleIdStatus> Statuses { get; set; }
 
         [BindProperty]

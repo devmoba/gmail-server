@@ -61,9 +61,9 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getGmailResourceStatusSelection")]
-        public Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo)
+        public Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null)
         {
-            return _gmailResourceAppService.GetGmailResourceStatusSelectionAsync(username, createdFrom, createdTo);
+            return _gmailResourceAppService.GetGmailResourceStatusSelectionAsync(username, createdFrom, createdTo, updatedHours);
         }
 
         [HttpGet]
