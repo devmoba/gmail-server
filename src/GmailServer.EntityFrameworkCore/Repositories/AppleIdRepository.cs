@@ -19,6 +19,12 @@ namespace GmailServer.Repositories
         {
         }
 
+        public async Task BulkDeleteAsync(List<AppleId> appleIds)
+        {
+            var dbContext = await GetDbContextAsync();
+            await dbContext.BulkDeleteAsync(appleIds);
+        }
+
         public async Task BulkInsertAsync(List<AppleId> appleIds)
         {
             var dbContext = await GetDbContextAsync();

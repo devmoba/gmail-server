@@ -84,7 +84,6 @@ namespace GmailServer.Web.Pages.GmailResources
                     {
                         Username = Username,
                         Statuses = Statuses,
-                        TargetStatus = TargetStatus,
                         CreatedFrom = CreatedFrom,
                         CreatedTo = CreatedTo,
                         UpdatedHours = UpdatedHours

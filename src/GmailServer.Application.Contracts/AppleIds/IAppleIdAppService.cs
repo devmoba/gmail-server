@@ -38,5 +38,7 @@ namespace GmailServer.AppleIds
         Task ResetStatusAsync(ResetStatusFilter input);
 
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
+
+        Task DeleteAsync(DeleteFilter input);
     }
 }

@@ -102,13 +102,25 @@
                     </div>
                     <div class="row status-cb">
                         <div class="col-md-2">
+                        </div>
+                        <div class="col-md-9">
+                            <label class="lb-checkbox">
+                                <input type="checkbox" name="CheckedOnDelete" data-bind="checked: checkedOnDelete, value: checkedOnDelete" style="transform: scale(1.8);" />
+                                <span style="font-size: 20px; margin-left: 15px;">On Delete</span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- ko ifnot: checkedOnDelete -->
+                    <div class="row row-top">
+                        <div class="col-md-2">
                             <label>Target Status (*)</label>
                         </div>
                         <div class="col-md-9">
-                             <select asp-for="TargetStatus" class="form-control"
-                            data-bind="options: targetStatuses, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
+                            <select asp-for="TargetStatus" class="form-control"
+                                    data-bind="options: targetStatuses, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
                         </div>
                     </div>
+                    <!-- /ko -->
                 </div>
             </div>
         </abp-card-body>

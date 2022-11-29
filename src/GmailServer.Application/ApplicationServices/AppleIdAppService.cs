@@ -362,5 +362,25 @@ namespace GmailServer.ApplicationServices
                 });
             }
         }
+
+        public async Task DeleteAsync(DeleteFilter input)
+        {
+            var query = Repository.AsQueryable();
+
+            query = query.Where(x => input.Statuses.Contains(x.Status));
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            if (input.UpdatedHours.HasValue)
+            {
+                var current = DateTime.Now;
+                var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                query = query.Where(x => x.Updated < timeCheck);
+            }
+
+            var appleIds = await AsyncExecuter.ToListAsync(query);
+            await Repository.BulkDeleteAsync(appleIds);
+        }
     }
 }

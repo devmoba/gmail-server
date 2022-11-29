@@ -39,6 +39,10 @@ namespace GmailServer.Web.Pages.AppleIds
         [DataType(DataType.Date)]
         public DateTime? CreatedTo { get; set; }
 
+        [BindProperty]
+
+        public bool CheckedOnDelete { get; set; }
+
         private readonly IAppleIdAppService appleIdAppService;
 
         public ResetStatusModel(IAppleIdAppService appleIdAppService)
@@ -75,15 +79,29 @@ namespace GmailServer.Web.Pages.AppleIds
         {
             if (Statuses.Count > 0)
             {
-                await this.appleIdAppService.ResetStatusAsync(new ResetStatusFilter()
+                if (CheckedOnDelete)
                 {
-                    Username = Username,
-                    Statuses = Statuses,
-                    TargetStatus = TargetStatus,
-                    CreatedFrom = CreatedFrom,
-                    CreatedTo = CreatedTo,
-                    UpdatedHours = UpdatedHours
-                });
+                    await this.appleIdAppService.DeleteAsync(new DeleteFilter()
+                    {
+                        Username = Username,
+                        Statuses = Statuses,
+                        CreatedFrom = CreatedFrom,
+                        CreatedTo = CreatedTo,
+                        UpdatedHours = UpdatedHours
+                    });
+                }
+                else
+                {
+                    await this.appleIdAppService.ResetStatusAsync(new ResetStatusFilter()
+                    {
+                        Username = Username,
+                        Statuses = Statuses,
+                        TargetStatus = TargetStatus,
+                        CreatedFrom = CreatedFrom,
+                        CreatedTo = CreatedTo,
+                        UpdatedHours = UpdatedHours
+                    });
+                }
             }
             else
             {

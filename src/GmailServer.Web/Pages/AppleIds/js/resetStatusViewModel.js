@@ -7,6 +7,7 @@
     self.createdFrom = ko.observable(null);
     self.createdTo = ko.observable(null);
     self.updatedHours = ko.observable(null).extend({ notify: 'always', rateLimit: 500 });
+    self.checkedOnDelete = ko.observable(false);
     self.selectedUsername = ko.observable(null);
     self.getStatusByConditions = ko.computed(() => {
         var username = self.selectedUsername();

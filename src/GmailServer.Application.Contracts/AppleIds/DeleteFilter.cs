@@ -2,13 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace GmailServer.GmailResources
+namespace GmailServer.AppleIds
 {
     public class DeleteFilter
     {
         public string Username { get; set; }
 
-        public List<GmailResourceStatus> Statuses { get; set; }
+        public List<AppleIdStatus> Statuses { get; set; }
 
         public DateTime? CreatedFrom { get; set; }
 
