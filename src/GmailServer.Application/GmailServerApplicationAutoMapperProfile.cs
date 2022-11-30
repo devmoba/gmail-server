@@ -1,6 +1,7 @@
 using AutoMapper;
 using GmailServer.AppleIds;
 using GmailServer.Checkers;
+using GmailServer.DownloadedApps;
 using GmailServer.Entities;
 using GmailServer.Enums;
 using GmailServer.FakeSettings;
@@ -52,6 +53,13 @@ namespace GmailServer
             CreateMap<GmailType, GmailTypeDto>();
             CreateMap<GmailType, GmailTypeSelectionDto>();
             CreateMap<CreateUpdateGmailTypeDto, GmailType>();
+
+            CreateMap<DownloadedApp, DownloadedAppGetListOutputDto>().AfterMap((a, b) =>
+            {
+                b.AppleId = b.AppleIdFK.HasValue ? a.AppleId.Email : String.Empty;
+            });
+            CreateMap<DownloadedApp, DownloadedAppGetOutputDto>();
+            CreateMap<CreateDownloadedAppDto, DownloadedApp>();
         }
     }
 }

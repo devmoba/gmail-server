@@ -26,6 +26,7 @@ namespace GmailServer.Controllers
 
         [HttpPost]
         [Route("create")]
+        [IgnoreAntiforgeryToken]
         public Task<GmailResourceDto> CreateAsync(CreateUpdateGmailResourceDto input)
         {
             return _gmailResourceAppService.CreateAsync(input);

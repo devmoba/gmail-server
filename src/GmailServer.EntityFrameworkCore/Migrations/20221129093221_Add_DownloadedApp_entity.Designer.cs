@@ -4,15 +4,17 @@ using GmailServer.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace GmailServer.Migrations
 {
     [DbContext(typeof(GmailServerDbContext))]
-    partial class GmailServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221129093221_Add_DownloadedApp_entity")]
+    partial class Add_DownloadedApp_entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,11 +131,6 @@ namespace GmailServer.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(128)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(128)");
-
                     b.Property<string>("ProductId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -141,9 +138,6 @@ namespace GmailServer.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppleIdFK");
-
-                    b.HasIndex("Id")
-                        .HasAnnotation("SqlServer:Include", new[] { "AppId", "ProductId", "Email", "Created" });
 
                     b.ToTable("AppDownloadedApps");
                 });
@@ -2916,7 +2910,7 @@ namespace GmailServer.Migrations
                     b.HasOne("GmailServer.Entities.AppleId", "AppleId")
                         .WithMany("DownloadedApps")
                         .HasForeignKey("AppleIdFK")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.Navigation("AppleId");
                 });

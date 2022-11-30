@@ -62,6 +62,11 @@
         public const string AppleId_StatisticDaily = AppleId + ".StatisticDaily";
         public const string AppleId_ResetStatus = AppleId + ".ResetStatus";
 
+        public const string DownloadedApp = "DownloadedAppGroup";
+        public const string DownloadedApp_Default = DownloadedApp + ".DownloadedApps";
+        public const string DownloadedApp_Create = DownloadedApp + ".Create";
+        public const string DownloadedApp_Delete = DownloadedApp + ".Delete";
+
         public const string GmailResource = "GmailResourceGroup";
         public const string GmailResource_Default = GmailResource + ".GmailResources";
         public const string GmailResource_Create = GmailResource + ".Create";

@@ -98,6 +98,15 @@ namespace GmailServer.Permissions
             public const string ResetStatus = PermissionNames.AppleId_ResetStatus;
         }
 
+        public const string DownloadedAppGroup = PermissionNames.DownloadedApp;
+
+        public static class DownloadedApps
+        {
+            public const string Default = PermissionNames.DownloadedApp_Default;
+            public const string Create = PermissionNames.DownloadedApp_Create;
+            public const string Delete = PermissionNames.DownloadedApp_Delete;
+        }
+
         public const string GmailResourceGroup = PermissionNames.GmailResource;
         public static class GmailResources
         {

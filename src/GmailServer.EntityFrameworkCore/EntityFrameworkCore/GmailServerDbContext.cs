@@ -244,6 +244,24 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.TakenTime).IsRequired();
             });
 
+            builder.Entity<DownloadedApp>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "DownloadedApps", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.AppId).IsRequired();
+                b.Property(x => x.ProductId).IsRequired();
+                b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128);
+                b.Property(x => x.Created).IsRequired();
+                b.HasIndex(x => x.Id).IncludeProperties<DownloadedApp>(da => new
+                {
+                    da.AppId,
+                    da.ProductId,
+                    da.Email,
+                    da.Created
+                });
+                b.HasOne(x => x.AppleId).WithMany(x => x.DownloadedApps).HasForeignKey(x => x.AppleIdFK).OnDelete(DeleteBehavior.SetNull);
+            });
+
             builder.Entity<GmailResource>(b =>
             {
                 b.ToTable(GmailServerConsts.DbTablePrefix + "GmailResources", GmailServerConsts.DbSchema);

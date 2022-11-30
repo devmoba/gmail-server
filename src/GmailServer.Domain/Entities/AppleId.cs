@@ -1,5 +1,6 @@
 ﻿using GmailServer.Enums;
 using System;
+using System.Collections.Generic;
 using Volo.Abp.Domain.Entities;
 
 namespace GmailServer.Entities
@@ -19,5 +20,7 @@ namespace GmailServer.Entities
         public DateTime TakenTime { get; set; }
 
         public AppleIdStatus Status { get; set; }
+
+        public virtual ICollection<DownloadedApp> DownloadedApps { get; set; }
     }
 }

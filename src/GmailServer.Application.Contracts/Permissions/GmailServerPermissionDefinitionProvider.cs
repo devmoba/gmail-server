@@ -71,6 +71,11 @@ namespace GmailServer.Permissions
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.StatisticDaily, L("Permission:AppleIds.StatisticDaily"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.ResetStatus, L("Permission:AppleIds.ResetStatus"));
 
+            var downloadedAppGroup = context.AddGroup(GmailServerPermissions.DownloadedAppGroup, L("Permission:DownloadedAppGroup "));
+            var downloadedAppManagement = downloadedAppGroup.AddPermission(GmailServerPermissions.DownloadedApps.Default, L("Permission:DownloadedApps"));
+            downloadedAppManagement.AddChild(GmailServerPermissions.DownloadedApps.Create, L("Permission:DownloadedApps.Create"));
+            downloadedAppManagement.AddChild(GmailServerPermissions.DownloadedApps.Delete, L("Permission:DownloadedApps.Delete"));
+
             var GmailResourceGroup = context.AddGroup(GmailServerPermissions.GmailResourceGroup, L("Permission:GmailResourceGroup "));
             var GmailResourceManagement = GmailResourceGroup.AddPermission(GmailServerPermissions.GmailResources.Default, L("Permission:GmailResources"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Create, L("Permission:GmailResource.Create"));
