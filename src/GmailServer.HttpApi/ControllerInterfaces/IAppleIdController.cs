@@ -10,19 +10,19 @@ namespace GmailServer.ControllerInterfaces
 {
     public interface IAppleIdController
     {
-        Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input);
+        Task<PagedResultDto<AppleIdGetListOutputDto>> GetListAsync(AppleIdFilterDto input);
 
-        Task<AppleIdDto> GetFirstAppleIdAsync();
-
-        Task<AppleIdDto> GetByStatusAsync(AppleIdStatus status);
+        Task<AppleIdGetOutputDto> GetFirstAppleIdAsync();
+          
+        Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status);
 
         Task DeleteAsync(long id);
 
         Task DeleteAllAsync();
 
-        Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
+        Task<AppleIdGetOutputDto> UpdateStatusAsync(string email, AppleIdStatus status);
 
-        Task<AppleIdDto> CreateAsync(string email, string password, string username);
+        Task<AppleIdGetOutputDto> CreateAsync(string email, string password, string username);
 
         Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null);
 

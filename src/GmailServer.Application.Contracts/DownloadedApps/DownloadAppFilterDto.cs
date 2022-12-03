@@ -16,5 +16,7 @@ namespace GmailServer.DownloadedApps
         public DateTime? CreatedTo { get; set; }
 
         public long? AppleIdFK { get; set; }
+
+        public string AppleId { get; set; }
     }
 }

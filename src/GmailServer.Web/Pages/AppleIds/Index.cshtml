@@ -32,6 +32,10 @@
 @section styles {
 <abp-style-bundle name="chosen" />
 <style>
+    .modal-dialog:has(#downloadedAppDetailTable_wrapper) {
+        max-width: 1800px;
+    }
+
     .modal-dialog {
         max-width: 800px;
     }
@@ -94,6 +98,7 @@
                     <th>@L["Taken Time"]</th>
                     <th>@L["Created"]</th>
                     <th>@L["Updated"]</th>
+                    <th>@L["Apps"]</th>
                     <th>@L["Action"]</th>
                 </tr>
             </thead>

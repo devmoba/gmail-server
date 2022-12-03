@@ -48,6 +48,7 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getByStatus")]
+        [IgnoreAntiforgeryToken]
         public Task<GmailResourceDto> GetByStatusAsync(GmailResourceStatus status)
         {
             return _gmailResourceAppService.GetByStatusAsync(status);
@@ -55,7 +56,8 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getFirst")]
-        public Task<GmailResourceDto> GetFirstGmailPremiumAsync()
+        [IgnoreAntiforgeryToken]
+        public Task<GmailResourceDto> GetFirstGmailResourceAsync()
         {
             return _gmailResourceAppService.GetFirstGmailResourceAsync();
         }
@@ -96,6 +98,7 @@ namespace GmailServer.Controllers
 
         [HttpPut]
         [Route("updateStatus")]
+        [IgnoreAntiforgeryToken]
         public Task<GmailResourceDto> UpdateStatusAsync([Required] string email, [Required] GmailResourceStatus status)
         {
             return _gmailResourceAppService.UpdateStatusAsync(email, status);

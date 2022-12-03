@@ -29,10 +29,14 @@ namespace GmailServer.ApplicationServices
         [Authorize(GmailServerPermissions.DownloadedApps.Default)]
         public async override Task<PagedResultDto<DownloadedAppGetListOutputDto>> GetListAsync(DownloadAppFilterDto input)
         {
-            var query = Repository.AsQueryable();
-            query = query.WhereIf(!string.IsNullOrEmpty(input.ProductId), x => x.Email == input.ProductId.Trim());
-            query = query.WhereIf(!string.IsNullOrEmpty(input.AppId), x => x.Email == input.AppId.Trim());
+            var query = await Repository.WithDetailsAsync(x => x.AppleId);
+            if (!string.IsNullOrEmpty(input.ProductId))
+                query = Repository.FullTextSearch(query, x => x.ProductId, input.ProductId);
+            if (!string.IsNullOrEmpty(input.AppId))
+                query = Repository.FullTextSearch(query, x => x.AppId, input.AppId);
+
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
+            query = query.WhereIf(!string.IsNullOrEmpty(input.AppleId), x => x.AppleId.Email == input.AppleId.ToLower().Trim());
             query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
             query = query.WhereIf(input.AppleIdFK.HasValue, x => x.AppleIdFK == input.AppleIdFK.Value);

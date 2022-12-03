@@ -25,7 +25,7 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("upload")]
-        public Task<AppleIdDto> CreateAsync([Required] string email, [Required] string password, [Required] string username)
+        public Task<AppleIdGetOutputDto> CreateAsync([Required] string email, [Required] string password, [Required] string username)
         {
             return _appleIdAppService.CreateAsync(new CreateUpdateAppleIdDto()
             {
@@ -58,20 +58,20 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getByStatus")]
-        public Task<AppleIdDto> GetByStatusAsync(AppleIdStatus status)
+        public Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status)
         {
             return _appleIdAppService.GetByStatusAsync(status);
         }
 
         [HttpGet]
         [Route("getFirst")]
-        public Task<AppleIdDto> GetFirstAppleIdAsync()
+        public Task<AppleIdGetOutputDto> GetFirstAppleIdAsync()
         {
             return _appleIdAppService.GetFirstAppleIdAsync();
         }
 
         [HttpGet]
-        public Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input)
+        public Task<PagedResultDto<AppleIdGetListOutputDto>> GetListAsync(AppleIdFilterDto input)
         {
             return _appleIdAppService.GetListAsync(input);
         }
@@ -99,7 +99,7 @@ namespace GmailServer.Controllers
 
         [HttpPut]
         [Route("updateStatus")]
-        public Task<AppleIdDto> UpdateStatusAsync([Required] string email, [Required] AppleIdStatus status)
+        public Task<AppleIdGetOutputDto> UpdateStatusAsync([Required] string email, [Required] AppleIdStatus status)
         {
             return _appleIdAppService.UpdateStatusAsync(email, status);
         }

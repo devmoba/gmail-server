@@ -43,6 +43,7 @@
     <None Remove="Pages\CheckMails\js\checkMailViewModel.js" />
     <None Remove="Pages\CheckMails\js\index.js" />
     <None Remove="Pages\Decrypt\js\index.js" />
+    <None Remove="Pages\DownloadedApps\js\index.js" />
     <None Remove="Pages\FakeSettings\js\index.js" />
     <None Remove="Pages\FakeSettings\js\jsonView.js" />
     <None Remove="Pages\GmailPremiums\js\index.js" />

@@ -9,7 +9,8 @@ using Volo.Abp.Application.Services;
 namespace GmailServer.AppleIds
 {
     public interface IAppleIdAppService : ICrudAppService<
-        AppleIdDto, 
+        AppleIdGetOutputDto,
+        AppleIdGetListOutputDto,
         long, 
         AppleIdFilterDto, 
         CreateUpdateAppleIdDto, 
@@ -19,11 +20,11 @@ namespace GmailServer.AppleIds
 
         Task DeleteAllAsync();
 
-        Task<AppleIdDto> GetFirstAppleIdAsync();
+        Task<AppleIdGetOutputDto> GetFirstAppleIdAsync();
 
-        Task<AppleIdDto> GetByStatusAsync(AppleIdStatus status);
+        Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status);
 
-        Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status);
+        Task<AppleIdGetOutputDto> UpdateStatusAsync(string email, AppleIdStatus status);
 
         Task<List<string>> GetUsernameSelectionAsync();
 

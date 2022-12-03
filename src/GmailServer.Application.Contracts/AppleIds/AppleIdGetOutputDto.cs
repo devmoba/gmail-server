@@ -4,7 +4,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace GmailServer.AppleIds
 {
-    public class AppleIdDto : EntityDto<long>
+    public class AppleIdGetOutputDto : EntityDto<long>
     {
         public string Email { get; set; }
 
@@ -19,5 +19,7 @@ namespace GmailServer.AppleIds
         public DateTime TakenTime { get; set; }
 
         public AppleIdStatus Status { get; set; }
+
+        public int? DownloadedAppCount { get; set; }
     }
 }

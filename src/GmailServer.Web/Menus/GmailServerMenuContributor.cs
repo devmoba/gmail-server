@@ -160,6 +160,18 @@ namespace GmailServer.Web.Menus
                );
             }
 
+            if (await context.IsGrantedAsync(GmailServerPermissions.DownloadedApps.Default))
+            {
+                appleId.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.DownloadedApp,
+                       "Apps",
+                       "/DownloadedApps",
+                       order: 4
+                   )
+               );
+            }
+
             context.Menu.AddItem(appleId);
 
             if (await context.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Default))

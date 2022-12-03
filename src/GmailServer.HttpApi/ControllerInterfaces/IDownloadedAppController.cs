@@ -9,5 +9,7 @@ namespace GmailServer.ControllerInterfaces
         Task<DownloadedAppGetOutputDto> CreateAsync(CreateDownloadedAppDto input);
 
         Task<PagedResultDto<DownloadedAppGetListOutputDto>> GetListAsync(DownloadAppFilterDto input);
+
+        Task DeleteAsync(long id);
     }
 }

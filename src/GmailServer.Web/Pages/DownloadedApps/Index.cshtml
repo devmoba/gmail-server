@@ -1,0 +1,71 @@
+﻿@page
+@model GmailServer.Web.Pages.DownloadedApps.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.Users
+@inject IPageLayout PageLayout
+@inject ICurrentUser CurrentUser
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Downloaded Apps"];
+    PageLayout.Content.Title = L["Downloaded Apps"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.DownloadedApp;
+}
+
+@section scripts {
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+    var appleIdStatusSelections = @Html.Raw(ViewData["appleIdStatusSelections"]);
+</script>
+<abp-script src="/Pages/DownloadedApps/js/index.js" />
+}
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    /*.modal-dialog {
+        max-width: 800px;
+    }
+
+    .text-ellipsis {
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        text-overflow: ellipsis;
+        width: 450px;
+    }*/
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Apps</h4>
+            </abp-column>
+            <abp-column size-md="_6">
+                
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="downloadedAppTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["App ID"]</th>
+                    <th>@L["Product ID"]</th>
+                    <th>@L["Email"]</th>
+                    <th>@L["Apple ID"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

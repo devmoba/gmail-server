@@ -187,7 +187,7 @@ namespace GmailServer.ApplicationServices
         public async Task<GmailResourceDto> UpdateStatusAsync(string email, GmailResourceStatus status)
         {
             var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
-            if (gmailResource != null)
+            if (gmailResource != null && gmailResource.Status != GmailResourceStatus.Success)
             {
                 gmailResource.Status = status;
                 gmailResource.Updated = DateTime.Now;

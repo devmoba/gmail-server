@@ -1,10 +1,6 @@
 ﻿using GmailServer.ControllerInterfaces;
 using GmailServer.DownloadedApps;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -25,9 +21,17 @@ namespace GmailServer.Controllers
 
         [HttpPost]
         [Route("create")]
+        [IgnoreAntiforgeryToken]
         public Task<DownloadedAppGetOutputDto> CreateAsync(CreateDownloadedAppDto input)
         {
             return this.downloadedAppAppService.CreateAsync(input);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public Task DeleteAsync(long id)
+        {
+            return this.downloadedAppAppService.DeleteAsync(id);
         }
 
         [HttpGet]

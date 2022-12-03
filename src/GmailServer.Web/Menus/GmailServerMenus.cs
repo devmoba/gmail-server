@@ -30,6 +30,8 @@
 
         public const string AppleIdStatistic = Prefix + ".AppleId.Statistic";
 
+        public const string DownloadedApp = Prefix + ".DownloadedApp";
+
         public const string GmailResource = Prefix + ".GmailResource";
 
         public const string GmailResourceStatistic = Prefix + ".GmailResource.Statistic";

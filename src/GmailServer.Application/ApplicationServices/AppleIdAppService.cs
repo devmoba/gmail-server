@@ -21,7 +21,8 @@ namespace GmailServer.ApplicationServices
     [RemoteService(IsEnabled = false)]
     public class AppleIdAppService : CrudAppService<
         AppleId,
-        AppleIdDto,
+        AppleIdGetOutputDto,
+        AppleIdGetListOutputDto,
         long,
         AppleIdFilterDto,
         CreateUpdateAppleIdDto,
@@ -39,9 +40,9 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.AppleIds.Default)]
-        public override async Task<PagedResultDto<AppleIdDto>> GetListAsync(AppleIdFilterDto input)
+        public override async Task<PagedResultDto<AppleIdGetListOutputDto>> GetListAsync(AppleIdFilterDto input)
         {
-            var query = Repository.AsQueryable();
+            var query = await Repository.WithDetailsAsync(x => x.DownloadedApps);
             //if (!string.IsNullOrEmpty(input.Email))
             //    query = Repository.FullTextSearch(query, x => x.Email, input.Email);
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
@@ -71,12 +72,12 @@ namespace GmailServer.ApplicationServices
 
             var entities = await AsyncExecuter.ToListAsync(query);
 
-            var res = ObjectMapper.Map<List<AppleId>, List<AppleIdDto>>(entities);
+            var res = ObjectMapper.Map<List<AppleId>, List<AppleIdGetListOutputDto>>(entities);
 
-            return new PagedResultDto<AppleIdDto>(count, res);
+            return new PagedResultDto<AppleIdGetListOutputDto>(count, res);
         }
 
-        public async override Task<AppleIdDto> CreateAsync(CreateUpdateAppleIdDto input)
+        public async override Task<AppleIdGetOutputDto> CreateAsync(CreateUpdateAppleIdDto input)
         {
             if (CommonMethod.IsValidEmail(input.Email))
             {
@@ -136,7 +137,7 @@ namespace GmailServer.ApplicationServices
             await Repository.DeleteAllAsync();
         }
 
-        public async Task<AppleIdDto> GetFirstAppleIdAsync()
+        public async Task<AppleIdGetOutputDto> GetFirstAppleIdAsync()
         {
             var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
             query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
@@ -153,29 +154,29 @@ namespace GmailServer.ApplicationServices
 
             if (appleId != null)
             {
-                var res = ObjectMapper.Map<AppleId, AppleIdDto>(appleId);
+                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
                 appleId.Status = Enums.AppleIdStatus.Pending;
                 appleId.TakenTime = DateTime.Now;
                 appleId.Updated = DateTime.Now;
                 await Repository.UpdateAsync(appleId, autoSave: true);
                 return res;
             }
-            return new AppleIdDto();
+            return new AppleIdGetOutputDto();
         }
 
-        public async Task<AppleIdDto> GetByStatusAsync(AppleIdStatus status)
+        public async Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status)
         {
             var query = Repository.Where(x => x.Status == status);
             query = query.OrderBy(x => x.TakenTime);
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
             if (appleId != null)
             {
-                var res = ObjectMapper.Map<AppleId, AppleIdDto>(appleId);
+                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
                 appleId.TakenTime = DateTime.Now;
                 await Repository.UpdateAsync(appleId, autoSave: true);
                 return res;
             }
-            return new AppleIdDto();
+            return new AppleIdGetOutputDto();
         }
 
         private bool ValidateAppleIdInput(string str)
@@ -184,7 +185,7 @@ namespace GmailServer.ApplicationServices
 
         }
 
-        public async Task<AppleIdDto> UpdateStatusAsync(string email, AppleIdStatus status)
+        public async Task<AppleIdGetOutputDto> UpdateStatusAsync(string email, AppleIdStatus status)
         {
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
             if (appleId != null && appleId.Status != AppleIdStatus.Completed1)
@@ -194,7 +195,7 @@ namespace GmailServer.ApplicationServices
                 var res = await Repository.UpdateAsync(appleId);
                 return await MapToGetOutputDtoAsync(res);
             }
-            return new AppleIdDto();
+            return new AppleIdGetOutputDto();
         }
 
         [Authorize]

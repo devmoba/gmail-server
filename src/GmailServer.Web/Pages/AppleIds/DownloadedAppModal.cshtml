@@ -1,0 +1,25 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleIds.DownloadedAppModalModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@{
+    Layout = null;
+}
+<abp-modal>
+    <abp-modal-header title="List of apps downloaded by "></abp-modal-header>
+    <abp-modal-body>
+         <abp-table striped-rows="true" id="downloadedAppDetailTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>App ID</th>
+                    <th>Product ID</th>
+                    <th>Email</th>
+                    <th>Apple ID</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-modal-body>
+</abp-modal>

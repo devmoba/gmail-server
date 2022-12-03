@@ -16,7 +16,7 @@ namespace GmailServer.ControllerInterfaces
 
         Task DeleteAsync(long id);
 
-        Task<GmailResourceDto> GetFirstGmailPremiumAsync();
+        Task<GmailResourceDto> GetFirstGmailResourceAsync();
 
         Task<GmailResourceDto> UpdateStatusAsync(string email, GmailResourceStatus status);
 
