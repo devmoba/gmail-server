@@ -17,6 +17,7 @@
         { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true },
+        { searchDisabled: true }
     ];
 
     devmoba.datatables.enableIndividualColumnSearch("#appleIdStatisticDailyTable", searchs);
@@ -60,7 +61,7 @@
             },
             {
                 orderable: false,
-                targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                 render: function (data, type, row, meta) {
                     return data;
                 }
@@ -68,18 +69,20 @@
         ],
         columns: [
             { data: null, width: "100px" },
-            { data: "created", width: "250px" },
-            { data: "total", width: "150px" },
+            { data: "created", width: "220px" },
+            { data: "total", width: "300px" },
             { data: "ready", width: "150px" },
             { data: "completed1", width: "150px" },
             { data: "completed2", width: "150px" },
-            { data: "pending", width: "150px" },
-            { data: "wrongPass", width: "150px" },
-            { data: "subed", width: "150px" },
-            { data: "locked1", width: "150px" },
-            { data: "locked2", width: "150px" },
-            { data: "review", width: "150px" },
-            { data: "error", width: "150px" },
+            { data: "completed3", width: "150px" },
+            { data: "completed4", width: "150px" },
+            { data: "pending", width: "100px" },
+            { data: "wrongPass", width: "100px" },
+            { data: "subed", width: "100px" },
+            { data: "locked1", width: "100px" },
+            { data: "locked2", width: "100px" },
+            { data: "review", width: "100px" },
+            { data: "error", width: "100px" },
             { data: "unknown", width: "150px" }
         ]
     });

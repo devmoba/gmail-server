@@ -57,6 +57,8 @@
         Ready = 0,
         Completed1 = 1,
         Completed2 = 10,
+        Completed3 = 11,
+        Completed4 = 12,
         Pending = 2,
         WrongPass = 3,
         Subed = 4,

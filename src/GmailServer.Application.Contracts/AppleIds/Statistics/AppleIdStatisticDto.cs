@@ -12,6 +12,10 @@
 
         public int Completed2 { get; set; } 
 
+        public int Completed3 { get; set; } 
+
+        public int Completed4 { get; set; } 
+
         public int Pending { get; set; } 
 
         public int WrongPass { get; set; } 

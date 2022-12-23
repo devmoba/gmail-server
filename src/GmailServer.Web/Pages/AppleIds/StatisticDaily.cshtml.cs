@@ -10,16 +10,24 @@ namespace GmailServer.Web.Pages.AppleIds
     {
         [BindProperty(SupportsGet = true)]
         [Required]
+        [HiddenInput]
         public string Username { get; set; }
 
         public void OnGet()
         {
-            if (string.IsNullOrEmpty(Username))
+            if (CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember))
             {
-                Response.Redirect("/AppleIds/Statistic");
+                ViewData.Add("usernameParam", SerializeObject(CurrentUser.UserName));
+                Username = CurrentUser.UserName;
             }
-
-            ViewData.Add("usernameParam", SerializeObject(Username));
+            else
+            {
+                if (string.IsNullOrEmpty(Username))
+                {
+                    Response.Redirect("/AppleIds/Statistic");
+                }
+                ViewData.Add("usernameParam", SerializeObject(Username));
+            }
         }
     }
 }
