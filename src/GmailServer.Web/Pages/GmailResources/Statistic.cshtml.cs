@@ -23,7 +23,7 @@ namespace GmailServer.Web.Pages.GmailResources
             {
                 Text = item,
                 Value = item
-            });
+            }).ToList();
 
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
         }

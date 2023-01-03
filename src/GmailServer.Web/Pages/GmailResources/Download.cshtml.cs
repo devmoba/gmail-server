@@ -62,7 +62,7 @@ namespace GmailServer.Web.Pages.GmailResources
                {
                    Text = item.ToString(),
                    Value = $"{(int)item}"
-               });
+               }).ToList();
 
             ViewData.Add("gmailResourceStatusSelections", SerializeObject(gmailResourceStatusSelections));
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));

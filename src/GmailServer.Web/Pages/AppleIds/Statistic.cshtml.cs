@@ -18,12 +18,12 @@ namespace GmailServer.Web.Pages.AppleIds
 
         public async void OnGet()
         {
-            var usernames = await _appleIdAppService.GetUsernameSelectionAsync();
-            var usernameSelections = usernames.Select(item => new SelectListItem()
-            {
-                Text = item,
-                Value = item
-            });
+            var usernameSelections = await _appleIdAppService.GetUsernameSelectionAsync();
+            //var usernameSelections = usernames.Select(item => new SelectListItem()
+            //{
+            //    Text = item,
+            //    Value = item
+            //}).ToList();
 
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
         }

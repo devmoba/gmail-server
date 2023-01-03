@@ -6,6 +6,8 @@ namespace GmailServer.AppleIds
 {
     public class UsernameSelectionDto
     {
-        public string Username { get; set; }
+        public string Text { get; set; }
+
+        public string Value { get; set; }
     }
 }

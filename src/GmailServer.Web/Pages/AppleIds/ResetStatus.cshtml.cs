@@ -51,14 +51,14 @@ namespace GmailServer.Web.Pages.AppleIds
         }
         public async Task OnGetAsync()
         {
-            var usernames = await this.appleIdAppService.GetUsernameSelectionAsync();
-            var usernameSelections = usernames.Select(item => new SelectListItem()
-            {
-                Text = item,
-                Value = item
-            }).ToList();
+            var usernameSelections = await this.appleIdAppService.GetUsernameSelectionAsync();
+            //var usernameSelections = usernames.Select(item => new SelectListItem()
+            //{
+            //    Text = item,
+            //    Value = item
+            //}).ToList();
 
-            usernameSelections.AddFirst(new SelectListItem()
+            usernameSelections.AddFirst(new UsernameSelectionDto()
             {
                 Text = "All Username",
                 Value = string.Empty
@@ -69,7 +69,7 @@ namespace GmailServer.Web.Pages.AppleIds
                {
                    Text = item.ToString(),
                    Value = $"{(int)item}"
-               });
+               }).ToList();
 
             ViewData.Add("appleIdStatusSelections", SerializeObject(appleIdStatusSelections));
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));

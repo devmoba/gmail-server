@@ -22,19 +22,19 @@ namespace GmailServer.Web.Pages.AppleIds
 
         public async void OnGet()
         {
-            var usernames = await _appleIdAppService.GetUsernameSelectionAsync();
-            var usernameSelections = usernames.Select(item => new SelectListItem()
-            {
-                Text = item,
-                Value = item
-            });
+            var usernameSelections = await _appleIdAppService.GetUsernameSelectionAsync();
+            //var usernameSelections = usernames.Select(item => new SelectListItem()
+            //{
+            //    Text = item,
+            //    Value = item
+            //}).ToList();
 
             var appleIdStatusSelections = Enum.GetValues(typeof(AppleIdStatus)).Cast<AppleIdStatus>()
                .Select(item => new SelectListItem()
                {
                    Text = item.ToString(),
                    Value = $"{(int)item}"
-               });
+               }).ToList();
 
             var isRoleNameAppleIdMember = CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember);
             IsRoleNameAppleIdMember = isRoleNameAppleIdMember;

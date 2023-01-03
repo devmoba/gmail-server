@@ -17,7 +17,7 @@ namespace GmailServer.Web.Pages.GmailPremiums
               {
                   Text = item.ToString(),
                   Value = $"{(int)item}"
-              });
+              }).ToList();
 
             ViewData.Add("gmailPremiumStatusSelections", SerializeObject(gmailPremiumStatusSelections));
         }

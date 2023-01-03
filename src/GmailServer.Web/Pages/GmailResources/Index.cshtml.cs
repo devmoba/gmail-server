@@ -27,14 +27,14 @@ namespace GmailServer.Web.Pages.GmailResources
                {
                    Text = item.ToString(),
                    Value = $"{(int)item}"
-               });
+               }).ToList();
 
             var usernames = await _gmailResourceAppService.GetUsernameSelectionAsync();
             var usernameSelections = usernames.Select(item => new SelectListItem()
             {
                 Text = item,
                 Value = item
-            });
+            }).ToList();
 
             ViewData.Add("gmailResourceStatusSelections", SerializeObject(gmailResourceStatusSelections));
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));

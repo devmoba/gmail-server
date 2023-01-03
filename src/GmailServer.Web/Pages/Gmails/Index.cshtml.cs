@@ -27,14 +27,14 @@ namespace GmailServer.Web.Pages.Gmails
                 {
                     Text = item.ToString(),
                     Value = $"{(int)item}"
-                });
+                }).ToList();
 
             ViewData.Add("gmailStatusSelections", SerializeObject(gmailStatusSelections));
             ViewData.Add("gmailTypeSelections", SerializeObject(gmailTypeSelections.Select(item => new SelectListItem()
             {
                 Text = item.Name,
                 Value = $"{item.Id}"
-            })));
+            }).ToList()));
         }
     }
 }
