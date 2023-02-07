@@ -1,5 +1,6 @@
 ﻿@page
 @model GmailServer.Web.Pages.AppleIds.IndexModel
+@using GmailServer
 @using GmailServer.Web.Menus
 @using Volo.Abp.AspNetCore.Mvc.UI.Layout
 @using Microsoft.AspNetCore.Mvc.Localization
@@ -57,7 +58,7 @@
                 <h4>Apple ID</h4>
             </abp-column>
             <abp-column size-md="_6">
-                @if (Model.IsRoleNameAppleIdMember && await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.StatisticDaily))
+                @if (CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember) && await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.StatisticDaily))
                 {
                     <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/AppleIds/StatisticDaily?Username=@CurrentUser.UserName">
                         <i class="fa fa-calendar-o" aria-hidden="true"></i>&nbsp;Statistics Daily

@@ -1,6 +1,7 @@
 ﻿$(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'GmailResources/CreateModal');
+    var reupModal = new abp.ModalManager(abp.appPath + 'GmailResources/ReupModal');
 
     var searchs = [
         { searchDisabled: true },
@@ -108,6 +109,11 @@
     $('#createBtn').click((e) => {
         e.preventDefault();
         createModal.open();
+    });
+
+    $('#reupBtn').click((e) => {
+        e.preventDefault();
+        reupModal.open();
     });
 
     $('#btnResetStatus').click((e) => {

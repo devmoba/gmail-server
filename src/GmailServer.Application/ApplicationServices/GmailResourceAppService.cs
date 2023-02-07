@@ -102,7 +102,7 @@ namespace GmailServer.ApplicationServices
             {
                 throw new UserFriendlyException($"{input.Email} - invalidate!");
             }
-           
+
         }
 
         [Authorize(GmailServerPermissions.GmailResources.Create)]
@@ -117,14 +117,15 @@ namespace GmailServer.ApplicationServices
                 if (ValidateGmailResourceInput(gr))
                 {
                     var gpSplit = gr.Split('|').ToArray();
-                    var hasEmail = await Repository.AnyAsync(x => x.Email == gpSplit[0]);
+                    var email = gpSplit[0].Trim().ToLower();
+                    var hasEmail = await Repository.AnyAsync(x => x.Email == email);
                     if (!hasEmail)
                     {
                         var entity = new GmailResource()
                         {
                             Username = input.Username,
-                            Email = gpSplit[0],
-                            Password = gpSplit[1],
+                            Email = email,
+                            Password = gpSplit[1].Trim(),
                             Status = Enums.GmailResourceStatus.Ready,
                             Created = DateTime.Now,
                             Updated = DateTime.Now
@@ -138,6 +139,49 @@ namespace GmailServer.ApplicationServices
             if (entities.Count > 0)
             {
                 await Repository.BulkInsertAsync(entities.DistinctBy(x => x.Email).ToList());
+            }
+        }
+
+        [Authorize(GmailServerPermissions.GmailResources.ReupEmail)]
+        public async Task ReupAsync(ReupGmailResourceInputDto input)
+        {
+            var gmailResources = input.Emails.Split("\r\n").ToList();
+            if (gmailResources.Count == 0)
+                throw new UserFriendlyException("Input empty!");
+            var entities = new List<GmailResource>();
+            foreach (var gr in gmailResources)
+            {
+                if (ValidateGmailResourceInput(gr))
+                {
+                    var gpSplit = gr.Split('|').ToArray();
+                    var email = gpSplit[0].Trim().ToLower();
+                    var oldEmail = await Repository.FirstOrDefaultAsync(x => x.Email == email);
+                    if (oldEmail != null)
+                    {
+                        oldEmail.Password = gpSplit[1].Trim();
+                        oldEmail.Status = Enums.GmailResourceStatus.Ready;
+                        oldEmail.Updated = DateTime.Now;
+                        oldEmail.TakenTime = DateTime.Parse("0001-01-01 00:00:00.0000000");
+                        entities.Add(oldEmail);
+                    }
+                }
+            }
+
+            if (entities.Count > 0)
+            {
+                try
+                {
+                    await Repository.BulkUpdateAsync(entities, new List<string>()
+                    {
+                        nameof(GmailResource.Password),
+                        nameof(GmailResource.Status),
+                        nameof(GmailResource.Updated)
+                    });
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException(ex.Message);
+                }
             }
         }
 

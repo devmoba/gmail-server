@@ -76,5 +76,6 @@
         public const string GmailResource_Statistic = GmailResource + ".Statistic";
         public const string GmailResource_StatisticDaily = GmailResource + ".StatisticDaily";
         public const string GmailResource_ResetStatus = GmailResource + ".ResetStatus";
+        public const string GmailResource_ReupEmail = GmailResource + ".ReupEmail";
     }
 }

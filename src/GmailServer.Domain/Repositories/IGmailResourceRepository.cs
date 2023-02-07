@@ -14,5 +14,6 @@ namespace GmailServer.Repositories
         Task DeleteAllAsync();
 
         Task BulkDeleteAsync(List<GmailResource> gmailResources);
+
     }
 }

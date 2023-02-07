@@ -118,6 +118,7 @@ namespace GmailServer.Permissions
             public const string Statistic = PermissionNames.GmailResource_Statistic;
             public const string StatisticDaily = PermissionNames.GmailResource_StatisticDaily;
             public const string ResetStatus = PermissionNames.GmailResource_ResetStatus;
+            public const string ReupEmail = PermissionNames.GmailResource_ReupEmail;
         }
     }
 }

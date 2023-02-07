@@ -85,6 +85,7 @@ namespace GmailServer.Permissions
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Statistic, L("Permission:GmailResource.Statistic"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.StatisticDaily, L("Permission:GmailResource.StatisticDaily"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ResetStatus, L("Permission:GmailResource.ResetStatus"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ReupEmail, L("Permission:GmailResource.ReupEmail"));
         }
 
         private static LocalizableString L(string name)
