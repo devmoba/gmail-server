@@ -10,6 +10,14 @@ namespace GmailServer.AppleIds
 
         public string Email { get; set; }
 
+        public int? PurchaseNumberMax { get; set; }
+
+        public int? PurchaseNumberMin { get; set; }
+
+        public int? TakenOutNumberMax { get; set; }
+
+        public int? TakenOutNumberMin { get; set; }
+
         public AppleIdStatus? Status { get; set; }
 
         public DateTime? CreatedFrom { get; set; }

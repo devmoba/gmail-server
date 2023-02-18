@@ -31,5 +31,7 @@ namespace GmailServer.ControllerInterfaces
         Task<PagedResultDto<AppleIdStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input);
 
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
+
+        Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email);
     }
 }

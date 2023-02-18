@@ -70,6 +70,20 @@ namespace GmailServer.Controllers
             return _appleIdAppService.GetFirstAppleIdAsync();
         }
 
+        [HttpPut]
+        [Route("increasePurchase")]
+        public Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email)
+        {
+            return _appleIdAppService.IncreasePurchaseAsync(email);
+        }
+
+        [HttpPut]
+        [Route("updateStatus")]
+        public Task<AppleIdGetOutputDto> UpdateStatusAsync([Required] string email, [Required] AppleIdStatus status)
+        {
+            return _appleIdAppService.UpdateStatusAsync(email, status);
+        }
+
         [HttpGet]
         public Task<PagedResultDto<AppleIdGetListOutputDto>> GetListAsync(AppleIdFilterDto input)
         {
@@ -95,13 +109,6 @@ namespace GmailServer.Controllers
         public Task<PagedResultDto<AppleIdStatisticDailyDto>> GetStatisticDailyAsync(AppleIdStatisticDailyFilterDto input)
         {
             return _appleIdAppService.GetStatisticDailyAsync(input);
-        }
-
-        [HttpPut]
-        [Route("updateStatus")]
-        public Task<AppleIdGetOutputDto> UpdateStatusAsync([Required] string email, [Required] AppleIdStatus status)
-        {
-            return _appleIdAppService.UpdateStatusAsync(email, status);
         }
     }
 }

@@ -6,6 +6,8 @@
 
         public int Total { get; set; }
 
+        public int TotalPurchaseNumber { get; set; }
+
         public int Ready { get; set; }
 
         public int Completed1 { get; set; } 

@@ -21,6 +21,10 @@ namespace GmailServer.Entities
 
         public AppleIdStatus Status { get; set; }
 
+        public int PurchaseNumber { get; set; }
+
+        public int TakenOutNumber { get; set; }
+
         public virtual ICollection<DownloadedApp> DownloadedApps { get; set; }
     }
 }

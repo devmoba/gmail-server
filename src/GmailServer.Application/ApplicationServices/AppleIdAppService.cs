@@ -49,6 +49,10 @@ namespace GmailServer.ApplicationServices
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
             query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.PurchaseNumberMax.HasValue, x => x.PurchaseNumber <= input.PurchaseNumberMax.Value);
+            query = query.WhereIf(input.PurchaseNumberMin.HasValue, x => x.PurchaseNumber >= input.PurchaseNumberMin.Value);
+            query = query.WhereIf(input.TakenOutNumberMin.HasValue, x => x.TakenOutNumber >= input.TakenOutNumberMin.Value);
+            query = query.WhereIf(input.TakenOutNumberMax.HasValue, x => x.TakenOutNumber <= input.TakenOutNumberMax.Value);
 
             var currentUser = CurrentUser;
             if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
@@ -83,8 +87,10 @@ namespace GmailServer.ApplicationServices
             {
                 var appleId = ObjectMapper.Map<CreateUpdateAppleIdDto, AppleId>(input);
                 appleId.Created = DateTime.Now;
-                appleId.Updated = DateTime.Now;
+                //appleId.Updated = DateTime.Now;
                 appleId.Status = Enums.AppleIdStatus.Ready;
+                appleId.PurchaseNumber = 0;
+                appleId.TakenOutNumber = 0;
                 var res = await Repository.InsertAsync(appleId, autoSave: true);
                 return await MapToGetOutputDtoAsync(res);
             }
@@ -117,7 +123,9 @@ namespace GmailServer.ApplicationServices
                             Password = appleIdSplit[1],
                             Status = Enums.AppleIdStatus.Ready,
                             Created = DateTime.Now,
-                            Updated = DateTime.Now,
+                            PurchaseNumber = 0,
+                            TakenOutNumber = 0
+                            //Updated = DateTime.Now,
                             //TakenTime = DateTime.Now
                         };
                         entities.Add(entity);
@@ -158,6 +166,7 @@ namespace GmailServer.ApplicationServices
                 appleId.Status = Enums.AppleIdStatus.Pending;
                 appleId.TakenTime = DateTime.Now;
                 appleId.Updated = DateTime.Now;
+                appleId.TakenOutNumber += 1;
                 await Repository.UpdateAsync(appleId, autoSave: true);
                 return res;
             }
@@ -173,6 +182,7 @@ namespace GmailServer.ApplicationServices
             {
                 var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
                 appleId.TakenTime = DateTime.Now;
+                appleId.TakenOutNumber += 1;
                 await Repository.UpdateAsync(appleId, autoSave: true);
                 return res;
             }
@@ -257,6 +267,7 @@ namespace GmailServer.ApplicationServices
             {
                 Username = g.Key.Username,
                 Total = g.Count(),
+                TotalPurchaseNumber = g.Sum(x => x.PurchaseNumber),
                 Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
                 Completed1 = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
                 Completed2 = g.Where(x => x.Status == AppleIdStatus.Completed2).Count(),
@@ -292,6 +303,7 @@ namespace GmailServer.ApplicationServices
             {
                 Created = g.Key.Created.Date,
                 Total = g.Count(),
+                TotalPurchaseNumber = g.Sum(x => x.PurchaseNumber),
                 Ready = g.Where(x => x.Status == AppleIdStatus.Ready).Count(),
                 Completed1 = g.Where(x => x.Status == AppleIdStatus.Completed1).Count(),
                 Completed2 = g.Where(x => x.Status == AppleIdStatus.Completed2).Count(),
@@ -390,6 +402,19 @@ namespace GmailServer.ApplicationServices
 
             var appleIds = await AsyncExecuter.ToListAsync(query);
             await Repository.BulkDeleteAsync(appleIds);
+        }
+
+        public async Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email)
+        {
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleId != null)
+            {
+                appleId.PurchaseNumber += 1;
+                appleId.Updated = DateTime.Now;
+                await Repository.UpdateAsync(appleId);
+                return await MapToGetOutputDtoAsync(appleId);
+            }
+            return new AppleIdGetOutputDto();
         }
     }
 }

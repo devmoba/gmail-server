@@ -17,7 +17,7 @@ namespace GmailServer.Repositories
 
         Task DeleteAllAsync();
 
-        Task UpdateStatusByTimeoutAsync(int hour);
+        Task UpdateStatusByTimeoutAsync(int minute);
 
     }
 

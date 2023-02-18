@@ -56,10 +56,10 @@ namespace GmailServer.Repositories
             await dbContext.BulkDeleteAsync(appleIds);
         }
 
-        public async Task UpdateStatusByTimeoutAsync(int hour)
+        public async Task UpdateStatusByTimeoutAsync(int minute)
         {
             var dbContext = await GetDbContextAsync();
-            var timeCheck = DateTime.Now.AddHours(-hour);
+            var timeCheck = DateTime.Now.AddMinutes(-minute);
             var appleIds = await dbContext.AppleIds
                 .Where(x => x.TakenTime < timeCheck && x.Status == AppleIdStatus.Pending)
                 .ToListAsync();

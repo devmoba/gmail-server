@@ -41,5 +41,7 @@ namespace GmailServer.AppleIds
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
 
         Task DeleteAsync(DeleteFilter input);
+
+        Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email);
     }
 }

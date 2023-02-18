@@ -20,6 +20,10 @@ namespace GmailServer.AppleIds
 
         public AppleIdStatus Status { get; set; }
 
+        public int PurchaseNumber { get; set; }
+
+        public int TakenOutNumber { get; set; }
+
         public int? DownloadedAppCount { get; set; }
     }
 }

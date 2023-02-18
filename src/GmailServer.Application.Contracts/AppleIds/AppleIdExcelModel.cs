@@ -12,6 +12,10 @@ namespace GmailServer.AppleIds
 
         public string Status { get; set; }
 
+        public int PurchaseNumber { get; set; }
+
+        public int TakenOutNumber { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }

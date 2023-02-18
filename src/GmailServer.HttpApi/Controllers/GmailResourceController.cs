@@ -96,6 +96,13 @@ namespace GmailServer.Controllers
             return _gmailResourceAppService.GetStatisticDailyAsync(input);
         }
 
+        [HttpGet]
+        [Route("getUsernameSelection")]
+        public Task<List<string>> GetUsernameSelectionAsync()
+        {
+            return _gmailResourceAppService.GetUsernameSelectionAsync();
+        }
+
         [HttpPut]
         [Route("updateStatus")]
         [IgnoreAntiforgeryToken]

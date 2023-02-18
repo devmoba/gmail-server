@@ -22,6 +22,9 @@
     });
 
     var l = abp.localization.getResource('GmailServer');
+    //var viewModel = new StatisticViewModel();
+    //ko.applyBindings(viewModel);
+    //console.log(viewModel.usernameSelections());
 
     var searchs = [
         { searchDisabled: true },
@@ -121,3 +124,21 @@
 
     }
 });
+
+//function StatisticViewModel() {
+//    var self = this;
+//    self.usernameSelections = ko.observableArray([]);
+//    self.getUsernameSelection = ko.computed(function () {
+//        gmailServer.controllers.gmailResource.getUsernameSelection().done(function (result) {
+//            result.forEach((item) => {
+//                self.usernameSelections.push({
+//                    text: item,
+//                    value: item,
+//                    disable: false,
+//                    group: null,
+//                    selected: false
+//                });
+//            })
+//        });
+//    });
+//}

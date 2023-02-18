@@ -8,7 +8,9 @@ $(function () {
         { name: "username", options: usernameSelections },
         { name: "email" },
         { searchDisabled: true },
+        { name: "purchaseNumber", enableRangeFilter: true },
         { name: "status", options: appleIdStatusSelections },
+        { name: "takenOutNumber", enableRangeFilter: true },
         { searchDisabled: true },
         { name: "created", enableDateRangeFilter: true },
         { searchDisabled: true },
@@ -46,14 +48,14 @@ $(function () {
                 }
             },
             {
-                targets: [4],
+                targets: [5],
                 render: function (data, type, row, meta) {
                     var status = appleIdStatusSelections.find(x => x.value == data.toString()).text;
                     return status;
                 }
             },
             {
-                targets: [5, 6, 7],
+                targets: [7, 8, 9],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -63,7 +65,7 @@ $(function () {
                 }
             },
             {
-                targets: [8],
+                targets: [10],
                 render: function (data, type, row, meta) {
                     if (abp.auth.isGranted('DownloadedAppGroup.DownloadedApps')) {
                         var html = `<button onclick="openDownloadedAppModal('${row.email}')" class="btn btn-sm btn-success" data-id="${row.email}">`;
@@ -75,7 +77,7 @@ $(function () {
                 }
             },
             {
-                targets: [9],
+                targets: [11],
                 rowAction: {
                     items:
                         [
@@ -100,9 +102,11 @@ $(function () {
         columns: [
             { data: "id", width: "100px" },
             { data: "username", width: "150px" },
-            { data: "email", width: "280px" },
+            { data: "email", width: "220px" },
             { data: "password", width: "150px" },
+            { data: "purchaseNumber", width: "150px" },
             { data: "status", width: "150px" },
+            { data: "takenOutNumber", width: "150px" },
             { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },
             { data: "updated", width: "250px" },
