@@ -80,6 +80,102 @@ namespace GmailServer.ApplicationServices
 
             return new PagedResultDto<AppleIdGetListOutputDto>(count, res);
         }
+        #region GET API Public
+        public async Task<AppleIdGetOutputDto> GetFirstAppleIdAsync()
+        {
+            var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
+            query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+            query = query.OrderBy(x => x.Updated);
+            //query = query.OrderBy(x => Guid.NewGuid());
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (appleId == null)
+            {
+                var query2 = Repository
+                    .Where(x => x.Status == Enums.AppleIdStatus.Ready)
+                    .OrderBy(x => x.TakenTime);
+                appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
+            }
+
+            if (appleId != null)
+            {
+                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
+                appleId.Status = Enums.AppleIdStatus.Pending;
+                appleId.TakenTime = DateTime.Now;
+                appleId.Updated = DateTime.Now;
+                //appleId.TakenOutNumber += 1;
+                await Repository.UpdateAsync(appleId, autoSave: true);
+                return res;
+            }
+            return new AppleIdGetOutputDto();
+        }
+
+        public async Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status)
+        {
+            var query = Repository.Where(x => x.Status == status);
+            query = query.OrderBy(x => x.TakenTime);
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (appleId != null)
+            {
+                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
+                appleId.TakenTime = DateTime.Now;
+                //appleId.TakenOutNumber += 1;
+                await Repository.UpdateAsync(appleId, autoSave: true);
+                return res;
+            }
+            return new AppleIdGetOutputDto();
+        }
+
+        #endregion
+
+        [Authorize]
+        public async Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
+        {
+            var query = Repository.GroupBy(x => x.Username).Select(x => new UsernameSelectionDto()
+            {
+                Text = x.Key,
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(query);
+            return res;
+        }
+
+        [Authorize(GmailServerPermissions.AppleIds.Download)]
+        public async Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            if (input.Statuses.Count > 0)
+            {
+                query = query.Where(x => input.Statuses.Contains(x.Status));
+            }
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            var res = await AsyncExecuter.ToListAsync(query);
+            return ObjectMapper.Map<List<AppleId>, List<AppleIdExcelModel>>(res);
+        }
+
+        [Authorize]
+        public async Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
+            query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
+            query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
+            if (updatedHours.HasValue)
+            {
+                var current = DateTime.Now;
+                var timeCheck = current.AddHours(-updatedHours.Value);
+                query = query.Where(x => x.Updated < timeCheck);
+            }
+            var groupBy = query.GroupBy(x => x.Status).Select(x => new AppleIdStatusSelectionDto()
+            {
+                Text = $"{x.Key.ToString()} | {x.Count()}",
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(groupBy);
+            return res;
+        }
 
         public async override Task<AppleIdGetOutputDto> CreateAsync(CreateUpdateAppleIdDto input)
         {
@@ -139,54 +235,37 @@ namespace GmailServer.ApplicationServices
             }
         }
 
-        [Authorize(GmailServerPermissions.AppleIds.Delete)]
+        [Authorize(GmailServerPermissions.AppleIds.DeleteFilter)]
+        public async Task DeleteAsync(DeleteFilter input)
+        {
+            var query = Repository.AsQueryable();
+
+            query = query.Where(x => input.Statuses.Contains(x.Status));
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            if (input.UpdatedHours.HasValue)
+            {
+                var current = DateTime.Now;
+                var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                query = query.Where(x => x.Updated < timeCheck);
+            }
+
+            var appleIds = await AsyncExecuter.ToListAsync(query);
+            await Repository.BulkDeleteAsync(appleIds);
+        }
+
+        [Authorize(GmailServerPermissions.AppleIds.DeleteAll)]
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
         }
 
-        public async Task<AppleIdGetOutputDto> GetFirstAppleIdAsync()
+        [Authorize(GmailServerPermissions.AppleIds.Delete)]
+        public override Task DeleteAsync(long id)
         {
-            var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
-            query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
-            query = query.OrderBy(x => x.Updated);
-            //query = query.OrderBy(x => Guid.NewGuid());
-            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (appleId == null)
-            {
-                var query2 = Repository
-                    .Where(x => x.Status == Enums.AppleIdStatus.Ready)
-                    .OrderBy(x => x.TakenTime);
-                appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
-            }
-
-            if (appleId != null)
-            {
-                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
-                appleId.Status = Enums.AppleIdStatus.Pending;
-                appleId.TakenTime = DateTime.Now;
-                appleId.Updated = DateTime.Now;
-                appleId.TakenOutNumber += 1;
-                await Repository.UpdateAsync(appleId, autoSave: true);
-                return res;
-            }
-            return new AppleIdGetOutputDto();
-        }
-
-        public async Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status)
-        {
-            var query = Repository.Where(x => x.Status == status);
-            query = query.OrderBy(x => x.TakenTime);
-            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (appleId != null)
-            {
-                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
-                appleId.TakenTime = DateTime.Now;
-                appleId.TakenOutNumber += 1;
-                await Repository.UpdateAsync(appleId, autoSave: true);
-                return res;
-            }
-            return new AppleIdGetOutputDto();
+            return base.DeleteAsync(id);
         }
 
         private bool ValidateAppleIdInput(string str)
@@ -208,55 +287,33 @@ namespace GmailServer.ApplicationServices
             return new AppleIdGetOutputDto();
         }
 
-        [Authorize]
-        public async Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
+        public async Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email)
         {
-            var query = Repository.GroupBy(x => x.Username).Select(x => new UsernameSelectionDto() 
-            { 
-                Text = x.Key,
-                Value = x.Key
-            });
-            var res = await AsyncExecuter.ToListAsync(query);
-            return res;
-        }
-
-        [Authorize(GmailServerPermissions.AppleIds.Download)]
-        public async Task<List<AppleIdExcelModel>> GetAppleIdExcelModelsAsync(AppleIdDownloadFilter input)
-        {
-            var query = Repository.AsQueryable();
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            if (input.Statuses.Count > 0)
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleId != null)
             {
-                query = query.Where(x => input.Statuses.Contains(x.Status));
+                appleId.PurchaseNumber += 1;
+                appleId.Updated = DateTime.Now;
+                await Repository.UpdateAsync(appleId);
+                return await MapToGetOutputDtoAsync(appleId);
             }
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
-            var res = await AsyncExecuter.ToListAsync(query);
-            return ObjectMapper.Map<List<AppleId>, List<AppleIdExcelModel>>(res);
+            return new AppleIdGetOutputDto();
         }
 
-        [Authorize]
-        public async Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null)
+        public async Task<AppleIdGetOutputDto> SetTakenOutNumberAsync(string email, int value)
         {
-            var query = Repository.AsQueryable();
-            query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
-            query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
-            query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
-            if (updatedHours.HasValue)
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleId != null)
             {
-                var current = DateTime.Now;
-                var timeCheck = current.AddHours(-updatedHours.Value);
-                query = query.Where(x => x.Updated < timeCheck);
+                appleId.TakenOutNumber = value;
+                appleId.Updated = DateTime.Now;
+                await Repository.UpdateAsync(appleId);
+                return await MapToGetOutputDtoAsync(appleId);
             }
-            var groupBy = query.GroupBy(x => x.Status).Select(x => new AppleIdStatusSelectionDto()
-            {
-                Text = $"{x.Key.ToString()} | {x.Count()}",
-                Value = x.Key
-            });
-            var res = await AsyncExecuter.ToListAsync(groupBy);
-            return res;
+            return new AppleIdGetOutputDto();
         }
+
+        #region Statistic
 
         [Authorize(GmailServerPermissions.AppleIds.Statistic)]
         public async Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleIdStatisticFilterDto input)
@@ -350,6 +407,7 @@ namespace GmailServer.ApplicationServices
                 StatusPoints = statusPoints
             };
         }
+        #endregion
 
         [Authorize(GmailServerPermissions.AppleIds.ResetStatus)]
         public async Task ResetStatusAsync(ResetStatusFilter input)
@@ -373,6 +431,10 @@ namespace GmailServer.ApplicationServices
                 appleIds.ForEach((appleId) =>
                 {
                     appleId.Status = input.TargetStatus;
+                    if (input.TargetStatus == AppleIdStatus.Ready)
+                    {
+                        appleId.TakenOutNumber = 0;
+                    }
                     appleId.Updated = DateTime.Now;
                 });
 
@@ -382,39 +444,6 @@ namespace GmailServer.ApplicationServices
                     nameof(AppleId.Updated)
                 });
             }
-        }
-
-        public async Task DeleteAsync(DeleteFilter input)
-        {
-            var query = Repository.AsQueryable();
-
-            query = query.Where(x => input.Statuses.Contains(x.Status));
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
-            if (input.UpdatedHours.HasValue)
-            {
-                var current = DateTime.Now;
-                var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-                query = query.Where(x => x.Updated < timeCheck);
-            }
-
-            var appleIds = await AsyncExecuter.ToListAsync(query);
-            await Repository.BulkDeleteAsync(appleIds);
-        }
-
-        public async Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email)
-        {
-            var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
-            if (appleId != null)
-            {
-                appleId.PurchaseNumber += 1;
-                appleId.Updated = DateTime.Now;
-                await Repository.UpdateAsync(appleId);
-                return await MapToGetOutputDtoAsync(appleId);
-            }
-            return new AppleIdGetOutputDto();
         }
     }
 }

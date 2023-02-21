@@ -33,5 +33,7 @@ namespace GmailServer.ControllerInterfaces
         Task<StatisticByUsernameDto> GetStatisticByUsernameAsync();
 
         Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email);
+
+        Task<AppleIdGetOutputDto> SetTakenOutNumberAsync(string email, int value);
     }
 }

@@ -71,6 +71,13 @@ namespace GmailServer.Controllers
         }
 
         [HttpPut]
+        [Route("setTakenOutNumber")]
+        public Task<AppleIdGetOutputDto> SetTakenOutNumberAsync([Required] string email, [Required] int value)
+        {
+            return _appleIdAppService.SetTakenOutNumberAsync(email, value);
+        }
+
+        [HttpPut]
         [Route("increasePurchase")]
         public Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email)
         {

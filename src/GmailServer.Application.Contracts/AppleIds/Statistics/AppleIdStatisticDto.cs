@@ -1,4 +1,6 @@
-﻿namespace GmailServer.AppleIds.Statistics
+﻿using System;
+
+namespace GmailServer.AppleIds.Statistics
 {
     public class AppleIdStatisticDto
     {

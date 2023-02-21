@@ -92,6 +92,8 @@ namespace GmailServer.Permissions
             public const string Create = PermissionNames.AppleId_Create;  
             public const string Update = PermissionNames.AppleId_Update;  
             public const string Delete = PermissionNames.AppleId_Delete;  
+            public const string DeleteAll = PermissionNames.AppleId_DeleteAll;  
+            public const string DeleteFilter = PermissionNames.AppleId_DeleteFilter;  
             public const string Download = PermissionNames.AppleId_Download;
             public const string Statistic = PermissionNames.AppleId_Statistic;
             public const string StatisticDaily = PermissionNames.AppleId_StatisticDaily;

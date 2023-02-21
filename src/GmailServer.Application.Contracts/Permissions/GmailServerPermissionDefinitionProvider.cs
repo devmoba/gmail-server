@@ -66,6 +66,8 @@ namespace GmailServer.Permissions
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Create, L("Permission:AppleIds.Create"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Update, L("Permission:AppleIds.Update"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Delete, L("Permission:AppleIds.Delete"));
+            appleIdManagement.AddChild(GmailServerPermissions.AppleIds.DeleteFilter, L("Permission:AppleIds.DeleteFilter"));
+            appleIdManagement.AddChild(GmailServerPermissions.AppleIds.DeleteAll, L("Permission:AppleIds.DeleteAll"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Download, L("Permission:AppleIds.Download"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Statistic, L("Permission:AppleIds.Statistic"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.StatisticDaily, L("Permission:AppleIds.StatisticDaily"));

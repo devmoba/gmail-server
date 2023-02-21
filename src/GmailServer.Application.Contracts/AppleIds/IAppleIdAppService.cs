@@ -43,5 +43,7 @@ namespace GmailServer.AppleIds
         Task DeleteAsync(DeleteFilter input);
 
         Task<AppleIdGetOutputDto> IncreasePurchaseAsync(string email);
+
+        Task<AppleIdGetOutputDto> SetTakenOutNumberAsync(string email, int value);
     }
 }
