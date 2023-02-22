@@ -31,12 +31,12 @@ namespace GmailServer.Repositories
             await dbContext.BulkInsertAsync(appleIds);
         }
 
-        public async Task BulkUpdateAsync(List<AppleId> appleIds, List<string> propertiesToExclude)
+        public async Task BulkUpdateAsync(List<AppleId> appleIds, List<string> propertiesToInclude)
         {
             var dbContext = await GetDbContextAsync();
             await dbContext.BulkUpdateAsync(appleIds, new BulkConfig()
             {
-                PropertiesToExclude = propertiesToExclude
+                PropertiesToInclude = propertiesToInclude
             });
         }
 

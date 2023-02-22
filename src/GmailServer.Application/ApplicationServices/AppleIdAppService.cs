@@ -441,6 +441,7 @@ namespace GmailServer.ApplicationServices
                 await Repository.BulkUpdateAsync(appleIds, new List<string>()
                 {
                     nameof(AppleId.Status),
+                    nameof(AppleId.TakenOutNumber),
                     nameof(AppleId.Updated)
                 });
             }

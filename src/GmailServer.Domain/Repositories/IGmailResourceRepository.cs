@@ -9,7 +9,7 @@ namespace GmailServer.Repositories
     {
         Task BulkInsertAsync(List<GmailResource> gmailPremiums);
 
-        Task BulkUpdateAsync(List<GmailResource> gmailResources, List<string> propertiesToExclude);
+        Task BulkUpdateAsync(List<GmailResource> gmailResources, List<string> propertiesToInclude);
 
         Task DeleteAllAsync();
 
