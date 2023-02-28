@@ -277,7 +277,10 @@ namespace GmailServer.ApplicationServices
         public async Task<AppleIdGetOutputDto> UpdateStatusAsync(string email, AppleIdStatus status)
         {
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
-            if (appleId != null && appleId.Status != AppleIdStatus.Completed1)
+            if (appleId != null && appleId.Status != AppleIdStatus.Completed1 
+                && appleId.Status != AppleIdStatus.Completed2 
+                && appleId.Status != AppleIdStatus.Completed3 
+                && appleId.Status != AppleIdStatus.Completed4)
             {
                 appleId.Status = status;
                 appleId.Updated = DateTime.Now;

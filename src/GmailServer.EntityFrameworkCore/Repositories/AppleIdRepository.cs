@@ -74,7 +74,8 @@ namespace GmailServer.Repositories
                 {
                     PropertiesToInclude = new List<string>()
                 {
-                    nameof(AppleId.Status)
+                    nameof(AppleId.Status),
+                    nameof(AppleId.Updated)
                 }
                 };
                 await dbContext.BulkUpdateAsync(appleIds, bulkConfig);

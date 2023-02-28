@@ -33,5 +33,9 @@ namespace GmailServer.ControllerInterfaces
         Task<PagedResultDto<GmailResourceStatisticDto>> GetStatisticAsync(GmailResourceStatisticFilterDto input);
 
         Task<PagedResultDto<GmailResourceStatisticDailyDto>> GetStatisticDailyAsync(GmailResourceStatisticDailyFilterDto input);
+
+        Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type);
+
+        Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default);
     }
 }

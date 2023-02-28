@@ -63,6 +63,22 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
+        [Route("getGmailPremium")]
+        [IgnoreAntiforgeryToken]
+        public Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default)
+        {
+            return _gmailResourceAppService.GetGmailPremiumAsync(time);
+        }
+
+        [HttpPut]
+        [Route("setPremiumType")]
+        [IgnoreAntiforgeryToken]
+        public Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type)
+        {
+            return _gmailResourceAppService.SetPremiumTypeAsync(email, type);
+        }                   
+
+        [HttpGet]
         [Route("getGmailResourceStatusSelection")]
         public Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null)
         {

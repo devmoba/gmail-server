@@ -4,15 +4,17 @@ using GmailServer.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace GmailServer.Migrations
 {
     [DbContext(typeof(GmailServerDbContext))]
-    partial class GmailServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230227023621_Add_PremiumType_GmailResource")]
+    partial class Add_PremiumType_GmailResource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,9 +371,6 @@ namespace GmailServer.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedPremium")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Username")

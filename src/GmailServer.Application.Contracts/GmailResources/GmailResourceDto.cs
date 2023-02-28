@@ -21,5 +21,9 @@ namespace GmailServer.GmailResources
         public DateTime TakenTime { get; set; }
 
         public GmailResourceStatus Status { get; set; }
+
+        public PremiumType PremiumType { get; set; }
+
+        public DateTime UpdatedPremium { get; set; }
     }
 }

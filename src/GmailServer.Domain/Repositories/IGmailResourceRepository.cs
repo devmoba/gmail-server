@@ -17,5 +17,7 @@ namespace GmailServer.Repositories
 
         Task UpdateStatusByTimeoutAsync(int minute);
 
+        Task UpdatePremiumTypeByTimeoutAsync(int minute);
+
     }
 }

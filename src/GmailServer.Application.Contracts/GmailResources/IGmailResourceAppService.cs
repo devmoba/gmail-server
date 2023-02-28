@@ -42,5 +42,9 @@ namespace GmailServer.GmailResources
         Task ReupAsync(ReupGmailResourceInputDto input);
 
         Task DeleteAsync(DeleteFilter input);
+
+        Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type);
+
+        Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default);
     }
 }

@@ -45,6 +45,7 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
+            query = query.WhereIf(input.PremiumType.HasValue, x => x.PremiumType == input.PremiumType.Value);
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
             query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
@@ -92,7 +93,9 @@ namespace GmailServer.ApplicationServices
             {
                 var gmailResource = ObjectMapper.Map<CreateUpdateGmailResourceDto, GmailResource>(input);
                 gmailResource.Created = DateTime.Now;
-                gmailResource.Updated = DateTime.Now;
+                //gmailResource.Updated = DateTime.Parse("0001-01-01 00:00:00.0000000");
+                gmailResource.PremiumType = PremiumType.Unset;
+                //gmailResource.UpdatedPremium = DateTime.Parse("0001-01-01 00:00:00.0000000");
                 gmailResource.Status = Enums.GmailResourceStatus.Ready;
                 var res = await Repository.InsertAsync(gmailResource, autoSave: true);
 
@@ -128,7 +131,9 @@ namespace GmailServer.ApplicationServices
                             Password = gpSplit[1].Trim(),
                             Status = Enums.GmailResourceStatus.Ready,
                             Created = DateTime.Now,
-                            Updated = DateTime.Now
+                            PremiumType = PremiumType.Unset
+                            //Updated = DateTime.Parse("0001-01-01 00:00:00.0000000"),
+                            //UpdatedPremium = DateTime.Parse("0001-01-01 00:00:00.0000000")
                         };
                         entity.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2] : string.Empty;
                         entities.Add(entity);
@@ -435,6 +440,47 @@ namespace GmailServer.ApplicationServices
             var gmailResources = await AsyncExecuter.ToListAsync(query);
             await Repository.BulkDeleteAsync(gmailResources);
 
+        }
+
+        public async Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type)
+        {
+            var gmail = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (gmail != null)
+            {
+                gmail.UpdatedPremium = DateTime.Now;
+                gmail.PremiumType = type;
+                return await MapToGetOutputDtoAsync(gmail);
+            }
+            return new GmailResourceDto();
+        }
+
+        public async Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default)
+        {
+            var query = Repository.AsQueryable();
+            if (time != DateTime.MinValue)
+            {
+                query = query.Where(x => x.Created >= time);
+            }
+            query = query.Where(x => x.Status == GmailResourceStatus.Success && x.PremiumType == PremiumType.Unset);
+
+            var nonUpdatedPreQuery = query.Where(x => x.UpdatedPremium == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+            nonUpdatedPreQuery = nonUpdatedPreQuery.OrderBy(x => x.Updated);
+            var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(nonUpdatedPreQuery);
+
+            if (gmailResource == null)
+            {
+                var hasUpdatedPreQuery = query.OrderBy(x => x.UpdatedPremium);
+                gmailResource = await AsyncExecuter.FirstOrDefaultAsync(hasUpdatedPreQuery);
+            }
+            if (gmailResource != null)
+            {
+                var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
+                gmailResource.UpdatedPremium = DateTime.Now;
+                gmailResource.PremiumType = PremiumType.Pending;
+                await Repository.UpdateAsync(gmailResource, autoSave: true);
+                return res;
+            }
+            return new GmailResourceDto();
         }
     }
 }

@@ -20,6 +20,7 @@
 <abp-script-bundle name="chosen" />
 <script>
     var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
+    var premiumTypeSelections = @Html.Raw(ViewData["premiumTypeSelections"]);
     var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
     var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
 </script>
@@ -92,6 +93,8 @@
                     <th>@L["Password"]</th>
                     <th>@L["Recovery Email"]</th>
                     <th>@L["Status"]</th>
+                    <th>@L["Premium Type"]</th>
+                    <th>@L["Updated Premium"]</th>
                     <th>@L["Taken Time"]</th>
                     <th>@L["Created"]</th>
                     <th>@L["Updated"]</th>

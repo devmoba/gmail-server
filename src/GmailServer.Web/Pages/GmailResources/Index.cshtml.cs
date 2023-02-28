@@ -28,6 +28,12 @@ namespace GmailServer.Web.Pages.GmailResources
                    Text = item.ToString(),
                    Value = $"{(int)item}"
                }).ToList();
+            var premiumTypeSelections = Enum.GetValues(typeof(PremiumType)).Cast<PremiumType>()
+                .Select(item => new SelectListItem()
+                {
+                    Text = item.ToString(),
+                    Value = $"{(int)item}"
+                }).ToList();
 
             var usernames = await _gmailResourceAppService.GetUsernameSelectionAsync();
             var usernameSelections = usernames.Select(item => new SelectListItem()
@@ -36,11 +42,13 @@ namespace GmailServer.Web.Pages.GmailResources
                 Value = item
             }).ToList();
 
+            
             ViewData.Add("gmailResourceStatusSelections", SerializeObject(gmailResourceStatusSelections));
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
             var isRoleNameAppleIdMember = CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember);
             IsRoleNameAppleIdMember = isRoleNameAppleIdMember;
             ViewData.Add("isRoleNameAppleIdMember", SerializeObject(isRoleNameAppleIdMember));
+            ViewData.Add("premiumTypeSelections", SerializeObject(premiumTypeSelections));
         }
     }
 }

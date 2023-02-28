@@ -63,7 +63,34 @@ namespace GmailServer.Repositories
                 {
                     PropertiesToInclude = new List<string>()
                 {
-                    nameof(GmailResource.Status)
+                    nameof(GmailResource.Status),
+                    nameof(GmailResource.Updated)
+                }
+                };
+                await dbContext.BulkUpdateAsync(gmailResources, bulkConfig);
+            }
+        }
+
+        public async Task UpdatePremiumTypeByTimeoutAsync(int minute)
+        {
+            var dbContext = await GetDbContextAsync();
+            var timeCheck = DateTime.Now.AddMinutes(-minute);
+            var gmailResources = await dbContext.GmailResources
+                .Where(x => x.UpdatedPremium < timeCheck && x.PremiumType == PremiumType.Pending)
+                .ToListAsync();
+            if (gmailResources.Count > 0)
+            {
+                gmailResources.ForEach((gr) =>
+                {
+                    gr.PremiumType = PremiumType.Unset;
+                    gr.UpdatedPremium = DateTime.Now;
+                });
+                var bulkConfig = new BulkConfig()
+                {
+                    PropertiesToInclude = new List<string>()
+                {
+                    nameof(GmailResource.PremiumType),
+                    nameof(GmailResource.UpdatedPremium)
                 }
                 };
                 await dbContext.BulkUpdateAsync(gmailResources, bulkConfig);

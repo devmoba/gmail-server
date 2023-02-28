@@ -79,4 +79,17 @@
         Error = 8,
         Unknown = 9
     }
+
+    public enum PremiumType
+    {
+        Unset = 1,
+        Pending = 2,
+        NoPremium = 3,
+        OneMonth = 4,
+        ThreeMonth = 5,
+        UnknowError = 6,
+        WrongPassword = 7,
+        Disabled = 8,
+        Verify = 9
+    }
 }

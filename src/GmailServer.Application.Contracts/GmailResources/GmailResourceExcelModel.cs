@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GmailServer.Enums;
+using System;
 
 namespace GmailServer.GmailResources
 {
@@ -14,9 +15,13 @@ namespace GmailServer.GmailResources
 
         public string Status { get; set; }
 
+        public PremiumType PremiumType { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }
+
+        public DateTime UpdatedPremium { get; set; }
 
         public DateTime TakenTime { get; set; }
     }

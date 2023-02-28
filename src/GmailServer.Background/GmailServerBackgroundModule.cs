@@ -24,6 +24,7 @@ namespace GmailServer.Background
             context.AddBackgroundWorker<GetAndInsertHotmailWorker>();
             context.AddBackgroundWorker<UpdateAppleIdStatusWorker>();
             context.AddBackgroundWorker<UpdateGmailResourceStatusWorker>();
+            context.AddBackgroundWorker<UpdateGmailResourcePremiumTyeWorker>();
         }
     }
 }

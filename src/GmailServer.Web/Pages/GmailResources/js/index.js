@@ -10,6 +10,8 @@
         { searchDisabled: true },
         { searchDisabled: true },
         { name: "status", options: gmailResourceStatusSelections },
+        { name: "premiumType", options: premiumTypeSelections },
+        { searchDisabled: true },
         { searchDisabled: true },
         { name: "created", enableDateRangeFilter: true },
         { searchDisabled: true },
@@ -54,7 +56,14 @@
                 }
             },
             {
-                targets: [6, 7, 8],
+                targets: [6],
+                render: function (data, type, row, meta) {
+                    var premiumType = premiumTypeSelections.find(x => x.value == data).text;
+                    return premiumType;
+                }
+            },
+            {
+                targets: [7, 8, 9, 10],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -64,7 +73,7 @@
                 }
             },
             {
-                targets: [9],
+                targets: [11],
                 rowAction: {
                     items:
                         [
@@ -89,10 +98,12 @@
         columns: [
             { data: "id", width: "100px" },
             { data: "username", width: "150px" },
-            { data: "email", width: "300px" },
+            { data: "email", width: "250px" },
             { data: "password", width: "150px" },
             { data: "recoveryEmail", width: "300px" },
             { data: "status", width: "150px" },
+            { data: "premiumType", width: "150px" },
+            { data: "updatedPremium", width: "250px" },
             { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },
             { data: "updated", width: "250px" },

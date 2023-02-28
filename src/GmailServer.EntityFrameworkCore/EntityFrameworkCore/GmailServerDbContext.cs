@@ -19,6 +19,7 @@ using Volo.Saas.Tenants;
 using Volo.Payment.EntityFrameworkCore;
 using GmailServer.Entities;
 using Volo.Abp.EntityFrameworkCore.Modeling;
+using GmailServer.Enums;
 
 namespace GmailServer.EntityFrameworkCore
 {
@@ -279,8 +280,10 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
                 b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128);
                 b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.PremiumType).IsRequired().HasDefaultValue(PremiumType.Unset);
                 b.Property(x => x.Created).IsRequired();
                 b.Property(x => x.Updated).IsRequired();
+                b.Property(x => x.UpdatedPremium).IsRequired();
                 b.Property(x => x.TakenTime).IsRequired();
             });
         }
