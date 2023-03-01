@@ -37,5 +37,7 @@ namespace GmailServer.ControllerInterfaces
         Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type);
 
         Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default);
+
+        Task<List<GmailResourceDto>> GetGmailsPremiumByNumber(DateTime time = default, int number = 1);
     }
 }

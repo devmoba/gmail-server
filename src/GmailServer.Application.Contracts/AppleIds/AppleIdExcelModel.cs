@@ -16,6 +16,8 @@ namespace GmailServer.AppleIds
 
         public int TakenOutNumber { get; set; }
 
+        public string Ccv { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }

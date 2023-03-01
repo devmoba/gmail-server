@@ -24,6 +24,8 @@ namespace GmailServer.AppleIds
 
         public int TakenOutNumber { get; set; }
 
+        public string Ccv { get; set; }
+
         public int? DownloadedAppCount { get; set; }
     }
 }

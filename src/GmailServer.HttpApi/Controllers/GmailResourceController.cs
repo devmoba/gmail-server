@@ -70,6 +70,13 @@ namespace GmailServer.Controllers
             return _gmailResourceAppService.GetGmailPremiumAsync(time);
         }
 
+        [HttpGet]
+        [Route("getGmailsPremiumByNumer")]
+        public Task<List<GmailResourceDto>> GetGmailsPremiumByNumber(DateTime time = default, int number = 1)
+        {
+            return _gmailResourceAppService.GetGmailsPremiumByNumber(time, number);
+        }
+
         [HttpPut]
         [Route("setPremiumType")]
         [IgnoreAntiforgeryToken]

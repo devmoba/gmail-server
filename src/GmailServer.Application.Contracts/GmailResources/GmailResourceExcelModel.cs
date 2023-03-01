@@ -15,7 +15,7 @@ namespace GmailServer.GmailResources
 
         public string Status { get; set; }
 
-        public PremiumType PremiumType { get; set; }
+        public string PremiumType { get; set; }
 
         public DateTime Created { get; set; }
 

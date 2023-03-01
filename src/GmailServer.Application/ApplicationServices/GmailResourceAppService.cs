@@ -482,5 +482,42 @@ namespace GmailServer.ApplicationServices
             }
             return new GmailResourceDto();
         }
+
+        public async Task<List<GmailResourceDto>> GetGmailsPremiumByNumber(DateTime time = default, int number = 1)
+        {
+            var query = Repository.AsQueryable();
+            if (time != DateTime.MinValue)
+            {
+                query = query.Where(x => x.Created >= time);
+            }
+            query = query.Where(x => x.Status == GmailResourceStatus.Success && x.PremiumType == PremiumType.Unset);
+
+            var nonUpdatedPreQuery = query.Where(x => x.UpdatedPremium == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+            nonUpdatedPreQuery = nonUpdatedPreQuery.OrderBy(x => x.Updated);
+            nonUpdatedPreQuery = nonUpdatedPreQuery.Take(number);
+            var gmailPremiums = await AsyncExecuter.ToListAsync(nonUpdatedPreQuery);
+            if (gmailPremiums.Count == 0)
+            {
+                var hasUpdatedPreQuery = query.OrderBy(x => x.UpdatedPremium).Take(number);
+                gmailPremiums = await AsyncExecuter.ToListAsync(hasUpdatedPreQuery);
+            }
+
+            if (gmailPremiums.Count > 0)
+            {
+                var res = ObjectMapper.Map<List<GmailResource>, List<GmailResourceDto>>(gmailPremiums);
+                gmailPremiums.ForEach(gmail =>
+                {
+                    gmail.PremiumType = PremiumType.Pending;
+                    gmail.UpdatedPremium = DateTime.Now;
+                });
+                await Repository.BulkUpdateAsync(gmailPremiums, new List<string>()
+                {
+                    nameof(GmailResource.UpdatedPremium),
+                    nameof(GmailResource.PremiumType)
+                });
+                return res;
+            }
+            return new List<GmailResourceDto>();
+        }
     }
 }

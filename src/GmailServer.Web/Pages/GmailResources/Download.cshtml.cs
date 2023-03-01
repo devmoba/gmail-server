@@ -75,7 +75,7 @@ namespace GmailServer.Web.Pages.GmailResources
 
             using (var package = new ExcelPackage(stream))
             {
-                var appleIds = await this.gmailResourceAppService.GetGmailResourceExcelModelsAsync(new GmailResourceDownloadFilter()
+                var gmailResources = await this.gmailResourceAppService.GetGmailResourceExcelModelsAsync(new GmailResourceDownloadFilter()
                 {
                     Username = Username,
                     Statuses = Statuses,
@@ -83,7 +83,7 @@ namespace GmailServer.Web.Pages.GmailResources
                     CreatedTo = CreatedTo
                 });
                 var workSheet = package.Workbook.Worksheets.Add("Sheet1");
-                workSheet.Cells.LoadFromCollection(appleIds, true);
+                workSheet.Cells.LoadFromCollection(gmailResources, true);
                 package.Save();
             }
             stream.Position = 0;

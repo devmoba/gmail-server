@@ -10,6 +10,7 @@ $(function () {
         { searchDisabled: true },
         { name: "purchaseNumber", enableRangeFilter: true },
         { name: "status", options: appleIdStatusSelections },
+        { searchDisabled: true },
         { name: "takenOutNumber", enableRangeFilter: true },
         { searchDisabled: true },
         { name: "created", enableDateRangeFilter: true },
@@ -55,7 +56,7 @@ $(function () {
                 }
             },
             {
-                targets: [7, 8, 9],
+                targets: [8, 9, 10],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -65,7 +66,7 @@ $(function () {
                 }
             },
             {
-                targets: [10],
+                targets: [11],
                 render: function (data, type, row, meta) {
                     if (abp.auth.isGranted('DownloadedAppGroup.DownloadedApps')) {
                         var html = `<button onclick="openDownloadedAppModal('${row.email}')" class="btn btn-sm btn-success" data-id="${row.email}">`;
@@ -77,7 +78,7 @@ $(function () {
                 }
             },
             {
-                targets: [11],
+                targets: [12],
                 rowAction: {
                     items:
                         [
@@ -106,6 +107,7 @@ $(function () {
             { data: "password", width: "150px" },
             { data: "purchaseNumber", width: "150px" },
             { data: "status", width: "150px" },
+            { data: "ccv", width: "150px" },
             { data: "takenOutNumber", width: "150px" },
             { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },

@@ -49,8 +49,9 @@ namespace GmailServer
 
             CreateMap<GmailResource, GmailResourceDto>();
             CreateMap<CreateUpdateGmailResourceDto, GmailResource>();
-            CreateMap<GmailResource, GmailResourceExcelModel>().AfterMap(
-                (a, b) => b.Status = Enum.GetName(typeof(GmailResourceStatus), a.Status));
+            CreateMap<GmailResource, GmailResourceExcelModel>()
+                .AfterMap((a, b) => b.PremiumType = Enum.GetName(typeof(PremiumType), a.PremiumType))
+                .AfterMap((a, b) => b.Status = Enum.GetName(typeof(GmailResourceStatus), a.Status));
 
             CreateMap<GmailType, GmailTypeDto>();
             CreateMap<GmailType, GmailTypeSelectionDto>();

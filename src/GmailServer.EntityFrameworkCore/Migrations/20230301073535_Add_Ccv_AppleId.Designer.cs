@@ -4,15 +4,17 @@ using GmailServer.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace GmailServer.Migrations
 {
     [DbContext(typeof(GmailServerDbContext))]
-    partial class GmailServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230301073535_Add_Ccv_AppleId")]
+    partial class Add_Ccv_AppleId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,8 +31,8 @@ namespace GmailServer.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Ccv")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");

@@ -25,6 +25,8 @@ namespace GmailServer.Entities
 
         public int TakenOutNumber { get; set; }
 
+        public string Ccv { get; set; }
+
         public virtual ICollection<DownloadedApp> DownloadedApps { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace GmailServer.Web.Pages.AppleIds.ViewModels
 
         [Required]
         [TextArea(Rows = 35)]
-        [Placeholder("email|password")]
+        [Placeholder("email|password|ccv(optional)")]
         public string Emails { get; set; }
     }
 }
