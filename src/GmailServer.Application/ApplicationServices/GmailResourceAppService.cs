@@ -7,9 +7,11 @@ using GmailServer.Permissions;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -28,6 +30,8 @@ namespace GmailServer.ApplicationServices
         CreateUpdateGmailResourceDto>, IGmailResourceAppService
     {
         private new readonly IGmailResourceRepository Repository;
+        private static ConcurrentDictionary<long, SemaphoreSlim> GetSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
+        private static ConcurrentDictionary<long, SemaphoreSlim> GetPremiumSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
 
         public GmailResourceAppService(IGmailResourceRepository repository) : base(repository)
         {
@@ -204,28 +208,39 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailResourceDto> GetFirstGmailResourceAsync()
         {
-            var query = Repository.Where(x => x.Status == Enums.GmailResourceStatus.Ready);
-            query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
-            query = query.OrderBy(x => x.Created);
-            var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (gmailResource == null)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                var query2 = Repository
-                  .Where(x => x.Status == Enums.GmailResourceStatus.Ready)
-                  .OrderBy(x => x.TakenTime);
-                gmailResource = await AsyncExecuter.FirstOrDefaultAsync(query2);
-            }
+                var query = Repository.Where(x => x.Status == Enums.GmailResourceStatus.Ready);
+                query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                query = query.OrderBy(x => x.Created);
+                var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (gmailResource == null)
+                {
+                    var query2 = Repository
+                      .Where(x => x.Status == Enums.GmailResourceStatus.Ready)
+                      .OrderBy(x => x.TakenTime);
+                    gmailResource = await AsyncExecuter.FirstOrDefaultAsync(query2);
+                }
 
-            if (gmailResource != null)
-            {
-                var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
-                gmailResource.Status = Enums.GmailResourceStatus.Pending;
-                gmailResource.TakenTime = DateTime.Now;
-                gmailResource.Updated = DateTime.Now;
-                await Repository.UpdateAsync(gmailResource, autoSave: true);
-                return res;
+                if (gmailResource != null)
+                {
+                    var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
+                    gmailResource.Status = Enums.GmailResourceStatus.Pending;
+                    gmailResource.TakenTime = DateTime.Now;
+                    gmailResource.Updated = DateTime.Now;
+                    await Repository.UpdateAsync(gmailResource, autoSave: true);
+                    return res;
+                }
+                return new GmailResourceDto();
             }
-            return new GmailResourceDto();
+            finally
+            {
+                GetSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release();
+            }
         }
 
         private bool ValidateGmailResourceInput(string str)
@@ -249,17 +264,28 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailResourceDto> GetByStatusAsync(GmailResourceStatus status)
         {
-            var query = Repository.Where(x => x.Status == status);
-            query = query.OrderBy(x => x.TakenTime);
-            var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (gmailResource != null)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
-                gmailResource.TakenTime = DateTime.Now;
-                await Repository.UpdateAsync(gmailResource, autoSave: true);
-                return res;
+                var query = Repository.Where(x => x.Status == status);
+                query = query.OrderBy(x => x.TakenTime);
+                var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (gmailResource != null)
+                {
+                    var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
+                    gmailResource.TakenTime = DateTime.Now;
+                    await Repository.UpdateAsync(gmailResource, autoSave: true);
+                    return res;
+                }
+                return new GmailResourceDto();
             }
-            return new GmailResourceDto();
+            finally
+            {
+                GetSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release();
+            }
         }
 
         [Authorize]
@@ -456,68 +482,90 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default)
         {
-            var query = Repository.AsQueryable();
-            if (time != DateTime.MinValue)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetPremiumSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                query = query.Where(x => x.Created >= time);
-            }
-            query = query.Where(x => x.Status == GmailResourceStatus.Success && x.PremiumType == PremiumType.Unset);
+                var query = Repository.AsQueryable();
+                if (time != DateTime.MinValue)
+                {
+                    query = query.Where(x => x.Created >= time);
+                }
+                query = query.Where(x => x.Status == GmailResourceStatus.Success && x.PremiumType == PremiumType.Unset);
 
-            var nonUpdatedPreQuery = query.Where(x => x.UpdatedPremium == DateTime.Parse("0001-01-01 00:00:00.0000000"));
-            nonUpdatedPreQuery = nonUpdatedPreQuery.OrderBy(x => x.Updated);
-            var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(nonUpdatedPreQuery);
+                var nonUpdatedPreQuery = query.Where(x => x.UpdatedPremium == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                nonUpdatedPreQuery = nonUpdatedPreQuery.OrderBy(x => x.Updated);
+                var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(nonUpdatedPreQuery);
 
-            if (gmailResource == null)
-            {
-                var hasUpdatedPreQuery = query.OrderBy(x => x.UpdatedPremium);
-                gmailResource = await AsyncExecuter.FirstOrDefaultAsync(hasUpdatedPreQuery);
+                if (gmailResource == null)
+                {
+                    var hasUpdatedPreQuery = query.OrderBy(x => x.UpdatedPremium);
+                    gmailResource = await AsyncExecuter.FirstOrDefaultAsync(hasUpdatedPreQuery);
+                }
+                if (gmailResource != null)
+                {
+                    var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
+                    gmailResource.UpdatedPremium = DateTime.Now;
+                    gmailResource.PremiumType = PremiumType.Pending;
+                    await Repository.UpdateAsync(gmailResource, autoSave: true);
+                    return res;
+                }
+                return new GmailResourceDto();
             }
-            if (gmailResource != null)
+            finally
             {
-                var res = ObjectMapper.Map<GmailResource, GmailResourceDto>(gmailResource);
-                gmailResource.UpdatedPremium = DateTime.Now;
-                gmailResource.PremiumType = PremiumType.Pending;
-                await Repository.UpdateAsync(gmailResource, autoSave: true);
-                return res;
+                GetPremiumSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release();
             }
-            return new GmailResourceDto();
         }
 
         public async Task<List<GmailResourceDto>> GetGmailsPremiumByNumber(DateTime time = default, int number = 1)
         {
-            var query = Repository.AsQueryable();
-            if (time != DateTime.MinValue)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetPremiumSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                query = query.Where(x => x.Created >= time);
-            }
-            query = query.Where(x => x.Status == GmailResourceStatus.Success && x.PremiumType == PremiumType.Unset);
-
-            var nonUpdatedPreQuery = query.Where(x => x.UpdatedPremium == DateTime.Parse("0001-01-01 00:00:00.0000000"));
-            nonUpdatedPreQuery = nonUpdatedPreQuery.OrderBy(x => x.Updated);
-            nonUpdatedPreQuery = nonUpdatedPreQuery.Take(number);
-            var gmailPremiums = await AsyncExecuter.ToListAsync(nonUpdatedPreQuery);
-            if (gmailPremiums.Count == 0)
-            {
-                var hasUpdatedPreQuery = query.OrderBy(x => x.UpdatedPremium).Take(number);
-                gmailPremiums = await AsyncExecuter.ToListAsync(hasUpdatedPreQuery);
-            }
-
-            if (gmailPremiums.Count > 0)
-            {
-                var res = ObjectMapper.Map<List<GmailResource>, List<GmailResourceDto>>(gmailPremiums);
-                gmailPremiums.ForEach(gmail =>
+                var query = Repository.AsQueryable();
+                if (time != DateTime.MinValue)
                 {
-                    gmail.PremiumType = PremiumType.Pending;
-                    gmail.UpdatedPremium = DateTime.Now;
-                });
-                await Repository.BulkUpdateAsync(gmailPremiums, new List<string>()
+                    query = query.Where(x => x.Created >= time);
+                }
+                query = query.Where(x => x.Status == GmailResourceStatus.Success && x.PremiumType == PremiumType.Unset);
+
+                var nonUpdatedPreQuery = query.Where(x => x.UpdatedPremium == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                nonUpdatedPreQuery = nonUpdatedPreQuery.OrderBy(x => x.Updated);
+                nonUpdatedPreQuery = nonUpdatedPreQuery.Take(number);
+                var gmailPremiums = await AsyncExecuter.ToListAsync(nonUpdatedPreQuery);
+                if (gmailPremiums.Count == 0)
+                {
+                    var hasUpdatedPreQuery = query.OrderBy(x => x.UpdatedPremium).Take(number);
+                    gmailPremiums = await AsyncExecuter.ToListAsync(hasUpdatedPreQuery);
+                }
+
+                if (gmailPremiums.Count > 0)
+                {
+                    var res = ObjectMapper.Map<List<GmailResource>, List<GmailResourceDto>>(gmailPremiums);
+                    gmailPremiums.ForEach(gmail =>
+                    {
+                        gmail.PremiumType = PremiumType.Pending;
+                        gmail.UpdatedPremium = DateTime.Now;
+                    });
+                    await Repository.BulkUpdateAsync(gmailPremiums, new List<string>()
                 {
                     nameof(GmailResource.UpdatedPremium),
                     nameof(GmailResource.PremiumType)
                 });
-                return res;
+                    return res;
+                }
+                return new List<GmailResourceDto>();
             }
-            return new List<GmailResourceDto>();
+            finally
+            {
+                GetPremiumSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release();
+            }
         }
     }
 }

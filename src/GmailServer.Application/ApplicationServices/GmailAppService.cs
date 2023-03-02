@@ -71,7 +71,6 @@ namespace GmailServer.ApplicationServices
             return base.GetAsync(id);
         }
 
-
         public async Task<GmailDto> CreateAsync(CreateGmailDto input)
         {
             var gmail = ObjectMapper.Map<CreateGmailDto, Gmail>(input);

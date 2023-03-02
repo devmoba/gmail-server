@@ -18,6 +18,7 @@ namespace GmailServer.Controllers
     public class AppleIdController : AbpController, IAppleIdController
     {
         private readonly IAppleIdAppService _appleIdAppService;
+
         public AppleIdController(IAppleIdAppService appleIdAppService)
         {
             _appleIdAppService = appleIdAppService;

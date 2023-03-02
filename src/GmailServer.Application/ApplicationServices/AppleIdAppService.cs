@@ -7,9 +7,11 @@ using GmailServer.Permissions;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -29,6 +31,7 @@ namespace GmailServer.ApplicationServices
         CreateUpdateAppleIdDto>, IAppleIdAppService
     {
         private new readonly IAppleIdRepository Repository;
+        private static ConcurrentDictionary<long, SemaphoreSlim> GetSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
 
         public AppleIdAppService(IAppleIdRepository repository) : base(repository)
         {
@@ -83,46 +86,69 @@ namespace GmailServer.ApplicationServices
         #region GET API Public
         public async Task<AppleIdGetOutputDto> GetFirstAppleIdAsync()
         {
-            var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
-            query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
-            query = query.OrderBy(x => x.Updated);
-            //query = query.OrderBy(x => Guid.NewGuid());
-            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (appleId == null)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                var query2 = Repository
-                    .Where(x => x.Status == Enums.AppleIdStatus.Ready)
-                    .OrderBy(x => x.TakenTime);
-                appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
+                var query = Repository.Where(x => x.Status == Enums.AppleIdStatus.Ready);
+                query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                query = query.OrderBy(x => x.Updated);
+                //query = query.OrderBy(x => Guid.NewGuid());
+                var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (appleId == null)
+                {
+                    var query2 = Repository
+                        .Where(x => x.Status == Enums.AppleIdStatus.Ready)
+                        .OrderBy(x => x.TakenTime);
+                    appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
+                }
+
+                if (appleId != null)
+                {
+                    var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
+                    appleId.Status = Enums.AppleIdStatus.Pending;
+                    appleId.TakenTime = DateTime.Now;
+                    appleId.Updated = DateTime.Now;
+                    //appleId.TakenOutNumber += 1;
+                    await Repository.UpdateAsync(appleId, autoSave: true);
+                    return res;
+                }
+                return new AppleIdGetOutputDto();
+            }
+            finally
+            {
+                GetSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release();
             }
 
-            if (appleId != null)
-            {
-                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
-                appleId.Status = Enums.AppleIdStatus.Pending;
-                appleId.TakenTime = DateTime.Now;
-                appleId.Updated = DateTime.Now;
-                //appleId.TakenOutNumber += 1;
-                await Repository.UpdateAsync(appleId, autoSave: true);
-                return res;
-            }
-            return new AppleIdGetOutputDto();
         }
 
         public async Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status)
         {
-            var query = Repository.Where(x => x.Status == status);
-            query = query.OrderBy(x => x.TakenTime);
-            var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (appleId != null)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
-                appleId.TakenTime = DateTime.Now;
-                //appleId.TakenOutNumber += 1;
-                await Repository.UpdateAsync(appleId, autoSave: true);
-                return res;
+                var query = Repository.Where(x => x.Status == status);
+                query = query.OrderBy(x => x.TakenTime);
+                var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (appleId != null)
+                {
+                    var res = ObjectMapper.Map<AppleId, AppleIdGetOutputDto>(appleId);
+                    appleId.TakenTime = DateTime.Now;
+                    //appleId.TakenOutNumber += 1;
+                    await Repository.UpdateAsync(appleId, autoSave: true);
+                    return res;
+                }
+                return new AppleIdGetOutputDto();
             }
-            return new AppleIdGetOutputDto();
+            finally
+            {
+                GetSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release(); ;
+            }
         }
 
         #endregion
@@ -280,16 +306,16 @@ namespace GmailServer.ApplicationServices
             var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
             if (appleId != null)
             {
-                if ((status == AppleIdStatus.Ready && appleId.Status == AppleIdStatus.Pending) || 
-                    (status != AppleIdStatus.Ready && appleId.Status != AppleIdStatus.Completed1 
-                        && appleId.Status != AppleIdStatus.Completed2 
-                        && appleId.Status != AppleIdStatus.Completed3 
+                if ((status == AppleIdStatus.Ready && appleId.Status == AppleIdStatus.Pending) ||
+                    (status != AppleIdStatus.Ready && appleId.Status != AppleIdStatus.Completed1
+                        && appleId.Status != AppleIdStatus.Completed2
+                        && appleId.Status != AppleIdStatus.Completed3
                         && appleId.Status != AppleIdStatus.Completed4))
                 {
-                        appleId.Status = status;
-                        appleId.Updated = DateTime.Now;
-                        var res = await Repository.UpdateAsync(appleId);
-                        return await MapToGetOutputDtoAsync(res);
+                    appleId.Status = status;
+                    appleId.Updated = DateTime.Now;
+                    var res = await Repository.UpdateAsync(appleId);
+                    return await MapToGetOutputDtoAsync(res);
                 }
             }
 

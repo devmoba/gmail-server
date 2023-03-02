@@ -5,9 +5,11 @@ using GmailServer.Permissions;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -26,6 +28,8 @@ namespace GmailServer.ApplicationServices
         CreateUpdateGmailPremiumDto>, IGmailPremiumAppService
     {
         private new readonly IGmailPremiumRepository Repository;
+        private static ConcurrentDictionary<long, SemaphoreSlim> GetSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
+
         public GmailPremiumAppService(IGmailPremiumRepository repository) : base(repository)
         {
             Repository = repository;
@@ -77,7 +81,7 @@ namespace GmailServer.ApplicationServices
             {
                 var gmailPremium = ObjectMapper.Map<CreateUpdateGmailPremiumDto, GmailPremium>(input);
                 gmailPremium.Created = DateTime.Now;
-                gmailPremium.Updated = DateTime.Now;    
+                //gmailPremium.Updated = DateTime.Now;    
                 gmailPremium.Status = Enums.GmailPremiumStatus.Ready;
                 gmailPremium.RecoveryEmail = string.IsNullOrEmpty(input.RecoveryEmail) ? string.Empty : input.RecoveryEmail;
                 var res = await Repository.InsertAsync(gmailPremium, autoSave: true);
@@ -112,8 +116,8 @@ namespace GmailServer.ApplicationServices
                             Email = gmailPremiumSplit[0],
                             Password = gmailPremiumSplit[1],
                             Status = Enums.GmailPremiumStatus.Ready,
-                            Created = DateTime.Now,
-                            Updated = DateTime.Now
+                            Created = DateTime.Now
+                            //Updated = DateTime.Now
                         };
                         entity.RecoveryEmail = gmailPremiumSplit.Length >= 3 ? gmailPremiumSplit[2] : string.Empty;
                         entities.Add(entity);
@@ -140,19 +144,30 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailPremiumDto> GetFirstGmailPremiumAsync()
         {
-            var query = Repository.Where(x => x.Status == Enums.GmailPremiumStatus.Ready);
-            query = query.OrderByDescending(x => x.Created);
-            var gmailPremium = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (gmailPremium != null)
+            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
+            await getSyncLock.WaitAsync();
+            try
             {
-                var res = ObjectMapper.Map<GmailPremium, GmailPremiumDto>(gmailPremium);
-                gmailPremium.Status = Enums.GmailPremiumStatus.Completed;
-                gmailPremium.TakenTime = DateTime.Now;
-                gmailPremium.Updated = DateTime.Now;
-                await Repository.UpdateAsync(gmailPremium, autoSave: true);
-                return res;
+                var query = Repository.Where(x => x.Status == Enums.GmailPremiumStatus.Ready);
+                query = query.OrderByDescending(x => x.Created);
+                var gmailPremium = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (gmailPremium != null)
+                {
+                    var res = ObjectMapper.Map<GmailPremium, GmailPremiumDto>(gmailPremium);
+                    gmailPremium.Status = Enums.GmailPremiumStatus.Completed;
+                    gmailPremium.TakenTime = DateTime.Now;
+                    gmailPremium.Updated = DateTime.Now;
+                    await Repository.UpdateAsync(gmailPremium, autoSave: true);
+                    return res;
+                }
+                return new GmailPremiumDto();
             }
-            return new GmailPremiumDto();
+            finally
+            {
+                GetSyncLocks.RemoveAll(x => x.Key == key);
+                getSyncLock.Release();
+            }
         }
 
         private bool ValidateGmailPremiumInput(string str)
