@@ -1,25 +1,25 @@
 ﻿$(function () {
-    gmailServer.controllers.gmailResource.getStatisticByUsername().done((res) => {
-        var chart = new CanvasJS.Chart("chartContainer", {
-            exportEnabled: false,
-            animationEnabled: true,
-            title: {
-                text: "Gmail Resource Statistics"
-            },
-            legend: {
-                cursor: "pointer",
-                itemclick: explodePie
-            },
-            data: [{
-                type: "pie",
-                showInLegend: false,
-                toolTipContent: `{name}: <strong>{y}</strong>`,
-                indexLabel: "{name} - {y}",
-                dataPoints: res.statusPoints
-            }]
-        });
-        chart.render();
-    });
+    //gmailServer.controllers.gmailResource.getStatisticByUsername().done((res) => {
+    //    var chart = new CanvasJS.Chart("chartContainer", {
+    //        exportEnabled: false,
+    //        animationEnabled: true,
+    //        title: {
+    //            text: "Gmail Resource Statistics"
+    //        },
+    //        legend: {
+    //            cursor: "pointer",
+    //            itemclick: explodePie
+    //        },
+    //        data: [{
+    //            type: "pie",
+    //            showInLegend: false,
+    //            toolTipContent: `{name}: <strong>{y}</strong>`,
+    //            indexLabel: "{name} - {y}",
+    //            dataPoints: res.statusPoints
+    //        }]
+    //    });
+    //    chart.render();
+    //});
 
     var l = abp.localization.getResource('GmailServer');
     //var viewModel = new StatisticViewModel();
@@ -114,15 +114,15 @@
 
     var dataTable = $('#gmailResourceStatisticTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
 
-    function explodePie(e) {
-        if (typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
-            e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
-        } else {
-            e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
-        }
-        e.chart.render();
+    //function explodePie(e) {
+    //    if (typeof (e.dataSeries.dataPoints[e.dataPointIndex].exploded) === "undefined" || !e.dataSeries.dataPoints[e.dataPointIndex].exploded) {
+    //        e.dataSeries.dataPoints[e.dataPointIndex].exploded = true;
+    //    } else {
+    //        e.dataSeries.dataPoints[e.dataPointIndex].exploded = false;
+    //    }
+    //    e.chart.render();
 
-    }
+    //}
 });
 
 //function StatisticViewModel() {

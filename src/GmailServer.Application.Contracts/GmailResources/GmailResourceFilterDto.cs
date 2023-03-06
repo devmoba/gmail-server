@@ -10,6 +10,8 @@ namespace GmailServer.GmailResources
 
         public string Email { get; set; }
 
+        public string Country { get; set; }
+
         public GmailResourceStatus? Status { get; set; }
 
         public PremiumType? PremiumType { get; set; }

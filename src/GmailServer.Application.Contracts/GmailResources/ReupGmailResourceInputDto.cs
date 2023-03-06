@@ -6,5 +6,8 @@ namespace GmailServer.GmailResources
     {
         [Required]
         public string Emails { get; set; }
+
+        [Required]
+        public string Username { get; set; }
     }
 }

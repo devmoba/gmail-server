@@ -9,6 +9,7 @@
         { name: "email" },
         { searchDisabled: true },
         { searchDisabled: true },
+        { name: "country" },
         { name: "status", options: gmailResourceStatusSelections },
         { name: "premiumType", options: premiumTypeSelections },
         { searchDisabled: true },
@@ -43,27 +44,31 @@
         columnDefs: [
             {
                 orderable: false,
-                targets: [2],
+                targets: [2]
+            },
+            {
+                orderable: false,
+                targets: [4],
                 render: function (data, type, row, meta) {
                     return `<span class="text-ellipsis">${data}</span>`;
                 }
             },
             {
-                targets: [5],
+                targets: [6],
                 render: function (data, type, row, meta) {
                     var status = gmailResourceStatusSelections.find(x => x.value == data).text;
                     return status;
                 }
             },
             {
-                targets: [6],
+                targets: [7],
                 render: function (data, type, row, meta) {
                     var premiumType = premiumTypeSelections.find(x => x.value == data).text;
                     return premiumType;
                 }
             },
             {
-                targets: [7, 8, 9, 10],
+                targets: [8, 9, 10, 11],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -73,7 +78,7 @@
                 }
             },
             {
-                targets: [11],
+                targets: [12],
                 rowAction: {
                     items:
                         [
@@ -98,15 +103,16 @@
         columns: [
             { data: "id", width: "100px" },
             { data: "username", width: "150px" },
-            { data: "email", width: "250px" },
+            { data: "email", width: "300px" },
             { data: "password", width: "150px" },
             { data: "recoveryEmail", width: "300px" },
+            { data: "country", width: "150px" },
             { data: "status", width: "150px" },
             { data: "premiumType", width: "150px" },
-            { data: "updatedPremium", width: "250px" },
-            { data: "takenTime", width: "250px" },
-            { data: "created", width: "250px" },
-            { data: "updated", width: "250px" },
+            { data: "updatedPremium", width: "150px" },
+            { data: "takenTime", width: "150px" },
+            { data: "created", width: "150px" },
+            { data: "updated", width: "150px" },
             { data: null, width: "100px" },
         ]
     });

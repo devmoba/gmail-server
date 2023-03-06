@@ -280,6 +280,7 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
                 b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128);
+                b.Property(x => x.Country).HasMaxLength(128).IsRequired(false);
                 b.Property(x => x.Status).IsRequired();
                 b.Property(x => x.PremiumType).IsRequired().HasDefaultValue(PremiumType.Unset);
                 b.Property(x => x.Created).IsRequired();

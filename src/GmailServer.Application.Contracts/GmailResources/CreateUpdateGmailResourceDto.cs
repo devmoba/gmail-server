@@ -17,5 +17,7 @@ namespace GmailServer.GmailResources
         public string Password { get; set; }
 
         public string RecoveryEmail { get; set; }
+
+        public string Country { get; set; }
     }
 }

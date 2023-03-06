@@ -14,6 +14,8 @@ namespace GmailServer.Entities
 
         public string RecoveryEmail { get; set; }
 
+        public string Country { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }

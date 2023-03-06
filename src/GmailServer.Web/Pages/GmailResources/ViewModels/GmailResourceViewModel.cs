@@ -10,7 +10,7 @@ namespace GmailServer.Web.Pages.GmailResources.ViewModels
 
         [Required]
         [TextArea(Rows = 35)]
-        [Placeholder("email|password|recoveryEmail(optional)")]
+        [Placeholder("email|password|recoveryEmail(optional)|country(optional)")]
         public string Emails { get; set; }
     }
 }

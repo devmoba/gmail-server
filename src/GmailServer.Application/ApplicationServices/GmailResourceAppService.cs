@@ -30,8 +30,10 @@ namespace GmailServer.ApplicationServices
         CreateUpdateGmailResourceDto>, IGmailResourceAppService
     {
         private new readonly IGmailResourceRepository Repository;
-        private static ConcurrentDictionary<long, SemaphoreSlim> GetSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
-        private static ConcurrentDictionary<long, SemaphoreSlim> GetPremiumSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
+        private static SemaphoreSlim getSyncLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim getByStatusSyncLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim getPremiumSyncLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim getPremiumByNumberSyncLock = new SemaphoreSlim(1, 1);
 
         public GmailResourceAppService(IGmailResourceRepository repository) : base(repository)
         {
@@ -53,6 +55,7 @@ namespace GmailServer.ApplicationServices
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
             query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Country), x => x.Country == input.Country.ToLower().Trim());
             var currentUser = CurrentUser;
             if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
             {
@@ -139,7 +142,8 @@ namespace GmailServer.ApplicationServices
                             //Updated = DateTime.Parse("0001-01-01 00:00:00.0000000"),
                             //UpdatedPremium = DateTime.Parse("0001-01-01 00:00:00.0000000")
                         };
-                        entity.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2] : string.Empty;
+                        entity.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2].Trim().ToLower() : string.Empty;
+                        entity.Country = gpSplit.Length >= 4 ? gpSplit[3].Trim().ToLower() : string.Empty;
                         entities.Add(entity);
                     }
                 }
@@ -167,10 +171,13 @@ namespace GmailServer.ApplicationServices
                     var oldEmail = await Repository.FirstOrDefaultAsync(x => x.Email == email);
                     if (oldEmail != null)
                     {
+                        oldEmail.Username = input.Username;
                         oldEmail.Password = gpSplit[1].Trim();
                         oldEmail.Status = Enums.GmailResourceStatus.Ready;
                         oldEmail.Updated = DateTime.Now;
                         oldEmail.TakenTime = DateTime.Parse("0001-01-01 00:00:00.0000000");
+                        oldEmail.PremiumType = PremiumType.Unset;
+                        oldEmail.UpdatedPremium = DateTime.Now;
                         entities.Add(oldEmail);
                     }
                 }
@@ -184,7 +191,10 @@ namespace GmailServer.ApplicationServices
                     {
                         nameof(GmailResource.Password),
                         nameof(GmailResource.Status),
-                        nameof(GmailResource.Updated)
+                        nameof(GmailResource.Updated),
+                        nameof(GmailResource.TakenTime),
+                        nameof(GmailResource.PremiumType),
+                        nameof(GmailResource.UpdatedPremium)
                     });
                 }
                 catch (Exception ex)
@@ -208,8 +218,6 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailResourceDto> GetFirstGmailResourceAsync()
         {
-            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
             await getSyncLock.WaitAsync();
             try
             {
@@ -238,7 +246,6 @@ namespace GmailServer.ApplicationServices
             }
             finally
             {
-                GetSyncLocks.RemoveAll(x => x.Key == key);
                 getSyncLock.Release();
             }
         }
@@ -264,9 +271,7 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailResourceDto> GetByStatusAsync(GmailResourceStatus status)
         {
-            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
-            await getSyncLock.WaitAsync();
+            await getByStatusSyncLock.WaitAsync();
             try
             {
                 var query = Repository.Where(x => x.Status == status);
@@ -283,8 +288,7 @@ namespace GmailServer.ApplicationServices
             }
             finally
             {
-                GetSyncLocks.RemoveAll(x => x.Key == key);
-                getSyncLock.Release();
+                getByStatusSyncLock.Release();
             }
         }
 
@@ -482,9 +486,7 @@ namespace GmailServer.ApplicationServices
 
         public async Task<GmailResourceDto> GetGmailPremiumAsync(DateTime time = default)
         {
-            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var getSyncLock = GetPremiumSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
-            await getSyncLock.WaitAsync();
+            await getPremiumSyncLock.WaitAsync();
             try
             {
                 var query = Repository.AsQueryable();
@@ -515,16 +517,13 @@ namespace GmailServer.ApplicationServices
             }
             finally
             {
-                GetPremiumSyncLocks.RemoveAll(x => x.Key == key);
-                getSyncLock.Release();
+                getPremiumSyncLock.Release();
             }
         }
 
         public async Task<List<GmailResourceDto>> GetGmailsPremiumByNumber(DateTime time = default, int number = 1)
         {
-            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var getSyncLock = GetPremiumSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
-            await getSyncLock.WaitAsync();
+            await getPremiumByNumberSyncLock.WaitAsync();
             try
             {
                 var query = Repository.AsQueryable();
@@ -563,8 +562,7 @@ namespace GmailServer.ApplicationServices
             }
             finally
             {
-                GetPremiumSyncLocks.RemoveAll(x => x.Key == key);
-                getSyncLock.Release();
+                getPremiumByNumberSyncLock.Release();
             }
         }
     }

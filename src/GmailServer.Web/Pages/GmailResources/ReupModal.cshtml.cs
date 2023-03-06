@@ -2,6 +2,7 @@ using GmailServer.GmailResources;
 using GmailServer.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
@@ -36,6 +37,10 @@ namespace GmailServer.Web.Pages.GmailResources
 
     public class ReupFormModel
     {
+        [Required]
+        [DisplayName("New username")]
+        public string Username { get; set; }
+
         [Required]
         [TextArea(Rows = 35)]
         [Placeholder("email|password")]

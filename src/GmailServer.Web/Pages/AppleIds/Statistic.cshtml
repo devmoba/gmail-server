@@ -18,7 +18,7 @@
 @section scripts {
 <abp-script-bundle name="knockout" />
 <abp-script-bundle name="chosen" />
-<abp-script-bundle name="canvasjs" />
+@*<abp-script-bundle name="canvasjs" />*@
 <script>
     var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
 </script>
@@ -54,11 +54,11 @@
                 
             </abp-column>
         </abp-row> 
-        <abp-row>
+        @*<abp-row>
             <abp-column size-md="_8">
                 <div id="chartContainer" style="height: 550px; width: 100%;"></div>
             </abp-column>
-        </abp-row>
+        </abp-row>*@
     </abp-card-header>
     <abp-card-body>
         <abp-table striped-rows="true" id="appleIdStatisticTable" class="table-bordered">

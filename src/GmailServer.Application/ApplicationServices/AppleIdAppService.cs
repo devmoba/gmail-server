@@ -31,7 +31,8 @@ namespace GmailServer.ApplicationServices
         CreateUpdateAppleIdDto>, IAppleIdAppService
     {
         private new readonly IAppleIdRepository Repository;
-        private static ConcurrentDictionary<long, SemaphoreSlim> GetSyncLocks = new ConcurrentDictionary<long, SemaphoreSlim>();
+        private static SemaphoreSlim getSyncLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim getByStatusSyncLock = new SemaphoreSlim(1, 1);
 
         public AppleIdAppService(IAppleIdRepository repository) : base(repository)
         {
@@ -86,8 +87,6 @@ namespace GmailServer.ApplicationServices
         #region GET API Public
         public async Task<AppleIdGetOutputDto> GetFirstAppleIdAsync()
         {
-            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
             await getSyncLock.WaitAsync();
             try
             {
@@ -118,7 +117,6 @@ namespace GmailServer.ApplicationServices
             }
             finally
             {
-                GetSyncLocks.RemoveAll(x => x.Key == key);
                 getSyncLock.Release();
             }
 
@@ -126,9 +124,7 @@ namespace GmailServer.ApplicationServices
 
         public async Task<AppleIdGetOutputDto> GetByStatusAsync(AppleIdStatus status)
         {
-            var key = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var getSyncLock = GetSyncLocks.GetOrAdd(key, new SemaphoreSlim(1, 1));
-            await getSyncLock.WaitAsync();
+            await getByStatusSyncLock.WaitAsync();
             try
             {
                 var query = Repository.Where(x => x.Status == status);
@@ -146,8 +142,7 @@ namespace GmailServer.ApplicationServices
             }
             finally
             {
-                GetSyncLocks.RemoveAll(x => x.Key == key);
-                getSyncLock.Release(); ;
+                getByStatusSyncLock.Release(); ;
             }
         }
 
