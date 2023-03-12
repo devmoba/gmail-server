@@ -391,14 +391,14 @@ namespace GmailServer.ApplicationServices
                 Error = g.Where(x => x.Status == GmailResourceStatus.Error).Count(),
                 Unknown = g.Where(x => x.Status == GmailResourceStatus.Unknown).Count()
             });
-            queryGroupBy = queryGroupBy.OrderByDescending(x => x.Created);
             var count = await AsyncExecuter.CountAsync(queryGroupBy);
 
             if (input.MaxResultCount > 0 || input.SkipCount > 0)
                 queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
-            return new PagedResultDto<GmailResourceStatisticDailyDto>(count, res);
+            return new PagedResultDto<GmailResourceStatisticDailyDto>(
+                count, res.OrderByDescending(x => x.Created).ToList());
         }
 
         [Authorize(GmailServerPermissions.GmailResources.ResetStatus)]

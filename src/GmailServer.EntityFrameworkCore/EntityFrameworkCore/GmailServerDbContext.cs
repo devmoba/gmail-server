@@ -110,7 +110,6 @@ namespace GmailServer.EntityFrameworkCore
             {
                 b.ToTable(GmailServerConsts.DbTablePrefix + "Gmails", GmailServerConsts.DbSchema);
                 b.ConfigureByConvention();
-
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
                 b.Property(x => x.RecoveryEmail).IsUnicode(false).HasMaxLength(128).IsRequired();
@@ -126,7 +125,16 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Created).IsRequired();
                 b.Property(x => x.Updated).IsRequired();
                 b.Property(x => x.LastCheck).IsRequired();  
-                b.Property(x => x.TimeDiff).IsRequired();  
+                b.Property(x => x.TimeDiff).IsRequired();
+                b.HasIndex(x => x.Id).IncludeProperties<Gmail>(g => new
+                {
+                    g.Status,
+                    g.Created,
+                    g.Updated,
+                    g.LastCheck,
+                    g.RecoveryEmail,
+                    g.Country
+                });
             });
 
             builder.Entity<GmailType>(b =>

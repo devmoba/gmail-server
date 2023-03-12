@@ -56,6 +56,7 @@ $(function () {
                 }
             },
             {
+                orderable: false,
                 targets: [8, 9, 10],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
@@ -66,6 +67,7 @@ $(function () {
                 }
             },
             {
+                orderable: false,
                 targets: [11],
                 render: function (data, type, row, meta) {
                     if (abp.auth.isGranted('DownloadedAppGroup.DownloadedApps')) {

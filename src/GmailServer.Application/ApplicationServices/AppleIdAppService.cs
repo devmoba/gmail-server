@@ -405,14 +405,13 @@ namespace GmailServer.ApplicationServices
                 Error = g.Where(x => x.Status == AppleIdStatus.Error).Count(),
                 Unknown = g.Where(x => x.Status == AppleIdStatus.Unknown).Count()
             });
-            queryGroupBy = queryGroupBy.OrderByDescending(x => x.Created);
             var count = await AsyncExecuter.CountAsync(queryGroupBy);
 
             if (input.MaxResultCount > 0 || input.SkipCount > 0)
                 queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
-            return new PagedResultDto<AppleIdStatisticDailyDto>(count, res);
+            return new PagedResultDto<AppleIdStatisticDailyDto>(count, res.OrderByDescending(x => x.Created).ToList());
         }
 
         [Authorize(GmailServerPermissions.AppleIds.Statistic)]

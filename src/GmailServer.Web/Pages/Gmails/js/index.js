@@ -72,6 +72,7 @@
                 }
             },
             {
+                orderable: false,
                 targets: [13],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {

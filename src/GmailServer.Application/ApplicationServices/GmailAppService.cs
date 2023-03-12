@@ -141,14 +141,14 @@ namespace GmailServer.ApplicationServices
                 Checking = g.Where(x => x.Status == Status.Checking).Count(),
                 Uncheck = g.Where(x => x.Status == Status.Uncheck).Count()
             });
-            queryGroupBy = queryGroupBy.OrderByDescending(x => x.Created);
+            //queryGroupBy = queryGroupBy.OrderByDescending(x => x.Created);
 
             var count = await AsyncExecuter.CountAsync(queryGroupBy);
             if (input.MaxResultCount > 0 || input.SkipCount > 0)
                 queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
-            return new PagedResultDto<GmailReportDto>(count, res);
+            return new PagedResultDto<GmailReportDto>(count, res.OrderByDescending(x => x.Created).ToList());
         }
 
         [Authorize(GmailServerPermissions.Dashboard.Home)]
