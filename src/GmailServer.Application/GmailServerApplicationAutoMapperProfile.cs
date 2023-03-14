@@ -43,7 +43,8 @@ namespace GmailServer
             CreateMap<AppleId, AppleIdGetOutputDto>();
             CreateMap<AppleId, AppleIdGetListOutputDto>().AfterMap(
                 (a, b) => b.DownloadedAppCount = a.DownloadedApps.Count);
-            CreateMap<CreateUpdateAppleIdDto, AppleId>();
+            CreateMap<CreateUpdateAppleIdDto, AppleId>()
+                .AfterMap((a, b) => b.DateOfBirth = a.DateOfBirth);
             CreateMap<AppleId, AppleIdExcelModel>().AfterMap(
                 (a, b) => b.Status = Enum.GetName(typeof(AppleIdStatus), a.Status));
 

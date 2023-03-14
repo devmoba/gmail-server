@@ -254,6 +254,10 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.PurchaseNumber).IsRequired();
                 b.Property(x => x.TakenOutNumber).IsRequired();
                 b.Property(x => x.Ccv).HasMaxLength(64).IsRequired(false);
+                b.Property(x => x.SecretAnswer1).IsRequired(false);
+                b.Property(x => x.SecretAnswer2).IsRequired(false);
+                b.Property(x => x.SecretAnswer3).IsRequired(false);
+                b.Property(x => x.DateOfBirth).HasMaxLength(128).IsRequired(false);
             });
 
             builder.Entity<DownloadedApp>(b =>

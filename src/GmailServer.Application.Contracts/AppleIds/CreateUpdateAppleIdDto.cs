@@ -15,5 +15,13 @@ namespace GmailServer.AppleIds
         public string Username { get; set; }
 
         public string Ccv { get; set; }
+
+        public string SecretAnswer1 { get; set; }
+
+        public string SecretAnswer2 { get; set; }
+
+        public string SecretAnswer3 { get; set; }
+
+        public string DateOfBirth { get; set; }
     }
 }

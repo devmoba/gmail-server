@@ -11,6 +11,10 @@ $(function () {
         { name: "purchaseNumber", enableRangeFilter: true },
         { name: "status", options: appleIdStatusSelections },
         { searchDisabled: true },
+        { searchDisabled: true },
+        { searchDisabled: true },
+        { searchDisabled: true },
+        { searchDisabled: true },
         { name: "takenOutNumber", enableRangeFilter: true },
         { searchDisabled: true },
         { name: "created", enableDateRangeFilter: true },
@@ -57,7 +61,14 @@ $(function () {
             },
             {
                 orderable: false,
-                targets: [8, 9, 10],
+                targets: [7, 8, 9, 10],
+                render: function (data, type, row, meta) {
+                    return `<span class="text-ellipsis sm-width">${data}</span>`;
+                }
+            },
+            {
+                orderable: false,
+                targets: [12, 13, 14],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -68,7 +79,7 @@ $(function () {
             },
             {
                 orderable: false,
-                targets: [11],
+                targets: [15],
                 render: function (data, type, row, meta) {
                     if (abp.auth.isGranted('DownloadedAppGroup.DownloadedApps')) {
                         var html = `<button onclick="openDownloadedAppModal('${row.email}')" class="btn btn-sm btn-success" data-id="${row.email}">`;
@@ -80,7 +91,7 @@ $(function () {
                 }
             },
             {
-                targets: [12],
+                targets: [16],
                 rowAction: {
                     items:
                         [
@@ -110,6 +121,10 @@ $(function () {
             { data: "purchaseNumber", width: "150px" },
             { data: "status", width: "150px" },
             { data: "ccv", width: "150px" },
+            { data: "secretAnswer1", width: "150px" },
+            { data: "secretAnswer2", width: "150px" },
+            { data: "secretAnswer3", width: "150px" },
+            { data: "dob", width: "150px" },
             { data: "takenOutNumber", width: "150px" },
             { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },

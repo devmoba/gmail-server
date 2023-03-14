@@ -27,6 +27,14 @@ namespace GmailServer.Entities
 
         public string Ccv { get; set; }
 
+        public string SecretAnswer1 { get; set; }
+
+        public string SecretAnswer2 { get; set; }   
+
+        public string SecretAnswer3 { get; set; }
+
+        public string DateOfBirth { get; set; }
+
         public virtual ICollection<DownloadedApp> DownloadedApps { get; set; }
     }
 }

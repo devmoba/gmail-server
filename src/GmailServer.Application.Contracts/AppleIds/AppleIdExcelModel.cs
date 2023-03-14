@@ -18,6 +18,14 @@ namespace GmailServer.AppleIds
 
         public string Ccv { get; set; }
 
+        public string SecretAnswer1 { get; set; }
+
+        public string SecretAnswer2 { get; set; }
+
+        public string SecretAnswer3 { get; set; }
+
+        public string DateOfBirth { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }

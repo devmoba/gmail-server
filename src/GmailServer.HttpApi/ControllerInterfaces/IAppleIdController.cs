@@ -22,7 +22,8 @@ namespace GmailServer.ControllerInterfaces
 
         Task<AppleIdGetOutputDto> UpdateStatusAsync(string email, AppleIdStatus status);
 
-        Task<AppleIdGetOutputDto> CreateAsync(string email, string password, string username, string ccv = null);
+        Task<AppleIdGetOutputDto> CreateAsync(string email, string password, string username, string ccv = null
+            , string secretAnswer1 = default, string secretAnswer2 = default, string secretAnswer3 = default, string dob = default);
 
         Task<List<AppleIdStatusSelectionDto>> GetAppleIdStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null);
 

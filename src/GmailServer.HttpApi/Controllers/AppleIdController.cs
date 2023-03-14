@@ -26,14 +26,19 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("upload")]
-        public Task<AppleIdGetOutputDto> CreateAsync([Required] string email, [Required] string password, [Required] string username, string ccv = default)
+        public Task<AppleIdGetOutputDto> CreateAsync([Required] string email, [Required] string password, [Required] string username, 
+            string ccv = default, string secretAnswer1 = default, string secretAnswer2 = default, string secretAnswer3 = default, string dob = default)
         {
             return _appleIdAppService.CreateAsync(new CreateUpdateAppleIdDto()
             {
                 Email = email,
                 Password = password,
                 Username = username,
-                Ccv = ccv
+                Ccv = ccv,
+                SecretAnswer1 = secretAnswer1,
+                SecretAnswer2 = secretAnswer2,
+                SecretAnswer3 = secretAnswer3,
+                DateOfBirth = dob
             });
         }
 
