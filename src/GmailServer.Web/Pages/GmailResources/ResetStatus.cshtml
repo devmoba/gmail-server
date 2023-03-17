@@ -101,14 +101,17 @@
                         </div>
                     </div>
                     <div class="row status-cb">
-                        <div class="col-md-2">
-                        </div>
-                        <div class="col-md-9">
-                            <label class="lb-checkbox">
-                                <input type="checkbox" name="CheckedOnDelete" data-bind="checked: checkedOnDelete, value: checkedOnDelete" style="transform: scale(1.8);" />
-                                <span style="font-size: 20px; margin-left: 15px;">On Delete</span>
-                            </label>
-                        </div>
+                        @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.DeleteFilter))
+                        {
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-9">
+                                <label class="lb-checkbox">
+                                    <input type="checkbox" name="CheckedOnDelete" data-bind="checked: checkedOnDelete, value: checkedOnDelete" style="transform: scale(1.8);" />
+                                    <span style="font-size: 20px; margin-left: 15px;">On Delete</span>
+                                </label>
+                            </div>
+                        }
                     </div>
                     <!-- ko ifnot: checkedOnDelete -->
                     <div class="row row-top">

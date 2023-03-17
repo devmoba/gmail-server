@@ -98,6 +98,7 @@ namespace GmailServer.Permissions
             public const string Statistic = PermissionNames.AppleId_Statistic;
             public const string StatisticDaily = PermissionNames.AppleId_StatisticDaily;
             public const string ResetStatus = PermissionNames.AppleId_ResetStatus;
+            public const string PurchaseNumber = PermissionNames.AppleId_PurchaseNumber;
         }
 
         public const string DownloadedAppGroup = PermissionNames.DownloadedApp;
@@ -116,6 +117,8 @@ namespace GmailServer.Permissions
             public const string Create = PermissionNames.GmailResource_Create;
             public const string Update = PermissionNames.GmailResource_Update;
             public const string Delete = PermissionNames.GmailResource_Delete;
+            public const string DeleteAll = PermissionNames.GmailResource_DeleteAll;
+            public const string DeleteFilter = PermissionNames.GmailResource_DeleteFilter;
             public const string Download = PermissionNames.GmailResource_Download;
             public const string Statistic = PermissionNames.GmailResource_Statistic;
             public const string StatisticDaily = PermissionNames.GmailResource_StatisticDaily;

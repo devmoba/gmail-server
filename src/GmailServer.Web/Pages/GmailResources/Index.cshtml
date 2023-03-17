@@ -76,7 +76,7 @@
                         <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;<span>Reset Status</span>
                     </a>
                 }
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.Delete))
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.DeleteAll))
                 {
                     <abp-button class="float-right btn btn-small btn-danger" id="btnRemoveAll" icon="trash" text="Remove All"></abp-button>
                 }

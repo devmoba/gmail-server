@@ -72,6 +72,7 @@ namespace GmailServer.Permissions
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.Statistic, L("Permission:AppleIds.Statistic"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.StatisticDaily, L("Permission:AppleIds.StatisticDaily"));
             appleIdManagement.AddChild(GmailServerPermissions.AppleIds.ResetStatus, L("Permission:AppleIds.ResetStatus"));
+            appleIdManagement.AddChild(GmailServerPermissions.AppleIds.PurchaseNumber, L("Permission:AppleIds.PurchaseNumber"));
 
             var downloadedAppGroup = context.AddGroup(GmailServerPermissions.DownloadedAppGroup, L("Permission:DownloadedAppGroup "));
             var downloadedAppManagement = downloadedAppGroup.AddPermission(GmailServerPermissions.DownloadedApps.Default, L("Permission:DownloadedApps"));
@@ -83,6 +84,8 @@ namespace GmailServer.Permissions
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Create, L("Permission:GmailResource.Create"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Update, L("Permission:GmailResource.Update"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Delete, L("Permission:GmailResource.Delete"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.DeleteAll, L("Permission:GmailResource.DeleteAll"));
+            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.DeleteFilter, L("Permission:GmailResource.DeleteFilter"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Download, L("Permission:GmailResource.Download"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Statistic, L("Permission:GmailResource.Statistic"));
             GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.StatisticDaily, L("Permission:GmailResource.StatisticDaily"));

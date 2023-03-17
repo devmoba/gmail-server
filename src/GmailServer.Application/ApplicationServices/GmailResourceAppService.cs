@@ -7,7 +7,6 @@ using GmailServer.Permissions;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -204,7 +203,7 @@ namespace GmailServer.ApplicationServices
             }
         }
 
-        [Authorize(GmailServerPermissions.GmailResources.Delete)]
+        [Authorize(GmailServerPermissions.GmailResources.DeleteAll)]
         public async Task DeleteAllAsync()
         {
             await Repository.DeleteAllAsync();
@@ -451,6 +450,7 @@ namespace GmailServer.ApplicationServices
             return ObjectMapper.Map<List<GmailResource>, List<GmailResourceExcelModel>>(res);
         }
 
+        [Authorize(GmailServerPermissions.GmailResources.DeleteFilter)]
         public async Task DeleteAsync(DeleteFilter input)
         {
             var query = Repository.AsQueryable();

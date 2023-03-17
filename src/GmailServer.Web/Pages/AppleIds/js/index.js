@@ -53,6 +53,15 @@ $(function () {
                 }
             },
             {
+                targets: [4],
+                render: function (data, type, row, meta) {
+                    if (abp.auth.isGranted('AppleIdGroup.PurchaseNumber')) {
+                        return data;
+                    }
+                    return `NA`;
+                }
+            },
+            {
                 targets: [5],
                 render: function (data, type, row, meta) {
                     var status = appleIdStatusSelections.find(x => x.value == data.toString()).text;
@@ -124,7 +133,7 @@ $(function () {
             { data: "secretAnswer1", width: "150px" },
             { data: "secretAnswer2", width: "150px" },
             { data: "secretAnswer3", width: "150px" },
-            { data: "dob", width: "150px" },
+            { data: "dateOfBirth", width: "150px" },
             { data: "takenOutNumber", width: "150px" },
             { data: "takenTime", width: "250px" },
             { data: "created", width: "250px" },
