@@ -11,6 +11,8 @@ namespace GmailServer.Repositories
 
         Task BulkUpdateAsync(List<AppleId> appleIds, List<string> propertiesToInclude);
 
+        Task ExecuteSqlRawAsync(string query);
+
         Task BulkDeleteAsync(List<AppleId> appleIds);
 
         Task DeleteAppleIdCompletedAsync(int timeCheckDelete);

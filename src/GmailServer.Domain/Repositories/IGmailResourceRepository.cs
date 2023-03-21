@@ -7,6 +7,8 @@ namespace GmailServer.Repositories
 {
     public interface IGmailResourceRepository : IRepository<GmailResource, long>
     {
+        Task ExecuteSqlRawAsync(string query);
+
         Task BulkInsertAsync(List<GmailResource> gmailPremiums);
 
         Task BulkUpdateAsync(List<GmailResource> gmailResources, List<string> propertiesToInclude);

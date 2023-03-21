@@ -25,6 +25,7 @@
 
     var searchs = [
         { searchDisabled: true },
+        { name: "created", enableDateRangeFilter: true },
         { name: "username", options: usernameSelections },
         { searchDisabled: true },
         { searchDisabled: true },
@@ -55,9 +56,10 @@
         autoWidth: false,
         scrollCollapse: true,
         orderCellsTop: true,
-        order: [[1, "desc"]],
+        //order: [[1, "desc"]],
+        ordering: false,
         initComplete: () => {
-            $('select.search_c_1').chosen({ disable_search_threshold: 5, search_contains: true });
+            $('select.search_c_2').chosen({ disable_search_threshold: 7, search_contains: true });
         },
         ajax: abp.libs.datatables.createAjax(gmailServer.controllers.appleId.getStatistic, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();
@@ -74,18 +76,22 @@
                 orderable: true,
                 targets: [1],
                 render: function (data, type, row, meta) {
+                    if (data && type === 'display') {
+                        let m = moment(data);
+                        data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD')}</span>`;
+                    }
                     return data;
                 }
             },
             {
                 orderable: false,
-                targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
                 render: function (data, type, row, meta) {
                     return data;
                 }
             },
             {
-                targets: [17],
+                targets: [18],
                 rowAction: {
                     items:
                         [
@@ -93,7 +99,7 @@
                                 text: l('Daily'),
                                 iconClass: "fa fa-calendar-o",
                                 visible: function (data) {
-                                    return abp.auth.isGranted('AppleIdGroup.Statistic');
+                                    return abp.auth.isGranted('AppleIdGroup.StatisticDaily');
                                 },
                                 action: data => window.open(`/AppleIds/StatisticDaily?Username=${data.record.username}`)
                             }
@@ -103,6 +109,7 @@
         ],
         columns: [
             { data: null, width: "100px" },
+            { data: "created", width: "200px" },
             { data: "username", width: "200px" },
             { data: "total", width: "300px" },
             { data: "totalPurchaseNumber", width: "150px" },

@@ -6,9 +6,11 @@ using GmailServer.GmailResources.Statistics;
 using GmailServer.Permissions;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -348,9 +350,12 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<GmailResourceStatisticDto>> GetStatisticAsync(GmailResourceStatisticFilterDto input)
         {
             var query = Repository.AsQueryable();
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            var queryGroupBy = query.GroupBy(x => new { Username = x.Username }).Select(g => new GmailResourceStatisticDto()
+            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date, Username = x.Username }).Select(g => new GmailResourceStatisticDto()
             {
+                Created = g.Key.Created.Date,
                 Username = g.Key.Username,
                 Total = g.Count(),
                 Ready = g.Where(x => x.Status == GmailResourceStatus.Ready).Count(),
@@ -367,7 +372,7 @@ namespace GmailServer.ApplicationServices
                 queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
-            return new PagedResultDto<GmailResourceStatisticDto>(count, res);
+            return new PagedResultDto<GmailResourceStatisticDto>(count, res.OrderByDescending(x => x.Created.Date).ToList());
         }
 
         [Authorize(GmailServerPermissions.GmailResources.StatisticDaily)]
@@ -405,32 +410,61 @@ namespace GmailServer.ApplicationServices
         {
             if (input.Statuses.Count > 0)
             {
-                var query = Repository.AsQueryable();
-
-                query = query.Where(x => input.Statuses.Contains(x.Status));
-                query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-                query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-                query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("Update AppGmailResources");
+                queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, Updated = GETDATE()");
+                queryBuilder.AppendLine($"From AppGmailResources t1");
+                queryBuilder.AppendLine($"Inner Join");
+                queryBuilder.AppendLine($"(Select Id, Status From AppGmailResources Where ");
+                queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And Created <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
                 if (input.UpdatedHours.HasValue)
                 {
                     var current = DateTime.Now;
                     var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-                    query = query.Where(x => x.Updated < timeCheck);
+                    queryBuilder.Append($"And Updated < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
                 }
+                queryBuilder.Append(") t2 ");
+                queryBuilder.AppendLine("On t2.Id = t1.Id");
+                string query = queryBuilder.ToString();
+                await Repository.ExecuteSqlRawAsync(query);
+                //var query = Repository.AsQueryable();
 
-                var gmailResources = await AsyncExecuter.ToListAsync(query);
-                gmailResources.ForEach((gmailResource) =>
-                {
-                    gmailResource.Status = input.TargetStatus;
-                    gmailResource.Updated = DateTime.Now;
-                });
+                //query = query.Where(x => input.Statuses.Contains(x.Status));
+                //query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+                //query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+                //query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
 
-                await Repository.BulkUpdateAsync(gmailResources, new List<string>()
-                {
-                    nameof(GmailResource.Status),
-                    nameof(GmailResource.Updated)
-                });
+                //if (input.UpdatedHours.HasValue)
+                //{
+                //    var current = DateTime.Now;
+                //    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                //    query = query.Where(x => x.Updated < timeCheck);
+                //}
+
+                //var gmailResources = await AsyncExecuter.ToListAsync(query);
+                //gmailResources.ForEach((gmailResource) =>
+                //{
+                //    gmailResource.Status = input.TargetStatus;
+                //    gmailResource.Updated = DateTime.Now;
+                //});
+
+                //await Repository.BulkUpdateAsync(gmailResources, new List<string>()
+                //{
+                //    nameof(GmailResource.Status),
+                //    nameof(GmailResource.Updated)
+                //});
             }
         }
 
@@ -453,23 +487,51 @@ namespace GmailServer.ApplicationServices
         [Authorize(GmailServerPermissions.GmailResources.DeleteFilter)]
         public async Task DeleteAsync(DeleteFilter input)
         {
-            var query = Repository.AsQueryable();
-
-            query = query.Where(x => input.Statuses.Contains(x.Status));
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
-            if (input.UpdatedHours.HasValue)
+            if (input.Statuses.Count > 0)
             {
-                var current = DateTime.Now;
-                var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-                query = query.Where(x => x.Updated < timeCheck);
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("DELETE FROM AppGmailResources WHERE ");
+                queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
+
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And Created <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.UpdatedHours.HasValue)
+                {
+                    var current = DateTime.Now;
+                    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                    queryBuilder.Append($"And Updated < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
+                }
+                var query = queryBuilder.ToString();
+                await Repository.ExecuteSqlRawAsync(query);
             }
+            throw new UserFriendlyException("The status filter is required");
 
-            var gmailResources = await AsyncExecuter.ToListAsync(query);
-            await Repository.BulkDeleteAsync(gmailResources);
+            //var query = Repository.AsQueryable();
 
+            //query = query.Where(x => input.Statuses.Contains(x.Status));
+            //query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            //query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            //query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            //if (input.UpdatedHours.HasValue)
+            //{
+            //    var current = DateTime.Now;
+            //    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+            //    query = query.Where(x => x.Updated < timeCheck);
+            //}
+
+            //var gmailResources = await AsyncExecuter.ToListAsync(query);
+            //await Repository.BulkDeleteAsync(gmailResources);
         }
 
         public async Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type)

@@ -96,5 +96,11 @@ namespace GmailServer.Repositories
                 await dbContext.BulkUpdateAsync(gmailResources, bulkConfig);
             }
         }
+
+        public async Task ExecuteSqlRawAsync(string query)
+        {
+            var dbContext = await GetDbContextAsync();
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+        }
     }
 }

@@ -4,6 +4,8 @@ namespace GmailServer.AppleIds.Statistics
 {
     public class AppleIdStatisticDto
     {
+        public DateTime Created { get; set; }
+
         public string Username { get; set; }
 
         public int Total { get; set; }

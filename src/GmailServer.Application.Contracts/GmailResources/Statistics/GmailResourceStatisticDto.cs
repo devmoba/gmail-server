@@ -1,7 +1,11 @@
-﻿namespace GmailServer.GmailResources.Statistics
+﻿using System;
+
+namespace GmailServer.GmailResources.Statistics
 {
     public class GmailResourceStatisticDto
     {
+        public DateTime Created { get; set; }
+
         public string Username { get; set; }
 
         public int Total { get; set; }

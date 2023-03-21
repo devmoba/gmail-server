@@ -36,7 +36,8 @@ namespace GmailServer.Repositories
             var dbContext = await GetDbContextAsync();
             await dbContext.BulkUpdateAsync(appleIds, new BulkConfig()
             {
-                PropertiesToInclude = propertiesToInclude
+                PropertiesToInclude = propertiesToInclude,
+                BatchSize = 4000
             });
         }
 
@@ -54,6 +55,12 @@ namespace GmailServer.Repositories
                 .Where(x => x.Created < timeCheck && x.Status == AppleIdStatus.Completed1)
                 .ToListAsync();
             await dbContext.BulkDeleteAsync(appleIds);
+        }
+
+        public async Task ExecuteSqlRawAsync(string query)
+        {
+            var dbContext = await GetDbContextAsync();
+            await dbContext.Database.ExecuteSqlRawAsync($"{query}");
         }
 
         public async Task UpdateStatusByTimeoutAsync(int minute)

@@ -6,10 +6,12 @@ using GmailServer.Extensions;
 using GmailServer.Permissions;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -260,22 +262,50 @@ namespace GmailServer.ApplicationServices
         [Authorize(GmailServerPermissions.AppleIds.DeleteFilter)]
         public async Task DeleteAsync(DeleteFilter input)
         {
-            var query = Repository.AsQueryable();
-
-            query = query.Where(x => input.Statuses.Contains(x.Status));
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
-            if (input.UpdatedHours.HasValue)
+            if (input.Statuses.Count > 0)
             {
-                var current = DateTime.Now;
-                var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-                query = query.Where(x => x.Updated < timeCheck);
-            }
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("DELETE FROM AppAppleIds WHERE ");
+                queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
-            var appleIds = await AsyncExecuter.ToListAsync(query);
-            await Repository.BulkDeleteAsync(appleIds);
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And Created <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.UpdatedHours.HasValue)
+                {
+                    var current = DateTime.Now;
+                    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                    queryBuilder.Append($"And Updated < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
+                }
+                var query = queryBuilder.ToString();
+                await Repository.ExecuteSqlRawAsync(query);
+            }
+            throw new UserFriendlyException("The status filter is required");
+            //var query = Repository.AsQueryable();
+
+            //query = query.Where(x => input.Statuses.Contains(x.Status));
+            //query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            //query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            //query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            //if (input.UpdatedHours.HasValue)
+            //{
+            //    var current = DateTime.Now;
+            //    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+            //    query = query.Where(x => x.Updated < timeCheck);
+            //}
+
+            //var appleIds = await AsyncExecuter.ToListAsync(query);
+            //await Repository.BulkDeleteAsync(appleIds);
         }
 
         [Authorize(GmailServerPermissions.AppleIds.DeleteAll)]
@@ -349,9 +379,12 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<AppleIdStatisticDto>> GetStatisticAsync(AppleIdStatisticFilterDto input)
         {
             var query = Repository.AsQueryable();
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            var queryGroupBy = query.GroupBy(x => new { Username = x.Username }).Select(g => new AppleIdStatisticDto()
+            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date, Username = x.Username }).Select(g => new AppleIdStatisticDto()
             {
+                Created = g.Key.Created.Date,
                 Username = g.Key.Username,
                 Total = g.Count(),
                 TotalPurchaseNumber = g.Sum(x => x.PurchaseNumber),
@@ -375,7 +408,7 @@ namespace GmailServer.ApplicationServices
                 queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
-            return new PagedResultDto<AppleIdStatisticDto>(count, res);
+            return new PagedResultDto<AppleIdStatisticDto>(count, res.OrderByDescending(x => x.Created).ToList());
         }
 
         [Authorize(GmailServerPermissions.AppleIds.StatisticDaily)]
@@ -443,36 +476,67 @@ namespace GmailServer.ApplicationServices
         {
             if (input.Statuses.Count > 0)
             {
-                var query = Repository.AsQueryable();
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("Update AppAppleIds");
+                queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, TakenOutNumber = 0, Updated = GETDATE()");
+                queryBuilder.AppendLine($"From AppAppleIds t1");
+                queryBuilder.AppendLine($"Inner Join");
+                queryBuilder.AppendLine($"(Select Id, Status From AppAppleIds Where ");
+                queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
-                query = query.Where(x => input.Statuses.Contains(x.Status));
-                query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-                query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-                query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And Created <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
                 if (input.UpdatedHours.HasValue)
                 {
                     var current = DateTime.Now;
                     var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-                    query = query.Where(x => x.Updated < timeCheck);
+                    queryBuilder.Append($"And Updated < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
                 }
-                var appleIds = await AsyncExecuter.ToListAsync(query);
-                appleIds.ForEach((appleId) =>
-                {
-                    appleId.Status = input.TargetStatus;
-                    if (input.TargetStatus == AppleIdStatus.Ready)
-                    {
-                        appleId.TakenOutNumber = 0;
-                    }
-                    appleId.Updated = DateTime.Now;
-                });
+                queryBuilder.Append(") t2 ");
+                queryBuilder.AppendLine("On t2.Id = t1.Id");
+                string query = queryBuilder.ToString();
 
-                await Repository.BulkUpdateAsync(appleIds, new List<string>()
-                {
-                    nameof(AppleId.Status),
-                    nameof(AppleId.TakenOutNumber),
-                    nameof(AppleId.Updated)
-                });
+                await Repository.ExecuteSqlRawAsync(query);
+                //var query = Repository.AsQueryable();
+
+                //query = query.Where(x => input.Statuses.Contains(x.Status));
+                //query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+                //query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+                //query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+                //if (input.UpdatedHours.HasValue)
+                //{
+                //    var current = DateTime.Now;
+                //    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
+                //    query = query.Where(x => x.Updated < timeCheck);
+                //}
+                //var appleIds = await AsyncExecuter.ToListAsync(query);
+                //appleIds.ForEach((appleId) =>
+                //{
+                //    appleId.Status = input.TargetStatus;
+                //    if (input.TargetStatus == AppleIdStatus.Ready)
+                //    {
+                //        appleId.TakenOutNumber = 0;
+                //    }
+                //    appleId.Updated = DateTime.Now;
+                //});
+
+                //await Repository.BulkUpdateAsync(appleIds, new List<string>()
+                //{
+                //    nameof(AppleId.Status),
+                //    nameof(AppleId.TakenOutNumber),
+                //    nameof(AppleId.Updated)
+                //});
             }
         }
     }
