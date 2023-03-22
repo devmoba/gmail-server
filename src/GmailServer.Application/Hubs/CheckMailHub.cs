@@ -41,6 +41,10 @@ namespace GmailServer.Hubs
             {
                 ConnectionMapping<string>.GetInstance().Remove(ConnectionName, Context.ConnectionId);
             }
+            else
+            {
+                ConnectionMapping<string>.GetInstance().Remove(currentUser.UserName, Context.ConnectionId);
+            }
 
             return base.OnDisconnectedAsync(exception);
         }

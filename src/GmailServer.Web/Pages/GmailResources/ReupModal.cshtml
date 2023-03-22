@@ -3,16 +3,84 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @using GmailServer.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Packages.SignalR;
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
 @{
-    Layout = null;
+    ViewBag.PageTitle = L["Re-up gmail resources"];
+    PageLayout.Content.Title = L["Re-up gmail resources"].Value;
 }
-<abp-dynamic-form abp-model="ReupForm" data-ajaxForm="true" asp-page="/GmailResources/ReupModal">
-     <abp-modal>
-        <abp-modal-header title="Re-up gmail resources"></abp-modal-header>
-        <abp-modal-body>
-            <abp-form-content />
-        </abp-modal-body>
-        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
-    </abp-modal>
-</abp-dynamic-form>
-   
+
+@section scripts {
+    <abp-script type="typeof(SignalRBrowserScriptContributor)" />
+    <abp-script src="/Pages/GmailResources/js/reup.js" />
+    <script>
+
+    </script>
+}
+
+@section styles {
+    <style>
+        .row {
+            margin-bottom: 15px;
+        }
+    </style>
+}
+
+<abp-card>
+    <form id="reupGmailResourceForm" action="/GmailResources/ReupModal" method="post">
+        @(Html.AntiForgeryToken())
+        <abp-card-body>
+            <abp-row>
+                <abp-column size-md="_7">
+                    <div id="alertMessage"></div>
+                </abp-column>
+            </abp-row>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>New Username (*)</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" asp-for="@Model.ReupForm.Username" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label>Emails (*)</label>
+                        </div>
+                        <div class="col-md-8">
+                            <textarea asp-for="@Model.ReupForm.Emails" class="form-control" rows="30" placeholder="email|password|recoveryEmail(optional)|country(optional)"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-8">
+                            <button id="btnClearForm" class="btn btn-sm btn-outline-secondary" type="reset">
+                                <i class="fa fa-eraser" aria-hidden="true"></i>&nbsp;Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </abp-card-body>
+        <div class="row">
+            <div class="col-md-7">
+                <abp-modal-footer>
+                    <a href="/GmailResources" class="btn-secondary btn" type="button">Back</a>
+                    <button class="btn btn-primary" type="submit" onclick="return confirm('Are you sure to action?');">
+                        <i class="fa fa-check" aria-hidden="true"></i><span>&nbsp;Save</span>
+                    </button>
+                </abp-modal-footer>
+            </div>
+        </div>
+    </form>
+</abp-card>
+

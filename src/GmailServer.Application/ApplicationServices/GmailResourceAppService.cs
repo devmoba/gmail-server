@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
 
 namespace GmailServer.ApplicationServices
@@ -157,11 +158,12 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.GmailResources.ReupEmail)]
-        public async Task ReupAsync(ReupGmailResourceInputDto input)
+        public async Task<List<ReupOutputDto>> ReupAsync(ReupGmailResourceInputDto input)
         {
             var gmailResources = input.Emails.Split("\r\n").ToList();
             if (gmailResources.Count == 0)
                 throw new UserFriendlyException("Input empty!");
+            var reupOutputs = new List<ReupOutputDto>();
             var entities = new List<GmailResource>();
             foreach (var gr in gmailResources)
             {
@@ -179,7 +181,21 @@ namespace GmailServer.ApplicationServices
                         oldEmail.TakenTime = DateTime.Parse("0001-01-01 00:00:00.0000000");
                         oldEmail.PremiumType = PremiumType.Unset;
                         oldEmail.UpdatedPremium = DateTime.Now;
+                        oldEmail.RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2].Trim().ToLower() : string.Empty;
+                        oldEmail.Country = gpSplit.Length >= 4 ? gpSplit[3].Trim().ToLower() : string.Empty;
                         entities.Add(oldEmail);
+                    }
+                    else
+                    {
+                        reupOutputs.Add(new ReupOutputDto()
+                        {
+                            Email = email,
+                            Password = gpSplit[1].Trim(),
+                            RecoveryEmail = gpSplit.Length >= 3 ? gpSplit[2].Trim().ToLower() : string.Empty,
+                            Country = gpSplit.Length >= 4 ? gpSplit[3].Trim().ToLower() : string.Empty,
+                            OutputType = "NotInDB",
+                            ReupStatus = "NA"
+                        });
                     }
                 }
             }
@@ -188,14 +204,31 @@ namespace GmailServer.ApplicationServices
             {
                 try
                 {
-                    await Repository.BulkUpdateAsync(entities, new List<string>()
+                    var duplicates = entities.GetDuplicates(x => x.Email, null).Select(x => new ReupOutputDto()
+                    {
+                        Email = x.Email, 
+                        Password = x.Password,
+                        RecoveryEmail = x.RecoveryEmail,
+                        Country = x.Country,
+                        OutputType = "Duplicated",
+                        ReupStatus = "Done"
+                    }).ToList();
+
+                    if (duplicates.Count > 0)
+                    {
+                        reupOutputs.AddRange(duplicates);
+                    }
+
+                    await Repository.BulkUpdateAsync(entities.DistinctBy(x => x.Email).ToList(), new List<string>()
                     {
                         nameof(GmailResource.Password),
                         nameof(GmailResource.Status),
                         nameof(GmailResource.Updated),
                         nameof(GmailResource.TakenTime),
                         nameof(GmailResource.PremiumType),
-                        nameof(GmailResource.UpdatedPremium)
+                        nameof(GmailResource.UpdatedPremium),
+                        nameof(GmailResource.Country),
+                        nameof(GmailResource.RecoveryEmail)
                     });
                 }
                 catch (Exception ex)
@@ -203,6 +236,7 @@ namespace GmailServer.ApplicationServices
                     throw new UserFriendlyException(ex.Message);
                 }
             }
+            return reupOutputs;
         }
 
         [Authorize(GmailServerPermissions.GmailResources.DeleteAll)]
@@ -514,7 +548,8 @@ namespace GmailServer.ApplicationServices
                 var query = queryBuilder.ToString();
                 await Repository.ExecuteSqlRawAsync(query);
             }
-            throw new UserFriendlyException("The status filter is required");
+            else
+               throw new UserFriendlyException("The status filter is required");
 
             //var query = Repository.AsQueryable();
 

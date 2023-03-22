@@ -51,6 +51,7 @@
     <None Remove="Pages\GmailResources\js\downloadViewModel.js" />
     <None Remove="Pages\GmailResources\js\index.js" />
     <None Remove="Pages\GmailResources\js\resetStatusViewModel.js" />
+    <None Remove="Pages\GmailResources\js\reup.js" />
     <None Remove="Pages\GmailResources\js\statistic.js" />
     <None Remove="Pages\GmailResources\js\statisticDaily.js" />
     <None Remove="Pages\Gmails\js\download.js" />

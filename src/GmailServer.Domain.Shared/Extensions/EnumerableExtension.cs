@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GmailServer.Extensions
 {
@@ -31,6 +32,12 @@ namespace GmailServer.Extensions
                     yield return element;
                 }
             }
+        }
+
+        public static IEnumerable<TSource> GetDuplicates<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer)
+        {
+            var hash = new HashSet<TKey>(comparer);
+            return source.Where(item => !hash.Add(selector(item))).ToList();
         }
     }
 }

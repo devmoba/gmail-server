@@ -289,7 +289,8 @@ namespace GmailServer.ApplicationServices
                 var query = queryBuilder.ToString();
                 await Repository.ExecuteSqlRawAsync(query);
             }
-            throw new UserFriendlyException("The status filter is required");
+            else
+                throw new UserFriendlyException("The status filter is required");
             //var query = Repository.AsQueryable();
 
             //query = query.Where(x => input.Statuses.Contains(x.Status));

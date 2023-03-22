@@ -62,7 +62,10 @@
                 }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.ReupEmail))
                 {
-                    <abp-button class="float-right btn btn-small btn-primary" id="reupBtn" icon="reply" text="Re-up Email"></abp-button>
+                    <a class="float-right btn btn-small btn-primary" href="/GmailResources/ReupModal">
+                        <i class="fa fa-reply" aria-hidden="true"></i>&nbsp;Re-up Email
+                    </a>
+                    @*<abp-button class="float-right btn btn-small btn-primary" id="reupBtn" icon="reply" text="Re-up Email"></abp-button>*@
                 }
                  @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.Download))
                 {

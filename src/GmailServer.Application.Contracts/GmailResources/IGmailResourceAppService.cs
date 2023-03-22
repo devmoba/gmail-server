@@ -39,7 +39,7 @@ namespace GmailServer.GmailResources
 
         Task ResetStatusAsync(ResetStatusFilter input);
 
-        Task ReupAsync(ReupGmailResourceInputDto input);
+        Task<List<ReupOutputDto>> ReupAsync(ReupGmailResourceInputDto input);
 
         Task DeleteAsync(DeleteFilter input);
 
