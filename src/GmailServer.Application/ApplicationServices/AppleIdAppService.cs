@@ -274,11 +274,11 @@ namespace GmailServer.ApplicationServices
                 }
                 if (input.CreatedFrom.HasValue)
                 {
-                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
                 }
                 if (input.CreatedTo.HasValue)
                 {
-                    queryBuilder.Append($"And Created <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
                 }
                 if (input.UpdatedHours.HasValue)
                 {
@@ -287,7 +287,14 @@ namespace GmailServer.ApplicationServices
                     queryBuilder.Append($"And Updated < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
                 }
                 var query = queryBuilder.ToString();
-                await Repository.ExecuteSqlRawAsync(query);
+                try
+                {
+                    await Repository.ExecuteSqlRawAsync(query);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException(ex.Message);
+                }
             }
             else
                 throw new UserFriendlyException("The status filter is required");
@@ -477,12 +484,12 @@ namespace GmailServer.ApplicationServices
         {
             if (input.Statuses.Count > 0)
             {
+
                 var queryBuilder = new StringBuilder();
                 queryBuilder.AppendLine("Update AppAppleIds");
                 queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, TakenOutNumber = 0, Updated = GETDATE()");
-                queryBuilder.AppendLine($"From AppAppleIds t1");
-                queryBuilder.AppendLine($"Inner Join");
-                queryBuilder.AppendLine($"(Select Id, Status From AppAppleIds Where ");
+                queryBuilder.AppendLine($"From AppAppleIds");
+                queryBuilder.AppendLine($"Where ");
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
@@ -491,11 +498,11 @@ namespace GmailServer.ApplicationServices
                 }
                 if (input.CreatedFrom.HasValue)
                 {
-                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
                 }
                 if (input.CreatedTo.HasValue)
                 {
-                    queryBuilder.Append($"And Created <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
                 }
                 if (input.UpdatedHours.HasValue)
                 {
@@ -503,11 +510,16 @@ namespace GmailServer.ApplicationServices
                     var timeCheck = current.AddHours(-input.UpdatedHours.Value);
                     queryBuilder.Append($"And Updated < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
                 }
-                queryBuilder.Append(") t2 ");
-                queryBuilder.AppendLine("On t2.Id = t1.Id");
                 string query = queryBuilder.ToString();
+                try
+                {
+                    await Repository.ExecuteSqlRawAsync(query);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException(ex.Message);
+                }
 
-                await Repository.ExecuteSqlRawAsync(query);
                 //var query = Repository.AsQueryable();
 
                 //query = query.Where(x => input.Statuses.Contains(x.Status));
