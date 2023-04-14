@@ -19,6 +19,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using static GmailServer.Permissions.GmailServerPermissions;
 
 namespace GmailServer.ApplicationServices
 {
@@ -293,12 +294,16 @@ namespace GmailServer.ApplicationServices
         public async Task<GmailResourceDto> UpdateStatusAsync(string email, GmailResourceStatus status)
         {
             var gmailResource = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
-            if (gmailResource != null && gmailResource.Status != GmailResourceStatus.Success)
+            if (gmailResource != null)
             {
-                gmailResource.Status = status;
-                gmailResource.Updated = DateTime.Now;
-                var res = await Repository.UpdateAsync(gmailResource);
-                return await MapToGetOutputDtoAsync(res);
+                if ((status == GmailResourceStatus.Ready && gmailResource.Status == GmailResourceStatus.Pending) 
+                    || (status != GmailResourceStatus.Ready && gmailResource.Status != GmailResourceStatus.Success))
+                {
+                    gmailResource.Status = status;
+                    gmailResource.Updated = DateTime.Now;
+                    var res = await Repository.UpdateAsync(gmailResource);
+                    return await MapToGetOutputDtoAsync(res);
+                }
             }
             return new GmailResourceDto();
 
