@@ -1,5 +1,7 @@
 using AutoMapper;
+using GmailServer.AppleIdNones;
 using GmailServer.AppleIds;
+using GmailServer.AppleOrders;
 using GmailServer.Checkers;
 using GmailServer.DownloadedApps;
 using GmailServer.Entities;
@@ -9,6 +11,7 @@ using GmailServer.GmailPremiums;
 using GmailServer.GmailResources;
 using GmailServer.Gmails;
 using GmailServer.GmailTypes;
+using GmailServer.MomoAccounts;
 using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
 using System;
@@ -43,8 +46,7 @@ namespace GmailServer
             CreateMap<AppleId, AppleIdGetOutputDto>();
             CreateMap<AppleId, AppleIdGetListOutputDto>().AfterMap(
                 (a, b) => b.DownloadedAppCount = a.DownloadedApps.Count);
-            CreateMap<CreateUpdateAppleIdDto, AppleId>()
-                .AfterMap((a, b) => b.DateOfBirth = a.DateOfBirth);
+            CreateMap<CreateUpdateAppleIdDto, AppleId>();
             CreateMap<AppleId, AppleIdExcelModel>().AfterMap(
                 (a, b) => b.Status = Enum.GetName(typeof(AppleIdStatus), a.Status));
 
@@ -64,6 +66,15 @@ namespace GmailServer
             });
             CreateMap<DownloadedApp, DownloadedAppGetOutputDto>();
             CreateMap<CreateDownloadedAppDto, DownloadedApp>();
+
+            CreateMap<MomoAccount, MomoAccountDto>();
+            CreateMap<AppleOrder, AppleOrderDto>();
+            CreateMap<AppleIdNone, AppleIdNoneGetOutputDto>();
+            CreateMap<AppleIdNone, AppleIdNoneGetListOutputDto>();
+            CreateMap<CreateUpdateAppleIdNoneDto, AppleIdNone>();
+            CreateMap<AppleIdNone, AppleIdNoneExcelModel>()
+                .AfterMap((a, b) => b.Status = Enum.GetName(typeof(AppleIdNoneStatus), a.Status))
+                .AfterMap((a,b) => b.RemovePaymentStatus = Enum.GetName(typeof(RemovePaymentStatus), a.RemovePaymentStatus));
         }
     }
 }

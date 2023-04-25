@@ -79,6 +79,12 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<GmailType> GmailTypes { get; set; }
 
+        public DbSet<MomoAccount> MomoAccounts { get; set; }
+
+        public DbSet<AppleOrder> AppleOrders { get; set; }
+
+        public DbSet<AppleIdNone> AppleIdNones { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -299,6 +305,67 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.Updated).IsRequired();
                 b.Property(x => x.UpdatedPremium).IsRequired();
                 b.Property(x => x.TakenTime).IsRequired();
+            });
+
+            builder.Entity<MomoAccount>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "MomoAccounts", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Username).IsUnique();
+                b.HasIndex(x => x.Id).IncludeProperties<MomoAccount>(re => new
+                {
+                    re.Email,
+                    re.Status,
+                    re.CurrentLinkCount,
+                    re.TotalLinkCount
+                });
+                b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.CreatedTime).IsRequired();
+            });
+
+            builder.Entity<AppleOrder>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "AppleOrders", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.HasIndex(x => x.Id).IncludeProperties<AppleOrder>(re => new
+                {
+                    re.OrderID,
+                    re.URLPayment,
+                    re.LinkStatus,
+                    re.AddPaymentStatus
+                });
+                b.Property(x => x.OrderID).IsRequired();
+                b.Property(x => x.URLPayment).IsRequired();
+                b.Property(x => x.CreatedTime).IsRequired();
+                b.Property(x => x.LinkStatus).IsRequired();
+                b.Property(x => x.AddPaymentCompletedTime).IsRequired();
+            });
+
+            builder.Entity<AppleIdNone>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "AppleIdNones", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Email).IsUnique();
+                b.HasIndex(x => x.Id).IncludeProperties<AppleIdNone>(re => new
+                {
+                    re.Username,
+                    re.Status,
+                    re.AddPaymentCompleted,
+                    re.RemovePaymentStatus
+                });
+                b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
+                b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.Status).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+                b.Property(x => x.PurchaseNumber).IsRequired();
+                b.Property(x => x.TakenOutNumber).IsRequired();
+                b.Property(x => x.RemovePaymentStatus).IsRequired();
+                b.Property(x => x.AddPaymentCompleted).HasDefaultValue(false);
             });
         }
     }

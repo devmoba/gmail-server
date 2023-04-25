@@ -79,18 +79,48 @@ namespace GmailServer.Permissions
             downloadedAppManagement.AddChild(GmailServerPermissions.DownloadedApps.Create, L("Permission:DownloadedApps.Create"));
             downloadedAppManagement.AddChild(GmailServerPermissions.DownloadedApps.Delete, L("Permission:DownloadedApps.Delete"));
 
-            var GmailResourceGroup = context.AddGroup(GmailServerPermissions.GmailResourceGroup, L("Permission:GmailResourceGroup "));
-            var GmailResourceManagement = GmailResourceGroup.AddPermission(GmailServerPermissions.GmailResources.Default, L("Permission:GmailResources"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Create, L("Permission:GmailResource.Create"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Update, L("Permission:GmailResource.Update"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Delete, L("Permission:GmailResource.Delete"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.DeleteAll, L("Permission:GmailResource.DeleteAll"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.DeleteFilter, L("Permission:GmailResource.DeleteFilter"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Download, L("Permission:GmailResource.Download"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Statistic, L("Permission:GmailResource.Statistic"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.StatisticDaily, L("Permission:GmailResource.StatisticDaily"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ResetStatus, L("Permission:GmailResource.ResetStatus"));
-            GmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ReupEmail, L("Permission:GmailResource.ReupEmail"));
+            var gmailResourceGroup = context.AddGroup(GmailServerPermissions.GmailResourceGroup, L("Permission:GmailResourceGroup "));
+            var gmailResourceManagement = gmailResourceGroup.AddPermission(GmailServerPermissions.GmailResources.Default, L("Permission:GmailResources"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Create, L("Permission:GmailResource.Create"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Update, L("Permission:GmailResource.Update"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Delete, L("Permission:GmailResource.Delete"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.DeleteAll, L("Permission:GmailResource.DeleteAll"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.DeleteFilter, L("Permission:GmailResource.DeleteFilter"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Download, L("Permission:GmailResource.Download"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.Statistic, L("Permission:GmailResource.Statistic"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.StatisticDaily, L("Permission:GmailResource.StatisticDaily"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ResetStatus, L("Permission:GmailResource.ResetStatus"));
+            gmailResourceManagement.AddChild(GmailServerPermissions.GmailResources.ReupEmail, L("Permission:GmailResource.ReupEmail"));
+
+            var momoAccountGroup = context.AddGroup(GmailServerPermissions.MomoAccountGroup, L("Permission:MomoAccountGroup "));
+            var momoAccountManagement = momoAccountGroup.AddPermission(GmailServerPermissions.MomoAccounts.Default, L("Permission:MomoAccounts"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Create, L("Permission:MomoAccount.Create"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.CreateMany, L("Permission:MomoAccount.CreateMany"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Update, L("Permission:MomoAccount.Update"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Delete, L("Permission:MomoAccount.Delete"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.DeleteAll, L("Permission:MomoAccount.DeleteAll"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Statistic, L("Permission:MomoAccount.Statistic"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.ResetStatus, L("Permission:MomoAccount.ResetStatus"));
+
+            var appleOrderGroup = context.AddGroup(GmailServerPermissions.AppleOrderGroup, L("Permissions:AppleOrderGroup"));
+            var appleOrderManagement = appleOrderGroup.AddPermission(GmailServerPermissions.AppleOrders.Default, L("Permissions:AppleOrders"));
+            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Create, L("Permission:AppleOrders.Create"));
+            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Update, L("Permission:AppleOrders.Update"));
+            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Delete, L("Permission:AppleOrders.Update"));
+            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Statistic, L("Permission:AppleOrders.Statistic"));
+            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.ResetLinkStatus, L("Permission:AppleOrders.ResetLinkStatus"));
+
+            var appleIdNoneGroup = context.AddGroup(GmailServerPermissions.AppleIdNoneGroup, L("Permission:AppleIdNoneGroup "));
+            var appleIdNoneManagement = appleIdNoneGroup.AddPermission(GmailServerPermissions.AppleIdNones.Default, L("Permission:AppleIdNones"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Create, L("Permission:AppleIdNones.Create"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Update, L("Permission:AppleIdNones.Update"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Delete, L("Permission:AppleIdNones.Delete"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.DeleteFilter, L("Permission:AppleIdNones.DeleteFilter"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.DeleteAll, L("Permission:AppleIdNones.DeleteAll"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Download, L("Permission:AppleIdNones.Download"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Statistic, L("Permission:AppleIdNones.Statistic"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.ResetStatus, L("Permission:AppleIdNones.ResetStatus"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.PurchaseNumber, L("Permission:AppleIdNones.PurchaseNumber"));
         }
 
         private static LocalizableString L(string name)

@@ -82,5 +82,35 @@
         public const string GmailResource_StatisticDaily = GmailResource + ".StatisticDaily";
         public const string GmailResource_ResetStatus = GmailResource + ".ResetStatus";
         public const string GmailResource_ReupEmail = GmailResource + ".ReupEmail";
+
+        public const string MomoAccount = "MomoAccountGroup";
+        public const string MomoAccount_Default = MomoAccount + ".MomoAccounts";
+        public const string MomoAccount_Create = MomoAccount + ".Create";
+        public const string MomoAccount_CreateMany = MomoAccount + ".CreateMany";
+        public const string MomoAccount_Update = MomoAccount + ".Update";
+        public const string MomoAccount_Delete = MomoAccount + ".Delete";
+        public const string MomoAccount_DeleteAll = MomoAccount + ".DeleteAll";
+        public const string MomoAccount_Statistic = MomoAccount + ".Statistic";
+        public const string MomoAccount_ResetStatus = MomoAccount + ".ResetLinkStatus";
+
+        public const string AppleOrder = "AppleOrder";
+        public const string AppleOrder_Default = AppleOrder + ".AppleOrders";
+        public const string AppleOrder_Create = AppleOrder + ".Create";
+        public const string AppleOrder_Update = AppleOrder + ".Update";
+        public const string AppleOrder_Delete = AppleOrder + ".Delete";
+        public const string AppleOrder_Statistic = AppleOrder + ".Statistic";
+        public const string AppleOrder_ResetLinkStatus = AppleOrder + ".ResetLinkStatus";
+
+        public const string AppleIdNone = "AppleIdNoneGroup";
+        public const string AppleIdNone_Default = AppleIdNone + ".AppleIdNones";
+        public const string AppleIdNone_Create = AppleIdNone + ".Create";
+        public const string AppleIdNone_Update = AppleIdNone + ".Update";
+        public const string AppleIdNone_Delete = AppleIdNone + ".Delete";
+        public const string AppleIdNone_DeleteAll = AppleIdNone + ".DeleteAll";
+        public const string AppleIdNone_DeleteFilter = AppleIdNone + ".DeleteFilter";
+        public const string AppleIdNone_Download = AppleIdNone + ".Download";
+        public const string AppleIdNone_Statistic = AppleIdNone + ".Statistic";
+        public const string AppleIdNone_ResetStatus = AppleIdNone + ".ResetStatus";
+        public const string AppleIdNone_PurchaseNumber = AppleIdNone + ".PurchaseNumber";
     }
 }

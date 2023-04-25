@@ -125,5 +125,44 @@ namespace GmailServer.Permissions
             public const string ResetStatus = PermissionNames.GmailResource_ResetStatus;
             public const string ReupEmail = PermissionNames.GmailResource_ReupEmail;
         }
+
+        public const string MomoAccountGroup = PermissionNames.MomoAccount;
+        public static class MomoAccounts
+        {
+            public const string Default = PermissionNames.MomoAccount_Default;
+            public const string Create = PermissionNames.MomoAccount_Create;
+            public const string CreateMany = PermissionNames.MomoAccount_CreateMany;
+            public const string Update = PermissionNames.MomoAccount_Update;
+            public const string Delete = PermissionNames.MomoAccount_Delete;
+            public const string DeleteAll = PermissionNames.MomoAccount_Delete;
+            public const string Statistic = PermissionNames.MomoAccount_Statistic;
+            public const string ResetStatus = PermissionNames.MomoAccount_ResetStatus;
+        }
+
+        public const string AppleOrderGroup = PermissionNames.AppleOrder;
+        public static class AppleOrders
+        {
+            public const string Default = PermissionNames.AppleOrder_Default;
+            public const string Create = PermissionNames.AppleOrder_Create;
+            public const string Update = PermissionNames.AppleOrder_Update;
+            public const string Delete = PermissionNames.AppleOrder_Delete;
+            public const string Statistic = PermissionNames.AppleOrder_Statistic;
+            public const string ResetLinkStatus = PermissionNames.AppleOrder_ResetLinkStatus;
+        }
+
+        public const string AppleIdNoneGroup = PermissionNames.AppleIdNone;
+        public static class AppleIdNones
+        {
+            public const string Default = PermissionNames.AppleIdNone_Default;
+            public const string Create = PermissionNames.AppleIdNone_Create;
+            public const string Update = PermissionNames.AppleIdNone_Update;
+            public const string Delete = PermissionNames.AppleIdNone_Delete;
+            public const string DeleteAll = PermissionNames.AppleIdNone_DeleteAll;
+            public const string DeleteFilter = PermissionNames.AppleIdNone_DeleteFilter;
+            public const string Download = PermissionNames.AppleIdNone_Download;
+            public const string Statistic = PermissionNames.AppleIdNone_Statistic;
+            public const string ResetStatus = PermissionNames.AppleIdNone_ResetStatus;
+            public const string PurchaseNumber = PermissionNames.AppleIdNone_PurchaseNumber;
+        }
     }
 }
