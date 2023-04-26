@@ -17,5 +17,7 @@ namespace GmailServer.Repositories
         Task ExecuteSqlRawAsync(string query);
 
         Task DeleteAllAsync();
+
+        Task UpdateStatusByTimeoutAsync(int minute);
     }
 }

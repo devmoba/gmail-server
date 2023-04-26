@@ -4,16 +4,15 @@
     devmoba.datatables.enableIndividualColumnSearch("#gmailTable", [
         { searchDisabled: true },
         { searchDisabled: true },
-        { searchDisabled: true },
-        { searchDisabled: true },
         { name: "email" },
         { searchDisabled: true },
         { name: "recoveryEmail" },
-        { searchDisabled: true },
-        { searchDisabled: true },
-        { searchDisabled: true },
         { name: "country" },
         { name: "status", options: gmailStatusSelections },
+        { searchDisabled: true },
+        { searchDisabled: true },
+        { searchDisabled: true },
+        { searchDisabled: true },
         { name: "gmailTypeId", options: gmailTypeSelections },
         { searchDisabled: true },
         { searchDisabled: true }
@@ -46,24 +45,17 @@
             },
             {
                 orderable: false,
-                targets: [2, 3, 4, 5, 6, 8, 9, 10],
+                targets: [2, 3, 4, 5, 7, 8, 9],
             },
             {
-                orderable: false,
-                targets: [7],
-                render: function (data, type, row, meta) {
-                    return data;
-                }
-            },
-            {
-                targets: [11],
+                targets: [6],
                 render: function (data, type, row, meta) {
                     var status = gmailStatusSelections.find(x => x.value == data);
                     return status.text;
                 }
             },
             {
-                targets: [12],
+                targets: [10],
                 render: function (data, type, row, meta) {
                     if (row.gmailType) {
                         return row.gmailType.name;
@@ -73,7 +65,7 @@
             },
             {
                 orderable: false,
-                targets: [13],
+                targets: [11],
                 render: function (data, type, row, meta) {
                     if (data && type === 'display') {
                         let m = moment(data);
@@ -82,24 +74,13 @@
                     return data;
                 }
             },
-            //{
-            //    targets: [13],
-            //    render: function (data, type, row, meta) {
-            //        if (data && type === 'display') {
-            //            let m = moment(data);
-            //            data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
-            //        }
-            //        return data;
-            //    }
-            //},
             {
-                targets: [14],
+                targets: [12],
                 rowAction: {
                     items:
                         [
                             {
                                 text: l('Delete'),
-                                //iconClass: "fas fa-trash-alt",
                                 visible: function (data) {
                                     return abp.auth.isGranted('GmailGroup.Delete');
                                 },
@@ -119,19 +100,16 @@
         columns: [
             { data: "id", width: "100px" },
             { data: "date", width: "150px" },
-            { data: "firstName", width: "100px" },
-            { data: "lastName", width: "100px" },
             { data: "email", width: "250px" },
             { data: "password", width: "200px" },
             { data: "recoveryEmail", width: "200px" },
-            { data: "dateOfBirth", width: "120px" },
-            { data: "gender", width: "80px" },
-            { data: "timezone", width: "100px" },
             { data: "country", width: "100px" },
             { data: "status", width: "150px" },
+            { data: "version", width: "150px" },
+            { data: "fakeVersion", width: "150px" },
+            { data: "deviceType", width: "150px" },
             { data: null, width: "150px" },
             { data: "created", width: "130px" },
-            //{ data: "updated", width: "130px" },
             { data: null, width: "100px" }
         ]
     });

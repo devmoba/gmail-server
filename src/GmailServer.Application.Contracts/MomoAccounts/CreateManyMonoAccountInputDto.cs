@@ -8,6 +8,6 @@ namespace GmailServer.MomoAccounts
         public string Accounts { get; set; }
 
         [Required]
-        public string Username { get; set; }
+        public string UploadGroup { get; set; }
     }
 }

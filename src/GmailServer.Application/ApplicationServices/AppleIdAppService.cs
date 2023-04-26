@@ -296,24 +296,7 @@ namespace GmailServer.ApplicationServices
                     throw new UserFriendlyException(ex.Message);
                 }
             }
-            else
-                throw new UserFriendlyException("The status filter is required");
-            //var query = Repository.AsQueryable();
-
-            //query = query.Where(x => input.Statuses.Contains(x.Status));
-            //query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            //query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            //query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
-            //if (input.UpdatedHours.HasValue)
-            //{
-            //    var current = DateTime.Now;
-            //    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-            //    query = query.Where(x => x.Updated < timeCheck);
-            //}
-
-            //var appleIds = await AsyncExecuter.ToListAsync(query);
-            //await Repository.BulkDeleteAsync(appleIds);
+            throw new UserFriendlyException("The status filter is required");
         }
 
         [Authorize(GmailServerPermissions.AppleIds.DeleteAll)]
@@ -488,7 +471,7 @@ namespace GmailServer.ApplicationServices
                 var queryBuilder = new StringBuilder();
                 queryBuilder.AppendLine("Update AppAppleIds");
                 queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, TakenOutNumber = 0, Updated = GETDATE()");
-                queryBuilder.AppendLine($"From AppAppleIds");
+                //queryBuilder.AppendLine($"From AppAppleIds");
                 queryBuilder.AppendLine($"Where ");
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
@@ -519,37 +502,6 @@ namespace GmailServer.ApplicationServices
                 {
                     throw new UserFriendlyException(ex.Message);
                 }
-
-                //var query = Repository.AsQueryable();
-
-                //query = query.Where(x => input.Statuses.Contains(x.Status));
-                //query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-                //query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-                //query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-
-                //if (input.UpdatedHours.HasValue)
-                //{
-                //    var current = DateTime.Now;
-                //    var timeCheck = current.AddHours(-input.UpdatedHours.Value);
-                //    query = query.Where(x => x.Updated < timeCheck);
-                //}
-                //var appleIds = await AsyncExecuter.ToListAsync(query);
-                //appleIds.ForEach((appleId) =>
-                //{
-                //    appleId.Status = input.TargetStatus;
-                //    if (input.TargetStatus == AppleIdStatus.Ready)
-                //    {
-                //        appleId.TakenOutNumber = 0;
-                //    }
-                //    appleId.Updated = DateTime.Now;
-                //});
-
-                //await Repository.BulkUpdateAsync(appleIds, new List<string>()
-                //{
-                //    nameof(AppleId.Status),
-                //    nameof(AppleId.TakenOutNumber),
-                //    nameof(AppleId.Updated)
-                //});
             }
         }
     }

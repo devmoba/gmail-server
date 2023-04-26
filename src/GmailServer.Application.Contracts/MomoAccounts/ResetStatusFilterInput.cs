@@ -6,7 +6,7 @@ namespace GmailServer.MomoAccounts
 {
     public class ResetStatusFilterInput
     {
-        public string Username { get; set; }
+        public string UploadGroup { get; set; }
 
         public List<MomoAccountStatus> Statuses { get; set; }
 

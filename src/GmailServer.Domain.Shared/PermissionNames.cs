@@ -89,6 +89,7 @@
         public const string MomoAccount_CreateMany = MomoAccount + ".CreateMany";
         public const string MomoAccount_Update = MomoAccount + ".Update";
         public const string MomoAccount_Delete = MomoAccount + ".Delete";
+        public const string MomoAccount_DeleteFilter = MomoAccount + ".DeleteFilter";
         public const string MomoAccount_DeleteAll = MomoAccount + ".DeleteAll";
         public const string MomoAccount_Statistic = MomoAccount + ".Statistic";
         public const string MomoAccount_ResetStatus = MomoAccount + ".ResetLinkStatus";

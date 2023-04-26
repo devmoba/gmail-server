@@ -98,6 +98,7 @@ namespace GmailServer.Permissions
             momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.CreateMany, L("Permission:MomoAccount.CreateMany"));
             momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Update, L("Permission:MomoAccount.Update"));
             momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Delete, L("Permission:MomoAccount.Delete"));
+            momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.DeleteFilter, L("Permission:MomoAccount.DeleteFilter"));
             momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.DeleteAll, L("Permission:MomoAccount.DeleteAll"));
             momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.Statistic, L("Permission:MomoAccount.Statistic"));
             momoAccountManagement.AddChild(GmailServerPermissions.MomoAccounts.ResetStatus, L("Permission:MomoAccount.ResetStatus"));

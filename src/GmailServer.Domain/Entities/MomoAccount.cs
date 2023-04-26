@@ -6,6 +6,8 @@ namespace GmailServer.Entities
 {
     public class MomoAccount : Entity<long>
     {
+        public string UploadGroup { get; set; }
+
         public string Username { get; set; }
 
         public string Password { get; set; }

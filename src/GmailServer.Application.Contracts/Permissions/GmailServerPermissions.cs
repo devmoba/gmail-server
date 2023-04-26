@@ -134,7 +134,8 @@ namespace GmailServer.Permissions
             public const string CreateMany = PermissionNames.MomoAccount_CreateMany;
             public const string Update = PermissionNames.MomoAccount_Update;
             public const string Delete = PermissionNames.MomoAccount_Delete;
-            public const string DeleteAll = PermissionNames.MomoAccount_Delete;
+            public const string DeleteFilter = PermissionNames.MomoAccount_DeleteFilter;
+            public const string DeleteAll = PermissionNames.MomoAccount_DeleteAll;
             public const string Statistic = PermissionNames.MomoAccount_Statistic;
             public const string ResetStatus = PermissionNames.MomoAccount_ResetStatus;
         }

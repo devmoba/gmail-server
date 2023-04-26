@@ -314,11 +314,16 @@ namespace GmailServer.EntityFrameworkCore
                 b.HasIndex(x => x.Username).IsUnique();
                 b.HasIndex(x => x.Id).IncludeProperties<MomoAccount>(re => new
                 {
+                    re.UploadGroup,
+                    re.CreatedTime,
                     re.Email,
                     re.Status,
                     re.CurrentLinkCount,
-                    re.TotalLinkCount
+                    re.TotalLinkCount,
+                    re.LastUpdateTime,
+                    re.LastTakenTime
                 });
+                b.Property(x => x.UploadGroup).HasMaxLength(1024).IsRequired();
                 b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();
                 b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
@@ -336,7 +341,11 @@ namespace GmailServer.EntityFrameworkCore
                     re.OrderID,
                     re.URLPayment,
                     re.LinkStatus,
-                    re.AddPaymentStatus
+                    re.AddPaymentStatus,
+                    re.LinkTakenTime,
+                    re.LinkCompletedTime,
+                    re.AddPaymentTakenTime, 
+                    re.AddPaymentCompletedTime
                 });
                 b.Property(x => x.OrderID).IsRequired();
                 b.Property(x => x.URLPayment).IsRequired();
@@ -353,9 +362,12 @@ namespace GmailServer.EntityFrameworkCore
                 b.HasIndex(x => x.Id).IncludeProperties<AppleIdNone>(re => new
                 {
                     re.Username,
+                    re.Created,
                     re.Status,
                     re.AddPaymentCompleted,
-                    re.RemovePaymentStatus
+                    re.RemovePaymentStatus,
+                    re.RemoveTakenTime,
+                    re.RemoveUpdateTime
                 });
                 b.Property(x => x.Username).IsUnicode(false).HasMaxLength(256).IsRequired();
                 b.Property(x => x.Email).IsUnicode(false).HasMaxLength(128).IsRequired();

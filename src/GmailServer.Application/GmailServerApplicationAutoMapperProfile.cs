@@ -68,7 +68,10 @@ namespace GmailServer
             CreateMap<CreateDownloadedAppDto, DownloadedApp>();
 
             CreateMap<MomoAccount, MomoAccountDto>();
+            CreateMap<CreateMomoAccountInputDto, MomoAccount>();
+
             CreateMap<AppleOrder, AppleOrderDto>();
+
             CreateMap<AppleIdNone, AppleIdNoneGetOutputDto>();
             CreateMap<AppleIdNone, AppleIdNoneGetListOutputDto>();
             CreateMap<CreateUpdateAppleIdNoneDto, AppleIdNone>();

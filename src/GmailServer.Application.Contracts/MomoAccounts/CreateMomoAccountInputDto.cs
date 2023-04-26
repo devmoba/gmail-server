@@ -1,12 +1,9 @@
 ﻿using GmailServer.Enums;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Volo.Abp.Application.Dtos;
 
 namespace GmailServer.MomoAccounts
 {
-    public class MomoAccountDto : EntityDto<long>
+    public class CreateMomoAccountInputDto
     {
         public string UploadGroup { get; set; }
 
@@ -35,12 +32,6 @@ namespace GmailServer.MomoAccounts
         public int CurrentLinkCount { get; set; }
 
         public int TotalLinkCount { get; set; }
-
-        public DateTime CreatedTime { get; set; }
-
-        public DateTime LastTakenTime { get; set; }
-
-        public DateTime LastUpdateTime { get; set; }
 
         public string CustmArg1 { get; set; }
 

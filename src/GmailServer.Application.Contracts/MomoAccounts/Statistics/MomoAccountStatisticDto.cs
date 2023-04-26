@@ -6,6 +6,8 @@ namespace GmailServer.MomoAccounts.Statistics
     {
         public DateTime CreatedTime { get; set; }
 
+        public string UploadGroup { get; set; }
+
         public int Total { get; set; }
 
         public int NotUse { get; set; }
