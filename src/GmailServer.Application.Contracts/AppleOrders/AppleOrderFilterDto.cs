@@ -8,7 +8,7 @@ namespace GmailServer.AppleOrders
     {
         public string OrderID { get; set; }
 
-        public string URLPayment { get; set; }
+        //public string URLPayment { get; set; }
 
         public LinkStatus? LinkStatus { get; set; }
 

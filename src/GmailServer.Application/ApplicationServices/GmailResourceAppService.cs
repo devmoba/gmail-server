@@ -537,7 +537,8 @@ namespace GmailServer.ApplicationServices
                 }
 
             }
-            throw new UserFriendlyException("The status filter is required");
+            else
+                throw new UserFriendlyException("The status filter is required");   
         }
 
         public async Task<GmailResourceDto> SetPremiumTypeAsync(string email, PremiumType type)

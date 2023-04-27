@@ -296,7 +296,8 @@ namespace GmailServer.ApplicationServices
                     throw new UserFriendlyException(ex.Message);
                 }
             }
-            throw new UserFriendlyException("The status filter is required");
+            else
+                throw new UserFriendlyException("The status filter is required");
         }
 
         [Authorize(GmailServerPermissions.AppleIds.DeleteAll)]

@@ -165,5 +165,14 @@ namespace GmailServer.Permissions
             public const string ResetStatus = PermissionNames.AppleIdNone_ResetStatus;
             public const string PurchaseNumber = PermissionNames.AppleIdNone_PurchaseNumber;
         }
+
+        public const string AppleIdRawGroup = PermissionNames.AppleIdRaw;
+        public static class AppleIdRaws
+        {
+            public const string Default = PermissionNames.AppleIdRaw_Default;
+            public const string Create = PermissionNames.AppleIdRaw_Create;
+            public const string Statistic = PermissionNames.AppleIdRaw_Statistic;
+            public const string Download = PermissionNames.AppleIdRaw_Download;
+        }
     }
 }

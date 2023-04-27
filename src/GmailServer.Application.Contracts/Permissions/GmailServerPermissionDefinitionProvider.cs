@@ -122,6 +122,12 @@ namespace GmailServer.Permissions
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Statistic, L("Permission:AppleIdNones.Statistic"));
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.ResetStatus, L("Permission:AppleIdNones.ResetStatus"));
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.PurchaseNumber, L("Permission:AppleIdNones.PurchaseNumber"));
+
+            var appleIdRawGroup = context.AddGroup(GmailServerPermissions.AppleIdRawGroup, L("Permission:AppleIdRawGroup "));
+            var appleIdRawManagement = appleIdRawGroup.AddPermission(GmailServerPermissions.AppleIdRaws.Default, L("Permission:AppleIdRaws"));
+            appleIdRawManagement.AddChild(GmailServerPermissions.AppleIdRaws.Create, L("Permission:AppleIdRaws.Create"));
+            appleIdRawManagement.AddChild(GmailServerPermissions.AppleIdRaws.Statistic, L("Permission:AppleIdRaws.Statistic"));
+            appleIdRawManagement.AddChild(GmailServerPermissions.AppleIdRaws.Download, L("Permission:AppleIdRaws.Download"));
         }
 
         private static LocalizableString L(string name)

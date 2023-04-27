@@ -85,6 +85,8 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<AppleIdNone> AppleIdNones { get; set; }
 
+        public DbSet<AppleIdRaw> AppleIdRaws { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -378,6 +380,20 @@ namespace GmailServer.EntityFrameworkCore
                 b.Property(x => x.TakenOutNumber).IsRequired();
                 b.Property(x => x.RemovePaymentStatus).IsRequired();
                 b.Property(x => x.AddPaymentCompleted).HasDefaultValue(false);
+            });
+
+            builder.Entity<AppleIdRaw>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "AppleIdRaws", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Username).IsUnique();
+                b.Property(x => x.Password).IsUnicode(false).HasMaxLength(64).IsRequired();
+                b.Property(x => x.Created).IsRequired();
+
+                b.HasIndex(x => x.Id).IncludeProperties<AppleIdRaw>(re => new
+                {
+                    re.Created
+                });
             });
         }
     }

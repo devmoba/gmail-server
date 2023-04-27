@@ -6,8 +6,6 @@ namespace GmailServer.AppleOrders
 {
     public class ResetLinkStatusFilterInput
     {
-        public string Username { get; set; }
-
         public List<LinkStatus> Statuses { get; set; }
 
         public LinkStatus TargetStatus { get; set; }

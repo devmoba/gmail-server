@@ -6,6 +6,8 @@ namespace GmailServer.AppleOrders.Statistics
     {
         public DateTime CreatedTime { get; set; }
 
+        public int Total { get; set; }
+
         public int Ready { get; set; }
 
         public int InUse { get; set; }

@@ -1,5 +1,6 @@
 using AutoMapper;
 using GmailServer.AppleIdNones;
+using GmailServer.AppleIdRaws;
 using GmailServer.AppleIds;
 using GmailServer.AppleOrders;
 using GmailServer.Checkers;
@@ -78,6 +79,9 @@ namespace GmailServer
             CreateMap<AppleIdNone, AppleIdNoneExcelModel>()
                 .AfterMap((a, b) => b.Status = Enum.GetName(typeof(AppleIdNoneStatus), a.Status))
                 .AfterMap((a,b) => b.RemovePaymentStatus = Enum.GetName(typeof(RemovePaymentStatus), a.RemovePaymentStatus));
+
+            CreateMap<AppleIdRaw, AppleIdRawDto>();
+            CreateMap<CreateAppleIdRawInputDto, AppleIdRaw>();
         }
     }
 }
