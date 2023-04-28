@@ -32,12 +32,6 @@ namespace GmailServer.ApplicationServices
             return ObjectMapper.Map<AppleIdRaw, AppleIdRawDto>(entity);
         }
 
-        [Authorize(GmailServerPermissions.AppleIdRaws.Download)]
-        public Task<List<AppleIdRawDto>> DownloadByCreatedAsync(DateTime? createdFrom, DateTime? createdTo)
-        {
-            throw new NotImplementedException();
-        }
-
         [Authorize(GmailServerPermissions.AppleIdRaws.Statistic)]
         public Task<PagedResultDto<AppleIdRawStatisticDailyDto>> GetAppleIdRawStatisticDailyAsync(AppleIdRawStatisticFilterDto input)
         {

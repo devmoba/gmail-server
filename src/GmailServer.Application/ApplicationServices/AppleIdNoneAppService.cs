@@ -2,8 +2,17 @@
 using GmailServer.AppleIdNones.Statistics;
 using GmailServer.Entities;
 using GmailServer.Enums;
+using GmailServer.Extensions;
+using GmailServer.Permissions;
+using GmailServer.Repositories;
+using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -20,90 +29,438 @@ namespace GmailServer.ApplicationServices
         long,
         AppleIdNoneFilterDto,
         CreateUpdateAppleIdNoneDto,
-        CreateUpdateAppleIdNoneDto>, IAppleNoneAppService
+        CreateUpdateAppleIdNoneDto>, IAppleIdNoneAppService
     {
-        public AppleIdNoneAppService(IRepository<AppleIdNone, long> repository) : base(repository)
+        private readonly new IAppleIdNoneRepository Repository;
+        private static SemaphoreSlim getSyncLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim getByStatusSyncLock = new SemaphoreSlim(1, 1);
+
+        public AppleIdNoneAppService(IAppleIdNoneRepository repository) : base(repository)
         {
+            Repository = repository;
         }
 
-        public override Task<PagedResultDto<AppleIdNoneGetListOutputDto>> GetListAsync(AppleIdNoneFilterDto input)
+        [Authorize(GmailServerPermissions.AppleIdNones.Default)]
+        public async override Task<PagedResultDto<AppleIdNoneGetListOutputDto>> GetListAsync(AppleIdNoneFilterDto input)
         {
-            return base.GetListAsync(input);
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
+            query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
+            query = query.WhereIf(input.RemovePaymentStatus.HasValue, x => x.RemovePaymentStatus == input.RemovePaymentStatus.Value);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.PurchaseNumberMax.HasValue, x => x.PurchaseNumber <= input.PurchaseNumberMax.Value);
+            query = query.WhereIf(input.PurchaseNumberMin.HasValue, x => x.PurchaseNumber >= input.PurchaseNumberMin.Value);
+            query = query.WhereIf(input.TakenOutNumberMin.HasValue, x => x.TakenOutNumber >= input.TakenOutNumberMin.Value);
+            query = query.WhereIf(input.TakenOutNumberMax.HasValue, x => x.TakenOutNumber <= input.TakenOutNumberMax.Value);
+
+            var currentUser = CurrentUser;
+            if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
+            {
+                query = query.Where(x => x.Username == currentUser.UserName);
+            }
+            else
+            {
+                query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            }
+
+            var count = await AsyncExecuter.CountAsync(query);
+
+            if (!string.IsNullOrEmpty(input.Sorting))
+                query = ApplySorting(query, input);
+            else
+                query = ApplyDefaultSorting(query);
+
+            if (input.MaxResultCount > 0 || input.SkipCount > 0)
+                query = ApplyPaging(query, input);
+
+            var entities = await AsyncExecuter.ToListAsync(query);
+
+            var res = ObjectMapper.Map<List<AppleIdNone>, List<AppleIdNoneGetListOutputDto>>(entities);
+
+            return new PagedResultDto<AppleIdNoneGetListOutputDto>(count, res);
         }
 
+        [Authorize(GmailServerPermissions.AppleIdNones.Default)]
         public override Task<AppleIdNoneGetOutputDto> GetAsync(long id)
         {
             return base.GetAsync(id);
         }
 
-        public Task<List<AppleIdNoneExcelModel>> GetAppleIdNoneExcelModelsAsync(AppleIdNoneDownloadFilter input)
+        [Authorize(GmailServerPermissions.AppleIdNones.Download)]
+        public async Task<List<AppleIdNoneExcelModel>> GetAppleIdNoneExcelModelsAsync(AppleIdNoneDownloadFilter input)
         {
-            throw new NotImplementedException();
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            if (input.Statuses.Count > 0)
+            {
+                query = query.Where(x => input.Statuses.Contains(x.Status));
+            }
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            var res = await AsyncExecuter.ToListAsync(query);
+            return ObjectMapper.Map<List<AppleIdNone>, List<AppleIdNoneExcelModel>>(res);
         }
 
-        public Task<List<AppleIdNoneStatusSelectionDto>> GetAppleIdNoneStatusSelectionsAsync(string username, DateTime? createdFrom, DateTime? createdTo)
+        [Authorize]
+        public async Task<List<AppleIdNoneStatusSelectionDto>> GetAppleIdNoneStatusSelectionsAsync(string username, DateTime? createdFrom, DateTime? createdTo)
         {
-            throw new NotImplementedException();
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
+            query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
+            query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
+            var groupBy = query.GroupBy(x => x.Status).Select(x => new AppleIdNoneStatusSelectionDto()
+            {
+                Text = $"{x.Key.ToString()} | {x.Count()}",
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(groupBy);
+            return res;
         }
 
-        public Task<AppleIdNoneGetOutputDto> GetByStatusAsync(AppleIdNoneStatus status)
+        public async Task<AppleIdNoneGetOutputDto> GetByStatusAsync(AppleIdNoneStatus status)
         {
-            throw new NotImplementedException();
+            await getByStatusSyncLock.WaitAsync();
+            try
+            {
+                var query = Repository.Where(x => x.Status == status);
+                query = query.OrderBy(x => x.TakenTime);
+                var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (appleIdNone != null)
+                {
+                    var res = ObjectMapper.Map<AppleIdNone, AppleIdNoneGetOutputDto>(appleIdNone);
+                    appleIdNone.TakenTime = DateTime.Now;
+                    //appleId.TakenOutNumber += 1;
+                    await Repository.UpdateAsync(appleIdNone, autoSave: true);
+                    return res;
+                }
+                return null;
+            }
+            finally
+            {
+                getByStatusSyncLock.Release(); ;
+            }
         }
 
-        public Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneDto()
+        public async Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync()
         {
-            throw new NotImplementedException();
+            await getSyncLock.WaitAsync();
+            try
+            {
+                var query = Repository.Where(x => x.Status == Enums.AppleIdNoneStatus.Ready);
+                query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                query = query.OrderBy(x => x.Updated);
+                var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (appleId == null)
+                {
+                    var query2 = Repository
+                        .Where(x => x.Status == Enums.AppleIdNoneStatus.Ready)
+                        .OrderBy(x => x.TakenTime);
+                    appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
+                }
+
+                if (appleId != null)
+                {
+                    var res = ObjectMapper.Map<AppleIdNone, AppleIdNoneGetOutputDto>(appleId);
+                    appleId.Status = Enums.AppleIdNoneStatus.Pending;
+                    appleId.TakenTime = DateTime.Now;
+                    appleId.Updated = DateTime.Now;
+                    await Repository.UpdateAsync(appleId, autoSave: true);
+                    return res;
+                }
+                return null;
+            }
+            finally
+            {
+                getSyncLock.Release();
+            }
         }
 
-        public Task<PagedResultDto<AppleIdNoneStatisticDto>> GetStatisticAsync(AppleIdNoneStatisticFilterDto input)
+        [Authorize(GmailServerPermissions.AppleIdNones.Statistic)]
+        public async Task<PagedResultDto<AppleIdNoneStatisticDto>> GetStatisticAsync(AppleIdNoneStatisticFilterDto input)
         {
-            throw new NotImplementedException();
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date, Username = x.Username }).Select(g => new AppleIdNoneStatisticDto()
+            {
+                Created = g.Key.Created.Date,
+                Username = g.Key.Username,
+                Total = g.Count(),
+                TotalPurchaseNumber = g.Sum(x => x.PurchaseNumber),
+                Ready = g.Where(x => x.Status == AppleIdNoneStatus.Ready).Count(),
+                Completed1 = g.Where(x => x.Status == AppleIdNoneStatus.Completed1).Count(),
+                Completed2 = g.Where(x => x.Status == AppleIdNoneStatus.Completed2).Count(),
+                Completed3 = g.Where(x => x.Status == AppleIdNoneStatus.Completed3).Count(),
+                Completed4 = g.Where(x => x.Status == AppleIdNoneStatus.Completed4).Count(),
+                Pending = g.Where(x => x.Status == AppleIdNoneStatus.Pending).Count(),
+                WrongPass = g.Where(x => x.Status == AppleIdNoneStatus.WrongPass).Count(),
+                Subed = g.Where(x => x.Status == AppleIdNoneStatus.Subed).Count(),
+                Locked1 = g.Where(x => x.Status == AppleIdNoneStatus.Locked1).Count(),
+                Locked2 = g.Where(x => x.Status == AppleIdNoneStatus.Locked2).Count(),
+                Review = g.Where(x => x.Status == AppleIdNoneStatus.Review).Count(),
+                Error = g.Where(x => x.Status == AppleIdNoneStatus.Error).Count(),
+                Unknown = g.Where(x => x.Status == AppleIdNoneStatus.Unknown).Count()
+            });
+
+            var count = await AsyncExecuter.CountAsync(queryGroupBy);
+            if (input.MaxResultCount > 0 || input.SkipCount > 0)
+                queryGroupBy = queryGroupBy.Skip(input.SkipCount).Take(input.MaxResultCount);
+
+            var res = await AsyncExecuter.ToListAsync(queryGroupBy);
+            return new PagedResultDto<AppleIdNoneStatisticDto>(count, res.OrderByDescending(x => x.Created).ToList());
         }
 
-        public Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
+        [Authorize]
+        public async Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
         {
-            throw new NotImplementedException();
+            var query = Repository.GroupBy(x => x.Username).Select(x => new UsernameSelectionDto()
+            {
+                Text = x.Key,
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(query);
+            return res;
         }
 
-        public Task<AppleIdNoneGetOutputDto> IncreasePurchaseAsync(string email)
+        public async Task<AppleIdNoneGetOutputDto> IncreasePurchaseAsync(string email)
         {
-            throw new NotImplementedException();
+            var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleIdNone != null)
+            {
+                appleIdNone.PurchaseNumber += 1;
+                appleIdNone.Updated = DateTime.Now;
+                await Repository.UpdateAsync(appleIdNone);
+                return await MapToGetOutputDtoAsync(appleIdNone);
+            }
+            return null;
         }
 
-        public Task<AppleIdNoneGetOutputDto> SetTakenOutNumberAsync(string email, int value)
+        public async Task<AppleIdNoneGetOutputDto> SetTakenOutNumberAsync(string email, int value)
         {
-            throw new NotImplementedException();
+            var appleId = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleId != null)
+            {
+                appleId.TakenOutNumber = value;
+                appleId.Updated = DateTime.Now;
+                await Repository.UpdateAsync(appleId);
+                return await MapToGetOutputDtoAsync(appleId);
+            }
+            return null;
         }
 
-        public override Task<AppleIdNoneGetOutputDto> CreateAsync(CreateUpdateAppleIdNoneDto input)
+        public async override Task<AppleIdNoneGetOutputDto> CreateAsync(CreateUpdateAppleIdNoneDto input)
         {
-            return base.CreateAsync(input);
+            if (CommonMethod.IsValidEmail(input.Email))
+            {
+                var appleIdNone = ObjectMapper.Map<CreateUpdateAppleIdNoneDto, AppleIdNone>(input);
+                appleIdNone.Created = DateTime.Now;
+                appleIdNone.Status = Enums.AppleIdNoneStatus.Ready;
+                appleIdNone.RemovePaymentStatus = RemovePaymentStatus.Ready;
+                appleIdNone.AddPaymentCompleted = false;
+                appleIdNone.PurchaseNumber = 0;
+                appleIdNone.TakenOutNumber = 0;
+                var res = await Repository.InsertAsync(appleIdNone, autoSave: true);
+                return await MapToGetOutputDtoAsync(res);
+            }
+            else
+            {
+                throw new UserFriendlyException($"{input.Email} - invalidate!");
+            }
         }
 
-        public Task CreateManyAsync(CreateManyAppleIdNoneInputDto input)
+        [Authorize(GmailServerPermissions.AppleIdNones.Create)]
+        public async Task CreateManyAsync(CreateManyAppleIdNoneInputDto input)
         {
-            throw new NotImplementedException();
+            var appleIds = input.Emails.Split("\r\n").ToList();
+            if (appleIds.Count == 0)
+                throw new UserFriendlyException("Input empty!");
+            var entities = new List<AppleIdNone>();
+            foreach (var appleId in appleIds)
+            {
+                if (ValidateAppleIdInput(appleId))
+                {
+                    var appleIdSplit = appleId.Split('|').ToArray();
+                    var email = appleIdSplit[0].ToLower();
+                    var hasEmail = await Repository.AnyAsync(x => x.Email == email);
+                    if (!hasEmail)
+                    {
+                        var entity = new AppleIdNone()
+                        {
+                            Username = input.Username,
+                            Email = email,
+                            Password = appleIdSplit[1],
+                            Status = AppleIdNoneStatus.Ready,
+                            RemovePaymentStatus = RemovePaymentStatus.Ready,
+                            Created = DateTime.Now,
+                            PurchaseNumber = 0,
+                            TakenOutNumber = 0
+                        };
+                        entity.Ccv = appleIdSplit.Length >= 3 ? appleIdSplit[2] : null;
+                        entities.Add(entity);
+                    }
+                }
+            }
+
+            if (entities.Count > 0)
+            {
+                await Repository.BulkInsertAsync(entities.DistinctBy(x => x.Email).ToList());
+            }
         }
 
-        public Task<AppleIdNoneGetOutputDto> UpdateStatusAsync(string email, AppleIdNoneStatus status)
+        private bool ValidateAppleIdInput(string str)
         {
-            throw new NotImplementedException();
+            return Regex.IsMatch(str, @"^(\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)\|(.+)");
+
         }
 
-        public Task DeleteAllAsync()
+        public async Task<AppleIdNoneGetOutputDto> UpdateStatusAsync(string email, AppleIdNoneStatus status)
         {
-            throw new NotImplementedException();
+            var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleIdNone != null)
+            {
+                if ((status == AppleIdNoneStatus.Ready && appleIdNone.Status == AppleIdNoneStatus.Pending) ||
+                    (status != AppleIdNoneStatus.Ready && appleIdNone.Status != AppleIdNoneStatus.Completed1
+                        && appleIdNone.Status != AppleIdNoneStatus.Completed2
+                        && appleIdNone.Status != AppleIdNoneStatus.Completed3
+                        && appleIdNone.Status != AppleIdNoneStatus.Completed4))
+                {
+                    appleIdNone.Status = status;
+                    appleIdNone.Updated = DateTime.Now;
+                    var res = await Repository.UpdateAsync(appleIdNone);
+                    return await MapToGetOutputDtoAsync(res);
+                }
+            }
+            return null;
         }
 
-        public Task DeleteAsync(DeleteFilter input)
+        [Authorize(GmailServerPermissions.AppleIdNones.DeleteAll)]
+        public async Task DeleteAllAsync()
         {
-            throw new NotImplementedException();
+            await Repository.DeleteAllAsync();
         }
 
-        public Task ResetStatusAsync(ResetStatusFilter input)
+        [Authorize(GmailServerPermissions.AppleIdNones.DeleteFilter)]
+        public async Task DeleteAsync(DeleteFilter input)
         {
-            throw new NotImplementedException();
+            if (input.Statuses.Count > 0)
+            {
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("DELETE FROM AppAppleNoneIds WHERE ");
+                queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
+
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                var query = queryBuilder.ToString();
+                try
+                {
+                    await Repository.ExecuteSqlRawAsync(query);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException(ex.Message);
+                }
+            }
+            else
+                throw new UserFriendlyException("The status filter is required");
+        }
+
+        [Authorize(GmailServerPermissions.AppleIdNones.ResetStatus)]
+        public async Task ResetStatusAsync(ResetStatusFilter input)
+        {
+            if (input.Statuses.Count > 0)
+            {
+
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("Update AppAppleNoneIds");
+                queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, TakenOutNumber = 0, Updated = GETDATE()");
+                //queryBuilder.AppendLine($"From AppAppleIds");
+                queryBuilder.AppendLine($"Where ");
+                queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
+
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+
+                string query = queryBuilder.ToString();
+                try
+                {
+                    await Repository.ExecuteSqlRawAsync(query);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException(ex.Message);
+                }
+            }
+        }
+
+        public async Task<AppleIdNoneGetOutputDto> AddPaymentCompletedAsync(string email)
+        {
+            var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleIdNone != null)
+            {
+                appleIdNone.AddPaymentCompleted = true;
+                var entity = await Repository.UpdateAsync(appleIdNone, true);
+                return await MapToGetOutputDtoAsync(entity);
+            }
+            return null;
+        }
+
+        public async Task<AppleIdNoneGetOutputDto> UpdateRemoveStatusAsync(string email, RemovePaymentStatus status)
+        {
+            var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Email == email));
+            if (appleIdNone != null)
+            {
+                appleIdNone.RemovePaymentStatus = status;
+                appleIdNone.RemoveUpdateTime = DateTime.Now;
+                var entity = await Repository.UpdateAsync(appleIdNone, true);
+                return await MapToGetOutputDtoAsync(entity);
+            }
+            return null;
+        }
+
+        public async Task<AppleIdNoneGetOutputDto> GetAppleIdToRemoveAsync()
+        {
+            var statusConditions = new AppleIdNoneStatus[]
+            { 
+                AppleIdNoneStatus.Ready, 
+                AppleIdNoneStatus.Pending, 
+                AppleIdNoneStatus.Locked1,
+                AppleIdNoneStatus.Locked2
+            };
+            var query = Repository.Where(x => x.AddPaymentCompleted == true
+                && statusConditions.Contains(x.Status)
+                && x.RemovePaymentStatus == RemovePaymentStatus.Ready);
+            var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(query);
+            if (appleIdNone != null)
+            {
+                var res = await MapToGetOutputDtoAsync(appleIdNone);
+                appleIdNone.RemovePaymentStatus = RemovePaymentStatus.InUse;
+                appleIdNone.RemoveTakenTime = DateTime.Now;
+                await Repository.UpdateAsync(appleIdNone, true);
+            }
+            return null;
         }
     }
 }

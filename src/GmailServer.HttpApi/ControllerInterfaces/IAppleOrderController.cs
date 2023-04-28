@@ -1,7 +1,6 @@
 ﻿using GmailServer.AppleOrders;
 using GmailServer.AppleOrders.Statistics;
 using GmailServer.Enums;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -22,7 +21,9 @@ namespace GmailServer.ControllerInterfaces
 
         Task<AppleOrderDto> UpdateAddPaymentStatusAsync(string orderId, AddPaymentStatus status, string appleId);
 
-        Task<List<AppleOrderDto>> GetPendingOrderCountByMomoAccountAsync(string momoAccount);
+        Task<int> GetPendingOrderCountByMomoAccountAsync([Required] string momoAccount);
+
+        Task<int> GetOrderCountByStatusAsync([Required] string linkStatus, [Required] string addPaymentStatus);
 
         Task<PagedResultDto<AppleOrderStatisticByLinkStatusDto>> GetStatisticByLinkStatusAsync(AppleOrderStatisticFilterDto input);
 

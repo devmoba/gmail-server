@@ -115,9 +115,9 @@
         public const string AppleIdNone_PurchaseNumber = AppleIdNone + ".PurchaseNumber";
 
         public const string AppleIdRaw = "AppleIdRawGroup";
-        public const string AppleIdRaw_Default = AppleIdNone + ".AppleIdRaws";
-        public const string AppleIdRaw_Create = AppleIdNone + ".Create";
-        public const string AppleIdRaw_Statistic = AppleIdNone + ".Statistic";
-        public const string AppleIdRaw_Download = AppleIdNone + ".Download";
+        public const string AppleIdRaw_Default = AppleIdRaw + ".AppleIdRaws";
+        public const string AppleIdRaw_Create = AppleIdRaw + ".Create";
+        public const string AppleIdRaw_Statistic = AppleIdRaw + ".Statistic";
+        public const string AppleIdRaw_Download = AppleIdRaw + ".Download";
     }
 }

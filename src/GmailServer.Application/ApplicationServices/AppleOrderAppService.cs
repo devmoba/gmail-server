@@ -131,14 +131,21 @@ namespace GmailServer.ApplicationServices
             return null;
         }
 
-        public async Task<List<AppleOrderDto>> GetPendingOrderCountByMomoAccountAsync(string momoAccount)
+        public async Task<int> GetPendingOrderCountByMomoAccountAsync(string momoAccount)
         {
             var query = Repository.Where(x => x.MomoAccount == momoAccount
                     && x.LinkStatus == LinkStatus.Linked
                     && (x.AddPaymentStatus == AddPaymentStatus.None || x.AddPaymentStatus == AddPaymentStatus.InUse)
                     && (x.LinkCompletedTime > DateTime.Now.AddMinutes(-10)));
-            var appleOrders = await AsyncExecuter.ToListAsync(query);
-            return ObjectMapper.Map<List<AppleOrder>, List<AppleOrderDto>>(appleOrders);
+            var count = await AsyncExecuter.CountAsync(query);
+            return count;
+        }
+
+        public async Task<int> GetOrderCountByStatusAsync(LinkStatus[] linkStatus, AddPaymentStatus[] addPaymentStatus)
+        {
+            var query = Repository.Where(x => linkStatus.Contains(x.LinkStatus)
+                    && addPaymentStatus.Contains(x.AddPaymentStatus));
+            return await AsyncExecuter.CountAsync(query);
         }
 
         [Authorize]
@@ -210,6 +217,9 @@ namespace GmailServer.ApplicationServices
         {
             if (!string.IsNullOrEmpty(orderId) && !string.IsNullOrEmpty(urlPayment))
             {
+                var hasOrder = await AsyncExecuter.AnyAsync(Repository.Where(x => x.OrderID == orderId));
+                if (hasOrder)
+                    throw new UserFriendlyException("OrderId already exists in the database;");
                 var order = new AppleOrder()
                 {
                     OrderID = orderId,
@@ -232,7 +242,7 @@ namespace GmailServer.ApplicationServices
         //[Authorize(GmailServerPermissions.AppleOrders.ResetLinkStatus)]
         //public async Task ResetLinkStatusAsync(ResetLinkStatusFilterInput input)
         //{
-            
+
         //}
     }
 }

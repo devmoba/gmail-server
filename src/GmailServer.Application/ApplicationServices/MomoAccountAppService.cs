@@ -139,7 +139,7 @@ namespace GmailServer.ApplicationServices
         [Authorize(GmailServerPermissions.MomoAccounts.CreateMany)]
         public async Task CreateManyAsync(CreateManyMonoAccountInputDto input)
         {
-            var accounts = input.Accounts.Split("\r\n").ToList();
+            var accounts = input.Accounts.Split("\r\n", StringSplitOptions.RemoveEmptyEntries).ToList();
             if (accounts.Count == 0)
                 throw new UserFriendlyException("Input empty!");
             var entities = new List<MomoAccount>();
@@ -147,7 +147,7 @@ namespace GmailServer.ApplicationServices
             {
                 if (!string.IsNullOrEmpty(account))
                 {
-                    var accountSplit = account.Split('|').ToArray();
+                    var accountSplit = account.Split('|', StringSplitOptions.RemoveEmptyEntries).ToArray();
                     if (accountSplit.Length >= 2)
                     {
                         var username = accountSplit[0].Trim();

@@ -14,7 +14,9 @@ namespace GmailServer.AppleOrders
             long,
             AppleOrderFilterDto>, IDeleteAppService<long>
     {
-        Task<List<AppleOrderDto>> GetPendingOrderCountByMomoAccountAsync(string momoAccount);
+        Task<int> GetPendingOrderCountByMomoAccountAsync(string momoAccount);
+
+        Task<int> GetOrderCountByStatusAsync(LinkStatus[] linkStatus, AddPaymentStatus[] addPaymentStatus);
 
         Task<PagedResultDto<AppleOrderStatisticByLinkStatusDto>> GetStatisticByLinkStatusAsync(AppleOrderStatisticFilterDto input);
 

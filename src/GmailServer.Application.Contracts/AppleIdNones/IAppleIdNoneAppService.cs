@@ -8,7 +8,7 @@ using Volo.Abp.Application.Services;
 
 namespace GmailServer.AppleIdNones
 {
-    public interface IAppleNoneAppService : ICrudAppService<
+    public interface IAppleIdNoneAppService : ICrudAppService<
         AppleIdNoneGetOutputDto,
         AppleIdNoneGetListOutputDto,
         long,
@@ -22,7 +22,7 @@ namespace GmailServer.AppleIdNones
 
         Task DeleteAsync(DeleteFilter input);
 
-        Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneDto();
+        Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync();
 
         Task<AppleIdNoneGetOutputDto> GetByStatusAsync(AppleIdNoneStatus status);
 
@@ -41,5 +41,11 @@ namespace GmailServer.AppleIdNones
         Task<AppleIdNoneGetOutputDto> IncreasePurchaseAsync(string email);
 
         Task<AppleIdNoneGetOutputDto> SetTakenOutNumberAsync(string email, int value);
+
+        Task<AppleIdNoneGetOutputDto> AddPaymentCompletedAsync(string email); 
+
+        Task<AppleIdNoneGetOutputDto> UpdateRemoveStatusAsync(string email, RemovePaymentStatus status);
+
+        Task<AppleIdNoneGetOutputDto> GetAppleIdToRemoveAsync();
     }
 }

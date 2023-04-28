@@ -20,6 +20,8 @@ namespace GmailServer.AppleIdNones
 
         public AppleIdNoneStatus? Status { get; set; }
 
+        public RemovePaymentStatus? RemovePaymentStatus { get; set; }
+
         public DateTime? CreatedFrom { get; set; }
 
         public DateTime? CreatedTo { get; set; }

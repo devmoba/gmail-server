@@ -3,10 +3,10 @@ using GmailServer.AppleOrders.Statistics;
 using GmailServer.ControllerInterfaces;
 using GmailServer.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
@@ -52,9 +52,22 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
+        [Route("getOrderCountByStatus")]
+        public Task<int> GetOrderCountByStatusAsync([Required]string linkStatus, [Required] string addPaymentStatus)
+        {
+            var linkStatusArr = linkStatus.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => Enum.Parse<LinkStatus>(x))
+                .ToArray();
+            var addPaymentStatusArr = addPaymentStatus.Split(',', StringSplitOptions.RemoveEmptyEntries)
+               .Select(x => Enum.Parse<AddPaymentStatus>(x))
+               .ToArray();
+            return _appService.GetOrderCountByStatusAsync(linkStatusArr, addPaymentStatusArr);
+        }
+
+        [HttpGet]
         [Route("getPendingOrderCountByMomoAccount")]
         [IgnoreAntiforgeryToken]
-        public Task<List<AppleOrderDto>> GetPendingOrderCountByMomoAccountAsync(string momoAccount)
+        public Task<int> GetPendingOrderCountByMomoAccountAsync([Required] string momoAccount)
         {
             return _appService.GetPendingOrderCountByMomoAccountAsync(momoAccount);
         }
@@ -82,7 +95,7 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
-        [Route("takeOrderToLinkAsync")]
+        [Route("takeOrderToLink")]
         [IgnoreAntiforgeryToken]
         public Task<AppleOrderDto> TakeOrderToLinkAsync()
         {
