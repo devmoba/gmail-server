@@ -56,9 +56,9 @@ namespace GmailServer.Controllers
         [HttpGet]
         [Route("getFirst")]
         [IgnoreAntiforgeryToken]
-        public Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync()
+        public Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync(bool isNone = false)
         {
-            return _appService.GetFirstAppleIdNoneAsync();
+            return _appService.GetFirstAppleIdNoneAsync(isNone);
         }
 
         [HttpGet]

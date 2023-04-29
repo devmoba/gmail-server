@@ -143,19 +143,28 @@ namespace GmailServer.ApplicationServices
             }
         }
 
-        public async Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync()
+        public async Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync(bool isNone = false)
         {
             await getSyncLock.WaitAsync();
             try
             {
-                var query = Repository.Where(x => x.Status == Enums.AppleIdNoneStatus.Ready);
-                query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                var query = Repository.Where(x => x.AddPaymentCompleted == false);
+                if (isNone)
+                {
+                    query = query.Where(x => x.PurchaseNumber == 0);
+                }
+                else
+                {
+                    query = query.Where(x => x.Status == Enums.AppleIdNoneStatus.Ready);
+                    query = query.Where(x => x.TakenTime == DateTime.Parse("0001-01-01 00:00:00.0000000"));
+                }
                 query = query.OrderBy(x => x.Updated);
+
                 var appleId = await AsyncExecuter.FirstOrDefaultAsync(query);
                 if (appleId == null)
                 {
                     var query2 = Repository
-                        .Where(x => x.Status == Enums.AppleIdNoneStatus.Ready)
+                        .Where(x => x.Status == Enums.AppleIdNoneStatus.Ready && x.AddPaymentCompleted == false)
                         .OrderBy(x => x.TakenTime);
                     appleId = await AsyncExecuter.FirstOrDefaultAsync(query2);
                 }
@@ -442,15 +451,8 @@ namespace GmailServer.ApplicationServices
 
         public async Task<AppleIdNoneGetOutputDto> GetAppleIdToRemoveAsync()
         {
-            var statusConditions = new AppleIdNoneStatus[]
-            { 
-                AppleIdNoneStatus.Ready, 
-                AppleIdNoneStatus.Pending, 
-                AppleIdNoneStatus.Locked1,
-                AppleIdNoneStatus.Locked2
-            };
             var query = Repository.Where(x => x.AddPaymentCompleted == true
-                && statusConditions.Contains(x.Status)
+                && x.Status != AppleIdNoneStatus.Pending
                 && x.RemovePaymentStatus == RemovePaymentStatus.Ready);
             var appleIdNone = await AsyncExecuter.FirstOrDefaultAsync(query);
             if (appleIdNone != null)

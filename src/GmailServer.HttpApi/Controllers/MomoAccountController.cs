@@ -78,6 +78,13 @@ namespace GmailServer.Controllers
             return _appService.GetStatisticAsync(input);    
         }
 
+        [HttpGet]
+        [Route("increaseLinkCount")]
+        public Task<MomoAccountDto> IncreaseLinkCountAsync(string username)
+        {
+            return _appService.IncreaseLinkCountAsync(username);
+        }
+
         [HttpPut]
         [Route("update/{username}")]
         [IgnoreAntiforgeryToken]

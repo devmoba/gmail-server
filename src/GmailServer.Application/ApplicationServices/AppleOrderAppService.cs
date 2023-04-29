@@ -141,6 +141,24 @@ namespace GmailServer.ApplicationServices
             return count;
         }
 
+        public async Task<int> GetReadyOrderCountAsync()
+        {
+            var timeCondition = DateTime.Now.AddMinutes(-5);
+            var query = Repository.Where(x => x.LinkStatus == LinkStatus.Ready
+                    && x.CreatedTime > timeCondition);
+            var count = await AsyncExecuter.CountAsync(query);
+            return count;
+        }
+
+        public async Task<int> GetLinkedOrderCountAsync()
+        {
+            var timeCondition = DateTime.Now.AddMinutes(-5);
+            var query = Repository.Where(x => x.LinkStatus == LinkStatus.Linked
+                    && x.LinkCompletedTime > timeCondition);
+            var count = await AsyncExecuter.CountAsync(query);
+            return count;
+        }
+
         public async Task<int> GetOrderCountByStatusAsync(LinkStatus[] linkStatus, AddPaymentStatus[] addPaymentStatus)
         {
             var query = Repository.Where(x => linkStatus.Contains(x.LinkStatus)

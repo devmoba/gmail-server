@@ -12,5 +12,7 @@ namespace GmailServer.Repositories
         IQueryable<AppleOrder> FullTextSearch(IQueryable<AppleOrder> query, Expression<Func<AppleOrder, string>> keySelector, string value);
 
         Task ExecuteSqlRawAsync(string query);
+
+        Task DeleteAppleOrderByTimeoutAsync(int timeout); // minutes
     }
 }

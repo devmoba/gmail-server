@@ -15,6 +15,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using static IdentityServer4.Models.IdentityResources;
 
 namespace GmailServer.ApplicationServices
 {
@@ -109,7 +110,8 @@ namespace GmailServer.ApplicationServices
                     NotUse = g.Where(x => x.Status == MomoAccountStatus.NotUse).Count(),
                     InUse = g.Where(x => x.Status == MomoAccountStatus.InUse).Count(),
                     Lock = g.Where(x => x.Status == MomoAccountStatus.Lock).Count(),
-                    WrongPassword = g.Where(x => x.Status == MomoAccountStatus.WrongPassword).Count()
+                    WrongPassword = g.Where(x => x.Status == MomoAccountStatus.WrongPassword).Count(),
+                    Unknown = g.Where(x => x.Status == MomoAccountStatus.Unknown).Count()
                 });
             var count = await AsyncExecuter.CountAsync(group);
             if (input.MaxResultCount > 0 || input.SkipCount > 0)
@@ -195,6 +197,8 @@ namespace GmailServer.ApplicationServices
                 momoAccount.CustmArg1 = input.CustmArg1;
                 momoAccount.CustmArg2 = input.CustmArg2;
                 momoAccount.CustmArg3 = input.CustmArg3;
+                momoAccount.LastUpdateTime = DateTime.Now;
+               
                 var entity = await Repository.UpdateAsync(momoAccount, true);
                 return ObjectMapper.Map<MomoAccount, MomoAccountDto>(entity);
             }
@@ -283,6 +287,19 @@ namespace GmailServer.ApplicationServices
             }
             else 
                 throw new UserFriendlyException("The status filter is required");
+        }
+
+        public async Task<MomoAccountDto> IncreaseLinkCountAsync(string username)
+        {
+            var momoAccount = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Username == username));
+            if (momoAccount != null)
+            {
+                momoAccount.TotalLinkCount += 1;
+                momoAccount.LastUpdateTime = DateTime.Now;
+                await Repository.UpdateAsync(momoAccount);
+                return await MapToGetOutputDtoAsync(momoAccount);
+            }
+            return null;
         }
     }
 }

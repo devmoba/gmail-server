@@ -27,5 +27,7 @@ namespace GmailServer.MomoAccounts
         Task DeleteFilterAsync(DeleteFilterInput input);
 
         Task DeleteAllAsync();
+
+        Task<MomoAccountDto> IncreaseLinkCountAsync(string username);
     }
 }

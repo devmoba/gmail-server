@@ -73,6 +73,22 @@ namespace GmailServer.Controllers
         }
 
         [HttpGet]
+        [Route("getReadyOrderCount")]
+        [IgnoreAntiforgeryToken]
+        public Task<int> GetReadyOrderCountAsync()
+        {
+            return _appService.GetReadyOrderCountAsync();
+        }
+
+        [HttpGet]
+        [Route("getLinkedOrderCount")]
+        [IgnoreAntiforgeryToken]
+        public Task<int> GetLinkedOrderCountAsync()
+        {
+            return _appService.GetLinkedOrderCountAsync();
+        }
+
+        [HttpGet]
         [Route("getStatisticByAddPaymentStatus")]
         public Task<PagedResultDto<AppleOrderStatisticByAddPaymentStatusDto>> GetStatisticByAddPaymentStatusAsync(AppleOrderStatisticFilterDto input)
         {

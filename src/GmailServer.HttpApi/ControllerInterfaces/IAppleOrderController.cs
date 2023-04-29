@@ -25,6 +25,10 @@ namespace GmailServer.ControllerInterfaces
 
         Task<int> GetOrderCountByStatusAsync([Required] string linkStatus, [Required] string addPaymentStatus);
 
+        Task<int> GetReadyOrderCountAsync();
+
+        Task<int> GetLinkedOrderCountAsync();
+
         Task<PagedResultDto<AppleOrderStatisticByLinkStatusDto>> GetStatisticByLinkStatusAsync(AppleOrderStatisticFilterDto input);
 
         Task<PagedResultDto<AppleOrderStatisticByAddPaymentStatusDto>> GetStatisticByAddPaymentStatusAsync(AppleOrderStatisticFilterDto input);

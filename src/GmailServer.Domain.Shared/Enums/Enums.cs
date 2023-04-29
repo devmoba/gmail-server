@@ -116,7 +116,8 @@
         NotUse = 0,
         InUse = 1,
         Lock = 3, 
-        WrongPassword = 4
+        WrongPassword = 4,
+        Unknown = 5
     }
 
     // AppleOrder

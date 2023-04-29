@@ -17,6 +17,14 @@ namespace GmailServer.Repositories
         {
         }
 
+        public async Task DeleteAppleOrderByTimeoutAsync(int timeout)
+        {
+            var dbContext = await GetDbContextAsync();
+            var conditionTime = DateTime.Now.AddMinutes(-timeout);
+            var query = $"DELETE FROM AppAppleOrders WHERE CreatedTime < {conditionTime.ToString("yyyy-MM-dd HH:mm:ss")}";
+            await dbContext.Database.ExecuteSqlRawAsync(query);
+        }
+
         public async Task ExecuteSqlRawAsync(string query)
         {
             var dbContext = await GetDbContextAsync();

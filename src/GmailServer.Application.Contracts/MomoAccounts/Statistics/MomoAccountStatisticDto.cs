@@ -17,5 +17,7 @@ namespace GmailServer.MomoAccounts.Statistics
         public int Lock { get; set; }
 
         public int WrongPassword { get; set; }
+
+        public int Unknown { get; set; }
     }
 }

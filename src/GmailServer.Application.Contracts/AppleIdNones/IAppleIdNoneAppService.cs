@@ -22,7 +22,7 @@ namespace GmailServer.AppleIdNones
 
         Task DeleteAsync(DeleteFilter input);
 
-        Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync();
+        Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync(bool isNone = false);
 
         Task<AppleIdNoneGetOutputDto> GetByStatusAsync(AppleIdNoneStatus status);
 

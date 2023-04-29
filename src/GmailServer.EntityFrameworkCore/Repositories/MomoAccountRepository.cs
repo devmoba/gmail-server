@@ -52,7 +52,7 @@ namespace GmailServer.Repositories
             queryBuilder.AppendLine("Update AppMomoAccounts");
             queryBuilder.AppendLine($"Set Status = {(int)MomoAccountStatus.NotUse}, LastUpdateTime = GETDATE()");
             queryBuilder.AppendLine($"Where ");
-            queryBuilder.Append($"LastUpdateTime < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' ");
+            queryBuilder.Append($"LastUpdateTime < '{timeCheck.ToString("yyyy-MM-dd HH:mm:ss")}' And Status = {(int)MomoAccountStatus.InUse}");
             var query = queryBuilder.ToString();
             await dbContext.Database.ExecuteSqlRawAsync(query);
         }

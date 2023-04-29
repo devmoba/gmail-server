@@ -12,7 +12,7 @@ namespace GmailServer.ControllerInterfaces
     {
         Task<PagedResultDto<AppleIdNoneGetListOutputDto>> GetListAsync(AppleIdNoneFilterDto input);
 
-        Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync();
+        Task<AppleIdNoneGetOutputDto> GetFirstAppleIdNoneAsync(bool isNone = false);
 
         Task<AppleIdNoneGetOutputDto> GetByStatusAsync(AppleIdNoneStatus status);
 
