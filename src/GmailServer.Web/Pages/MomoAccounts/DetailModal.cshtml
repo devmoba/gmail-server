@@ -1,0 +1,167 @@
+﻿@page
+@model GmailServer.Web.Pages.MomoAccounts.DetailModalModel
+@using GmailServer.Enums;
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@{
+    Layout = null;
+}
+
+<abp-modal>
+    <abp-modal-header title="Account - @(Model.MomoAccount.Username)"></abp-modal-header>
+    <abp-modal-body>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Upload Group</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.UploadGroup)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Username</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.Username)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Email</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.Email)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>Status</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Enum.GetName(typeof(MomoAccountStatus), Model.MomoAccount.Status))</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>UDid1</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.UDid1)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>UDid2</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.UDid2)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>RefreshToken</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.RefreshToken)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>AuthenticateToken</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.AuthenticateToken)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>SessionKey</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.SessionKey)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>SessionKey2</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.SessionKey2)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>CurrentLinkCount</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.CurrentLinkCount)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>TotalLinkCount</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.TotalLinkCount)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>CreatedTime</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.CreatedTime.ToString("yyyy/MM/dd HH:mm"))</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>LastTakenTime</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.LastTakenTime.ToString("yyyy/MM/dd HH:mm"))</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>LastUpdateTime</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.LastUpdateTime.ToString("yyyy/MM/dd HH:mm"))</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>CustomArg1</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.CustmArg1)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>CustomArg2</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.CustmArg2)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>CustomArg3</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.CustmArg3)</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <h4>InUseDevice</h4>
+            </div>
+            <div class="col-md-8">
+                <p>@(Model.MomoAccount.InUseDevice)</p>
+            </div>
+        </div>
+    </abp-modal-body>
+</abp-modal>

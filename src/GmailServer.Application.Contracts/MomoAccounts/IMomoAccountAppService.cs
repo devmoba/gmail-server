@@ -1,4 +1,5 @@
-﻿using GmailServer.MomoAccounts.Statistics;
+﻿using GmailServer.Enums;
+using GmailServer.MomoAccounts.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,9 +15,13 @@ namespace GmailServer.MomoAccounts
     {
         Task<MomoAccountDto> GetMomoAcountAsync();
 
-        Task CreateManyAsync(CreateManyMonoAccountInputDto input);
+        Task CreateManyAsync(CreateManyMomoAccountInputDto input);
 
         Task<MomoAccountDto> UpdateMomoAcountAsync(string username, UpdateMomoAccountInputDto input);
+
+        Task<MomoAccountDto> UpdateStatusAsync(string username, MomoAccountStatus status);
+
+        Task<List<UploadGroupSelectionDto>> GetUploadGroupSelectionAsync();
 
         Task<PagedResultDto<MomoAccountStatisticDto>> GetStatisticAsync(MomoAccountStatisticFilterDto input);
 

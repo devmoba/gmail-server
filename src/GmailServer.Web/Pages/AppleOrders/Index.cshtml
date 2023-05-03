@@ -1,0 +1,83 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleOrders.IndexModel
+@using GmailServer
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.Users
+@inject IPageLayout PageLayout
+@inject ICurrentUser CurrentUser
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Apple Order"];
+    PageLayout.Content.Title = L["Apple Order"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.AppleOrder;
+}
+
+@section scripts {
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+        var linkStatusSelections = @Html.Raw(ViewData["linkStatusSelections"]);
+        var addPaymentStatusSelections = @Html.Raw(ViewData["addPaymentStatusSelections"]);
+</script>
+<abp-script src="/Pages/AppleOrders/js/index.js" />
+}
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    .modal-dialog {
+        max-width: 1000px;
+    }
+
+    .text-ellipsis {
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+    .text-ellipsis.sm-width {
+         width: 120px;
+    }
+    </style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Apple Order</h4>
+            </abp-column>
+            <abp-column size-md="_6">
+
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="appleOrderTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Order ID"]</th>
+                    <th>@L["URL Payment"]</th>
+                    <th>@L["Link Status"]</th>
+                    <th>@L["Link Taken Time"]</th>
+                    <th>@L["Link Completed Time"]</th>
+                    <th>@L["Add Payment Status"]</th>
+                    <th>@L["Add Payment Taken Time"]</th>
+                    <th>@L["Add Payment Completed Time"]</th>
+                    <th>@L["Momo Account"]</th>
+                    <th>@L["Apple ID"]</th>
+                    <th>@L["Created Time"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

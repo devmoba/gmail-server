@@ -229,6 +229,18 @@ namespace GmailServer.Web.Menus
                    );
                 }
 
+                if (await context.IsGrantedAsync(GmailServerPermissions.AppleIdNones.ResetRemovePaymentStatus))
+                {
+                    appleIdNone.AddItem(
+                       new ApplicationMenuItem(
+                           GmailServerMenus.AppleIdNoneResetRemovePaymentStatus,
+                           "Reset Remove Payment",
+                           "/AppleIdNones/ResetRemovePaymentStatus",
+                           order: 4
+                       )
+                   );
+                }
+
                 if (await context.IsGrantedAsync(GmailServerPermissions.AppleIdNones.Download))
                 {
                     appleIdNone.AddItem(
@@ -236,7 +248,7 @@ namespace GmailServer.Web.Menus
                            GmailServerMenus.AppleIdNoneDownload,
                            "Download",
                            "/AppleIdNones/Download",
-                           order: 4
+                           order: 5
                        )
                    );
                 }
@@ -260,14 +272,27 @@ namespace GmailServer.Web.Menus
 
                 if (await context.IsGrantedAsync(GmailServerPermissions.AppleOrders.Statistic))
                 {
-                    appleOrder.AddItem(
+                    var statistic = new ApplicationMenuItem(GmailServerMenus.AppleOrderStatistic, "Statistic", order: 2);
+
+                    statistic.AddItem(
                        new ApplicationMenuItem(
                            GmailServerMenus.AppleOrderStatistic,
-                           "Statistic",
-                           "/AppleOrders/Statistic",
+                           "Link Status",
+                           "/AppleOrders/StatisticByLinkStatus",
                            order: 2
                        )
-                   );
+                    );
+
+                    statistic.AddItem(
+                       new ApplicationMenuItem(
+                           GmailServerMenus.AppleOrderStatistic,
+                           "Add Payment Status",
+                           "/AppleOrders/StatisticByAddPaymentStatus",
+                           order: 3
+                       )
+                    );
+
+                    appleOrder.AddItem(statistic);
                 }
 
                 apple.AddItem(appleOrder);
@@ -458,7 +483,7 @@ namespace GmailServer.Web.Menus
                );
             }
 
-           
+
             //HostDashboard
             //context.Menu.AddItem(
             //    new ApplicationMenuItem(

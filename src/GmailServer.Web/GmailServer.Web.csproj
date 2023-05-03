@@ -32,12 +32,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Pages\AppleIdNones\css\reset-status.css" />
+    <None Remove="Pages\AppleIdNones\js\downloadViewModel.js" />
+    <None Remove="Pages\AppleIdNones\js\index.js" />
+    <None Remove="Pages\AppleIdNones\js\resetRemovePaymentViewModel.js" />
+    <None Remove="Pages\AppleIdNones\js\resetStatusViewModel.js" />
+    <None Remove="Pages\AppleIdNones\js\statistic.js" />
+    <None Remove="Pages\AppleIdRaws\js\download.js" />
+    <None Remove="Pages\AppleIdRaws\js\statistic.js" />
     <None Remove="Pages\AppleIds\css\reset-status.css" />
     <None Remove="Pages\AppleIds\js\downloadViewModel.js" />
     <None Remove="Pages\AppleIds\js\index.js" />
     <None Remove="Pages\AppleIds\js\resetStatusViewModel.js" />
     <None Remove="Pages\AppleIds\js\statistic.js" />
     <None Remove="Pages\AppleIds\js\statisticDaily.js" />
+    <None Remove="Pages\AppleOrders\js\index.js" />
+    <None Remove="Pages\AppleOrders\js\statisticByAddPaymentStatus.js" />
+    <None Remove="Pages\AppleOrders\js\statisticByLinkStatus.js" />
     <None Remove="Pages\Checkers\js\index.js" />
     <None Remove="Pages\CheckMails\css\index.css" />
     <None Remove="Pages\CheckMails\js\checkMailViewModel.js" />
@@ -60,6 +71,10 @@
     <None Remove="Pages\GmailTypes\js\index.js" />
     <None Remove="Pages\index.css" />
     <None Remove="Pages\index.js" />
+    <None Remove="Pages\MomoAccounts\css\reset-status.css" />
+    <None Remove="Pages\MomoAccounts\js\index.js" />
+    <None Remove="Pages\MomoAccounts\js\resetStatusViewModel.js" />
+    <None Remove="Pages\MomoAccounts\js\statistic.js" />
     <None Remove="Pages\RecoveryEmails\js\index.js" />
   </ItemGroup>
 
@@ -231,6 +246,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\AppleOrders\css\" />
     <Folder Include="wwwroot\styles\" />
   </ItemGroup>
 

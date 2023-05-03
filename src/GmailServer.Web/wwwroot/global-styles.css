@@ -19,7 +19,7 @@
     border-radius: 5px;
 }
 
-#fakeSettingTable_wrapper .dataTables_scrollBody,
+/*#fakeSettingTable_wrapper .dataTables_scrollBody,
 #recoveryEmailTable_wrapper .dataTables_scrollBody,
 #appleIdTable_wrapper .dataTables_scrollBody,
 #gmailPremiumTable_wrapper .dataTables_scrollBody,
@@ -33,6 +33,10 @@
 #downloadedAppDetailTable_wrapper .dataTables_scrollBody,
 #gmailTable_wrapper .dataTables_scrollBody {
     min-height: 500px;
+}*/
+
+.dataTables_scrollBody {
+    min-height: 500px;
 }
 
 .dataTables_scrollHead th div.chosen-container {
@@ -40,7 +44,7 @@
     font-weight: normal;
 }
 
-#fakeSettingTable_wrapper table.dataTable thead tr th input[type="text"],
+/*#fakeSettingTable_wrapper table.dataTable thead tr th input[type="text"],
 #recoveryEmailTable_wrapper table.dataTable thead tr th input[type="text"],
 #appleIdTable_wrapper table.dataTable thead tr th input[type="text"],
 #gmailPremiumTable_wrapper table.dataTable thead tr th input[type="text"],
@@ -58,5 +62,12 @@
     padding: 3px 7px;
     height: 36px;
     font-size: 15px;
-}
+}*/
 
+table.dataTable thead tr th input[type="text"] {
+    margin: 0px;
+    width: calc(100%);
+    padding: 3px 7px;
+    height: 36px;
+    font-size: 15px;
+}

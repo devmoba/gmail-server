@@ -1,0 +1,46 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleOrders.StatisticByLinkStatusModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Apple Order Statistic"];
+    PageLayout.Content.Title = L["Apple Order Statistic"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.AppleOrderStatistic;
+}
+
+@section scripts {
+    <abp-script src="/Pages/AppleOrders/js/statisticByLinkStatus.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Link Status</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="statisticByLinkStatusTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["#"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Total Order"]</th>
+                    <th>@L["Ready"]</th>
+                    <th>@L["InUse"]</th>
+                    <th>@L["Expired"]</th>
+                    <th>@L["Error"]</th>
+                    <th>@L["Linked"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
+

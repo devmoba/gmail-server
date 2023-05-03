@@ -1,0 +1,60 @@
+﻿@page
+@model GmailServer.Web.Pages.MomoAccounts.StatisticModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Momo Account Statistic"];
+    PageLayout.Content.Title = L["Momo Account Statistic"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.MomoAccountStatistic;
+}
+
+@section scripts {
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+        var uploadGroupSelections = @Html.Raw(ViewData["uploadGroupSelections"]);
+</script>
+<abp-script src="/Pages/MomoAccounts/js/statistic.js" />
+}
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    #momoAccountStatisticTable_wrapper .btn {
+        padding: 5px 10px;
+    }
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Momo Account Statistics</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="momoAccountStatisticTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["#"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Upload Group"]</th>
+                    <th>@L["Total Upload"]</th>
+                    <th>@L["NotUse"]</th>
+                    <th>@L["InUse"]</th>
+                    <th>@L["Lock"]</th>
+                    <th>@L["WrongPassword"]</th>
+                    <th>@L["Unknown"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

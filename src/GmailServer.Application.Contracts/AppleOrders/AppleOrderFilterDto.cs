@@ -12,6 +12,8 @@ namespace GmailServer.AppleOrders
 
         public LinkStatus? LinkStatus { get; set; }
 
+        public AddPaymentStatus? AddPaymentStatus { get; set; }
+
         public string MomoAccount { get; set; }
 
         public string AppleID { get; set; }

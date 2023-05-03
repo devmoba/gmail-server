@@ -30,10 +30,11 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
 
-            query.WhereIf(!string.IsNullOrEmpty(input.OrderID), x => x.OrderID == input.OrderID)
-                .WhereIf(input.LinkStatus.HasValue, x => x.LinkStatus == input.LinkStatus.Value)
-                .WhereIf(input.CreatedTimeFrom.HasValue, x => x.CreatedTime >= input.CreatedTimeFrom.Value)
-                .WhereIf(input.CreatedTimeTo.HasValue, x => x.CreatedTime <= input.CreatedTimeTo.Value);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.OrderID), x => x.OrderID == input.OrderID);
+            query = query.WhereIf(input.LinkStatus.HasValue, x => x.LinkStatus == input.LinkStatus.Value);
+            query = query.WhereIf(input.AddPaymentStatus.HasValue, x => x.AddPaymentStatus == input.AddPaymentStatus.Value);
+            query = query.WhereIf(input.CreatedTimeFrom.HasValue, x => x.CreatedTime >= input.CreatedTimeFrom.Value);
+            query = query.WhereIf(input.CreatedTimeTo.HasValue, x => x.CreatedTime <= input.CreatedTimeTo.Value);
 
             if (!string.IsNullOrEmpty(input.MomoAccount))
                 query = Repository.FullTextSearch(query, x => x.MomoAccount, input.MomoAccount);
@@ -154,6 +155,7 @@ namespace GmailServer.ApplicationServices
         {
             var timeCondition = DateTime.Now.AddMinutes(-5);
             var query = Repository.Where(x => x.LinkStatus == LinkStatus.Linked
+                    && x.AddPaymentStatus == AddPaymentStatus.None
                     && x.LinkCompletedTime > timeCondition);
             var count = await AsyncExecuter.CountAsync(query);
             return count;

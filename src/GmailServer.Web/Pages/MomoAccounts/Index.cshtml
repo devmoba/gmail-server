@@ -1,0 +1,99 @@
+﻿@page
+@model GmailServer.Web.Pages.MomoAccounts.IndexModel
+@using GmailServer
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.Users
+@inject IPageLayout PageLayout
+@inject ICurrentUser CurrentUser
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Momo Account"];
+    PageLayout.Content.Title = L["Momo Account"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.MomoAccount;
+}
+
+@section scripts {
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+        var momoAccountStatusSelections = @Html.Raw(ViewData["momoAccountStatusSelections"]);
+        var uploadGroupSelections = @Html.Raw(ViewData["uploadGroupSelections"]);
+</script>
+<abp-script src="/Pages/MomoAccounts/js/index.js" />
+@*<abp-script src="/Pages/AppleIds/js/downloadViewModel.js" />*@
+    <abp-script src="/Pages/MomoAccounts/js/resetStatusViewModel.js" />
+}
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    .modal-dialog {
+        max-width: 1000px;
+    }
+
+    .text-ellipsis {
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+
+    .text-ellipsis.sm-width {
+         width: 120px;
+    }
+    </style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Momo Account</h4>
+            </abp-column>
+            <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.MomoAccounts.CreateMany))
+                {
+                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
+                }
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.MomoAccounts.ResetStatus))
+                {
+                    <a class="float-right btn btn-small btn-danger" style="margin-right: 15px;" href="/MomoAccounts/ResetStatus">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;<span>Reset Status</span>
+                    </a>
+                }
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.MomoAccounts.DeleteAll))
+                {
+                    <abp-button class="float-right btn btn-small btn-danger" id="btnRemoveAll" icon="trash" text="Remove All" style="margin-right: 15px;"></abp-button>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="momoAccountTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Upload Group"]</th>
+                    <th>@L["Username"]</th>
+                    <th>@L["Password"]</th>
+                    <th>@L["Email"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["UDid1"]</th>
+                    <th>@L["UDid2"]</th>
+                    <th>@L["CurrentLinkCount"]</th>
+                    <th>@L["TotalLinkCount"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Last Taken"]</th>
+                    <th>@L["Last Update"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

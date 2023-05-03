@@ -140,5 +140,16 @@ namespace GmailServer.Controllers
             return _appService.DeleteAsync(id);
         }
 
+        [HttpGet]
+        [Route("getAppleIdNoneRemoveStatusSelection")]
+        public Task<List<AppleIdNoneRemoveStatusSelectionDto>> GetAppleIdNoneRemoveStatusSelectionsAsync(
+            string username, 
+            DateTime? createdFrom, 
+            DateTime? createdTo, 
+            DateTime? removeTakenTimeFrom, 
+            DateTime? removeTakenTimeTo)
+        {
+            return _appService.GetAppleIdNoneRemoveStatusSelectionsAsync(username, createdFrom, createdTo, removeTakenTimeFrom, removeTakenTimeTo);
+        }
     }
 }

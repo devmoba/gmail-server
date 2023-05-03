@@ -6,9 +6,9 @@ namespace GmailServer.MomoAccounts
 {
     public class MomoAccountFilterDto : PagedAndSortedResultRequestDto
     {
-        public string Username { get; set; }
+        public string UploadGroup { get; set; }
 
-        public string Email { get; set; }
+        public string Username { get; set; }
 
         public MomoAccountStatus? Status { get; set; }
 

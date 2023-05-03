@@ -1,0 +1,40 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleIdRaws.StatisticModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Apple ID Raw Statistic"];
+    PageLayout.Content.Title = L["Apple ID Raw Statistic"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.AppleIdRawStatistic;
+}
+
+@section scripts {
+    <abp-script src="/Pages/AppleIdRaws/js/statistic.js" />
+}
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Apple Id Raw</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="appleIdRawStatistic" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["#"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Total Upload"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

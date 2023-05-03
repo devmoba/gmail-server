@@ -107,7 +107,7 @@ namespace GmailServer.Permissions
             var appleOrderManagement = appleOrderGroup.AddPermission(GmailServerPermissions.AppleOrders.Default, L("Permissions:AppleOrders"));
             appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Create, L("Permission:AppleOrders.Create"));
             appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Update, L("Permission:AppleOrders.Update"));
-            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Delete, L("Permission:AppleOrders.Update"));
+            appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Delete, L("Permission:AppleOrders.Delete"));
             appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.Statistic, L("Permission:AppleOrders.Statistic"));
             appleOrderManagement.AddChild(GmailServerPermissions.AppleOrders.ResetLinkStatus, L("Permission:AppleOrders.ResetLinkStatus"));
 
@@ -121,6 +121,7 @@ namespace GmailServer.Permissions
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Download, L("Permission:AppleIdNones.Download"));
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.Statistic, L("Permission:AppleIdNones.Statistic"));
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.ResetStatus, L("Permission:AppleIdNones.ResetStatus"));
+            appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.ResetRemovePaymentStatus, L("Permission:AppleIdNones.ResetRemovePaymentStatus"));
             appleIdNoneManagement.AddChild(GmailServerPermissions.AppleIdNones.PurchaseNumber, L("Permission:AppleIdNones.PurchaseNumber"));
 
             var appleIdRawGroup = context.AddGroup(GmailServerPermissions.AppleIdRawGroup, L("Permission:AppleIdRawGroup "));

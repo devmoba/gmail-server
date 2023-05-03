@@ -15,7 +15,6 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
-using static IdentityServer4.Models.IdentityResources;
 
 namespace GmailServer.ApplicationServices
 {
@@ -35,13 +34,13 @@ namespace GmailServer.ApplicationServices
         public override async Task<PagedResultDto<MomoAccountDto>> GetListAsync(MomoAccountFilterDto input)
         {
             var query = Repository.AsQueryable();
-            query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username)
-                .WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email)
-                .WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value)
-                .WhereIf(input.TotalLinkCountMax.HasValue, x => x.TotalLinkCount <= input.TotalLinkCountMax.Value)
-                .WhereIf(input.TotalLinkCountMin.HasValue, x => x.TotalLinkCount >= input.TotalLinkCountMin.Value)
-                .WhereIf(input.CreatedTimeFrom.HasValue, x => x.CreatedTime >= input.CreatedTimeFrom.Value)
-                .WhereIf(input.CreatedTimeTo.HasValue, x => x.CreatedTime <= input.CreatedTimeTo.Value);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.UploadGroup), x => x.UploadGroup == input.UploadGroup);
+            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+            query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
+            query = query.WhereIf(input.TotalLinkCountMax.HasValue, x => x.TotalLinkCount <= input.TotalLinkCountMax.Value);
+            query = query.WhereIf(input.TotalLinkCountMin.HasValue, x => x.TotalLinkCount >= input.TotalLinkCountMin.Value);
+            query = query.WhereIf(input.CreatedTimeFrom.HasValue, x => x.CreatedTime >= input.CreatedTimeFrom.Value);
+            query = query.WhereIf(input.CreatedTimeTo.HasValue, x => x.CreatedTime <= input.CreatedTimeTo.Value);
 
             var count = await AsyncExecuter.CountAsync(query);
             if (!string.IsNullOrEmpty(input.Sorting))
@@ -83,9 +82,9 @@ namespace GmailServer.ApplicationServices
         [Authorize]
         public async Task<List<MomoAccountStatusSelectionDto>> GetMomoAcountStatusSelectionsAsync(string uploadGroup, DateTime? createdFrom, DateTime? createdTo)
         {
-            var query = Repository.WhereIf(!string.IsNullOrEmpty(uploadGroup), x => x.UploadGroup == uploadGroup)
-                .WhereIf(createdFrom.HasValue, x => x.CreatedTime.Date >= createdFrom.Value.Date)
-                .WhereIf(createdTo.HasValue, x => x.CreatedTime.Date <= createdTo.Value.Date);
+            var query = Repository.WhereIf(!string.IsNullOrEmpty(uploadGroup), x => x.UploadGroup == uploadGroup);
+            query = query.WhereIf(createdFrom.HasValue, x => x.CreatedTime.Date >= createdFrom.Value.Date);
+            query = query.WhereIf(createdTo.HasValue, x => x.CreatedTime.Date <= createdTo.Value.Date);
             var group = query.GroupBy(x => x.Status).Select(x => new MomoAccountStatusSelectionDto()
             {
                 Text = $"{x.Key.ToString()} | {x.Count()}",
@@ -98,9 +97,9 @@ namespace GmailServer.ApplicationServices
         [Authorize(GmailServerPermissions.MomoAccounts.Statistic)]
         public async Task<PagedResultDto<MomoAccountStatisticDto>> GetStatisticAsync(MomoAccountStatisticFilterDto input)
         {
-            var query = Repository.WhereIf(!string.IsNullOrEmpty(input.UploadGroup), x => x.UploadGroup == input.UploadGroup)
-               .WhereIf(input.CreatedTimeForm.HasValue, x => x.CreatedTime.Date >= input.CreatedTimeForm.Value.Date)
-               .WhereIf(input.CreatedTimeTo.HasValue, x => x.CreatedTime.Date <= input.CreatedTimeTo.Value.Date);
+            var query = Repository.WhereIf(!string.IsNullOrEmpty(input.UploadGroup), x => x.UploadGroup == input.UploadGroup);
+            query = query.WhereIf(input.CreatedTimeForm.HasValue, x => x.CreatedTime.Date >= input.CreatedTimeForm.Value.Date);
+            query = query.WhereIf(input.CreatedTimeTo.HasValue, x => x.CreatedTime.Date <= input.CreatedTimeTo.Value.Date);
             var group = query.GroupBy(x => new { CreatedTime = x.CreatedTime.Date, UploadGroup = x.UploadGroup })
                 .Select(g => new MomoAccountStatisticDto()
                 {
@@ -139,7 +138,7 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.MomoAccounts.CreateMany)]
-        public async Task CreateManyAsync(CreateManyMonoAccountInputDto input)
+        public async Task CreateManyAsync(CreateManyMomoAccountInputDto input)
         {
             var accounts = input.Accounts.Split("\r\n", StringSplitOptions.RemoveEmptyEntries).ToList();
             if (accounts.Count == 0)
@@ -198,7 +197,7 @@ namespace GmailServer.ApplicationServices
                 momoAccount.CustmArg2 = input.CustmArg2;
                 momoAccount.CustmArg3 = input.CustmArg3;
                 momoAccount.LastUpdateTime = DateTime.Now;
-               
+
                 var entity = await Repository.UpdateAsync(momoAccount, true);
                 return ObjectMapper.Map<MomoAccount, MomoAccountDto>(entity);
             }
@@ -241,7 +240,7 @@ namespace GmailServer.ApplicationServices
                     throw new UserFriendlyException(ex.Message);
                 }
             }
-            else 
+            else
                 throw new UserFriendlyException("The status filter is required");
         }
 
@@ -264,15 +263,15 @@ namespace GmailServer.ApplicationServices
 
                 if (!string.IsNullOrEmpty(input.UploadGroup))
                 {
-                    queryBuilder.Append($"And Username = '{input.UploadGroup}' ");
+                    queryBuilder.Append($"And UploadGroup = '{input.UploadGroup}' ");
                 }
                 if (input.CreatedTimeFrom.HasValue)
                 {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedTimeFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                    queryBuilder.Append($"And CONVERT(DATE, CreatedTime) >= '{input.CreatedTimeFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
                 }
                 if (input.CreatedTimeTo.HasValue)
                 {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTimeTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                    queryBuilder.Append($"And CONVERT(DATE, CreatedTime) <= '{input.CreatedTimeTo.Value.Date.ToString("yyyy-MM-dd")}' ");
                 }
 
                 string query = queryBuilder.ToString();
@@ -285,7 +284,7 @@ namespace GmailServer.ApplicationServices
                     throw new UserFriendlyException(ex.Message);
                 }
             }
-            else 
+            else
                 throw new UserFriendlyException("The status filter is required");
         }
 
@@ -295,6 +294,31 @@ namespace GmailServer.ApplicationServices
             if (momoAccount != null)
             {
                 momoAccount.TotalLinkCount += 1;
+                momoAccount.LastUpdateTime = DateTime.Now;
+                await Repository.UpdateAsync(momoAccount);
+                return await MapToGetOutputDtoAsync(momoAccount);
+            }
+            return null;
+        }
+
+        [Authorize]
+        public async Task<List<UploadGroupSelectionDto>> GetUploadGroupSelectionAsync()
+        {
+            var query = Repository.GroupBy(x => x.UploadGroup).Select(g => new UploadGroupSelectionDto()
+            {
+                Text = g.Key,
+                Value = g.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(query);
+            return res;
+        }
+
+        public async Task<MomoAccountDto> UpdateStatusAsync(string username, MomoAccountStatus status)
+        {
+            var momoAccount = await AsyncExecuter.FirstOrDefaultAsync(Repository.Where(x => x.Username == username));
+            if (momoAccount != null)
+            {
+                momoAccount.Status = status;
                 momoAccount.LastUpdateTime = DateTime.Now;
                 await Repository.UpdateAsync(momoAccount);
                 return await MapToGetOutputDtoAsync(momoAccount);

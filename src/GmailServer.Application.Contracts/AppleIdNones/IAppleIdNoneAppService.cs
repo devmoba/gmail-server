@@ -34,6 +34,15 @@ namespace GmailServer.AppleIdNones
 
         Task<List<AppleIdNoneStatusSelectionDto>> GetAppleIdNoneStatusSelectionsAsync(string username, DateTime? createdFrom, DateTime? createdTo);
 
+        Task<List<AppleIdNoneRemoveStatusSelectionDto>> GetAppleIdNoneRemoveStatusSelectionsAsync(
+            string username,
+            DateTime? createdFrom,
+            DateTime? createdTo,
+            DateTime? removeTakenTimeFrom,
+            DateTime? removeTakenTimeTo);
+
+        Task ResetRemovePaymentStatusAsync(ResetRemovePaymentStatusFilter input);
+
         Task<List<AppleIdNoneExcelModel>> GetAppleIdNoneExcelModelsAsync(AppleIdNoneDownloadFilter input);
 
         Task ResetStatusAsync(ResetStatusFilter input);

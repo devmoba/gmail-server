@@ -2,7 +2,7 @@
 
 namespace GmailServer.MomoAccounts
 {
-    public class CreateManyMonoAccountInputDto
+    public class CreateManyMomoAccountInputDto
     {
         [Required]
         public string Accounts { get; set; }

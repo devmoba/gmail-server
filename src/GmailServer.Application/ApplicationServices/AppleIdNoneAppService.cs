@@ -46,6 +46,7 @@ namespace GmailServer.ApplicationServices
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
+            query = query.WhereIf(input.AddPaymentCompleted.HasValue, x => x.AddPaymentCompleted == input.AddPaymentCompleted.Value);
             query = query.WhereIf(input.RemovePaymentStatus.HasValue, x => x.RemovePaymentStatus == input.RemovePaymentStatus.Value);
             query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
             query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
@@ -357,7 +358,7 @@ namespace GmailServer.ApplicationServices
             if (input.Statuses.Count > 0)
             {
                 var queryBuilder = new StringBuilder();
-                queryBuilder.AppendLine("DELETE FROM AppAppleNoneIds WHERE ");
+                queryBuilder.AppendLine("DELETE FROM AppAppleIdNones WHERE ");
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
@@ -393,9 +394,8 @@ namespace GmailServer.ApplicationServices
             {
 
                 var queryBuilder = new StringBuilder();
-                queryBuilder.AppendLine("Update AppAppleNoneIds");
+                queryBuilder.AppendLine("Update AppAppleIdNones");
                 queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, TakenOutNumber = 0, Updated = GETDATE()");
-                //queryBuilder.AppendLine($"From AppAppleIds");
                 queryBuilder.AppendLine($"Where ");
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
@@ -422,6 +422,8 @@ namespace GmailServer.ApplicationServices
                     throw new UserFriendlyException(ex.Message);
                 }
             }
+            else
+                throw new UserFriendlyException("The status filter is required");
         }
 
         public async Task<AppleIdNoneGetOutputDto> AddPaymentCompletedAsync(string email)
@@ -461,8 +463,78 @@ namespace GmailServer.ApplicationServices
                 appleIdNone.RemovePaymentStatus = RemovePaymentStatus.InUse;
                 appleIdNone.RemoveTakenTime = DateTime.Now;
                 await Repository.UpdateAsync(appleIdNone, true);
+                return res;
             }
             return null;
+        }
+
+        [Authorize]
+        public async Task<List<AppleIdNoneRemoveStatusSelectionDto>> GetAppleIdNoneRemoveStatusSelectionsAsync(
+            string username, 
+            DateTime? createdFrom, 
+            DateTime? createdTo, 
+            DateTime? removeTakenTimeFrom, 
+            DateTime? removeTakenTimeTo)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(!string.IsNullOrEmpty(username), x => x.Username == username);
+            query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
+            query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
+            query = query.WhereIf(removeTakenTimeFrom.HasValue, x => x.RemoveTakenTime.Date >= removeTakenTimeFrom.Value.Date);
+            query = query.WhereIf(removeTakenTimeTo.HasValue, x => x.RemoveTakenTime.Date <= removeTakenTimeTo.Value.Date);
+            var groupBy = query.GroupBy(x => x.RemovePaymentStatus).Select(x => new AppleIdNoneRemoveStatusSelectionDto()
+            {
+                Text = $"{x.Key.ToString()} | {x.Count()}",
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(groupBy);
+            return res;
+        }
+
+        [Authorize(GmailServerPermissions.AppleIdNones.ResetRemovePaymentStatus)]
+        public async Task ResetRemovePaymentStatusAsync(ResetRemovePaymentStatusFilter input)
+        {
+            if (input.Statuses.Count > 0)
+            {
+                var queryBuilder = new StringBuilder();
+                queryBuilder.AppendLine("Update AppAppleIdNones");
+                queryBuilder.AppendLine($"Set RemovePaymentStatus = {(int)input.TargetStatus}, RemoveUpdateTime = GETDATE()");
+                queryBuilder.AppendLine($"Where ");
+                queryBuilder.Append($"RemovePaymentStatus IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
+
+                if (!string.IsNullOrEmpty(input.Username))
+                {
+                    queryBuilder.Append($"And Username = '{input.Username}' ");
+                }
+                if (input.CreatedFrom.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.CreatedTo.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.RemoveTakenTimeFrom.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, RemoveTakenTime) >= '{input.RemoveTakenTimeFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+                if (input.RemoveTakenTimeTo.HasValue)
+                {
+                    queryBuilder.Append($"And CONVERT(DATE, RemoveTakenTime) <= '{input.RemoveTakenTimeTo.Value.Date.ToString("yyyy-MM-dd")}' ");
+                }
+
+                string query = queryBuilder.ToString();
+                try
+                {
+                    await Repository.ExecuteSqlRawAsync(query);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException(ex.Message);
+                }
+            }
+            else
+                throw new UserFriendlyException("The status filter is required");
         }
     }
 }

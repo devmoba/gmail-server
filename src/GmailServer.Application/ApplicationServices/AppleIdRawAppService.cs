@@ -1,4 +1,5 @@
 ﻿using GmailServer.AppleIdRaws;
+using GmailServer.AppleOrders.Statistics;
 using GmailServer.Entities;
 using GmailServer.Permissions;
 using Microsoft.AspNetCore.Authorization;
@@ -33,9 +34,23 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize(GmailServerPermissions.AppleIdRaws.Statistic)]
-        public Task<PagedResultDto<AppleIdRawStatisticDailyDto>> GetAppleIdRawStatisticDailyAsync(AppleIdRawStatisticFilterDto input)
+        public async Task<PagedResultDto<AppleIdRawStatisticDailyDto>> GetAppleIdRawStatisticDailyAsync(AppleIdRawStatisticFilterDto input)
         {
-            throw new NotImplementedException();
+            var query = _repository.AsQueryable();
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            var group = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new AppleIdRawStatisticDailyDto()
+            {
+                Created = g.Key.Created,
+                Count = g.Count()
+            });
+
+            var count = await AsyncExecuter.CountAsync(group);
+            if (input.MaxResultCount > 0 || input.SkipCount > 0)
+                group = group.Skip(input.SkipCount).Take(input.MaxResultCount);
+
+            var res = await AsyncExecuter.ToListAsync(group);
+            return new PagedResultDto<AppleIdRawStatisticDailyDto>(count, res.OrderByDescending(x => x.Created).ToList());
         }
     }
 }

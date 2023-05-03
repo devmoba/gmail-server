@@ -1,4 +1,5 @@
 ﻿using GmailServer.ControllerInterfaces;
+using GmailServer.Enums;
 using GmailServer.MomoAccounts;
 using GmailServer.MomoAccounts.Statistics;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +79,7 @@ namespace GmailServer.Controllers
             return _appService.GetStatisticAsync(input);    
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("increaseLinkCount")]
         public Task<MomoAccountDto> IncreaseLinkCountAsync(string username)
         {
@@ -91,6 +92,14 @@ namespace GmailServer.Controllers
         public Task<MomoAccountDto> UpdateMomoAcountAsync(string username, UpdateMomoAccountInputDto input)
         {
             return _appService.UpdateMomoAcountAsync(username, input);
+        }
+
+        [HttpPut]
+        [Route("updateStatus/{username}")]
+        [IgnoreAntiforgeryToken]
+        public Task<MomoAccountDto> UpdateStatusAsync(string username, MomoAccountStatus status)
+        {
+            return _appService.UpdateStatusAsync(username, status);
         }
     }
 }

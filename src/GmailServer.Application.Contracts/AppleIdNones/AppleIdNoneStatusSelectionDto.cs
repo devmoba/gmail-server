@@ -8,4 +8,11 @@ namespace GmailServer.AppleIdNones
 
         public string Text { get; set; }
     }
+
+    public class AppleIdNoneRemoveStatusSelectionDto
+    {
+        public RemovePaymentStatus Value { get; set; }
+
+        public string Text { get; set; }
+    }
 }

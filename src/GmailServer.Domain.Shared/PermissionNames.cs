@@ -94,7 +94,7 @@
         public const string MomoAccount_Statistic = MomoAccount + ".Statistic";
         public const string MomoAccount_ResetStatus = MomoAccount + ".ResetLinkStatus";
 
-        public const string AppleOrder = "AppleOrder";
+        public const string AppleOrder = "AppleOrderGroup";
         public const string AppleOrder_Default = AppleOrder + ".AppleOrders";
         public const string AppleOrder_Create = AppleOrder + ".Create";
         public const string AppleOrder_Update = AppleOrder + ".Update";
@@ -112,6 +112,7 @@
         public const string AppleIdNone_Download = AppleIdNone + ".Download";
         public const string AppleIdNone_Statistic = AppleIdNone + ".Statistic";
         public const string AppleIdNone_ResetStatus = AppleIdNone + ".ResetStatus";
+        public const string AppleIdNone_ResetRemovePaymentStatus = AppleIdNone + ".ResetRemovePaymentStatus";
         public const string AppleIdNone_PurchaseNumber = AppleIdNone + ".PurchaseNumber";
 
         public const string AppleIdRaw = "AppleIdRawGroup";

@@ -163,6 +163,7 @@ namespace GmailServer.Permissions
             public const string Download = PermissionNames.AppleIdNone_Download;
             public const string Statistic = PermissionNames.AppleIdNone_Statistic;
             public const string ResetStatus = PermissionNames.AppleIdNone_ResetStatus;
+            public const string ResetRemovePaymentStatus = PermissionNames.AppleIdNone_ResetRemovePaymentStatus;
             public const string PurchaseNumber = PermissionNames.AppleIdNone_PurchaseNumber;
         }
 

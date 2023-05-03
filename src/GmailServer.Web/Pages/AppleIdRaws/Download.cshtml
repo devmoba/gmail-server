@@ -1,0 +1,88 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleIdRaws.DownloadModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Download Apple Id Raw"];
+    PageLayout.Content.Title = L["Download Apple Id Raw"].Value;
+}
+
+@section scripts {
+
+<abp-script-bundle name="knockout" />
+<abp-script src="/Pages/AppleIdRaws/js/download.js" />
+}
+
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+        #downloadAppleIdRawForm .row {
+        margin-bottom: 20px;
+    }
+</style>
+}
+
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Download Gmail</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <form id="downloadAppleIdRawForm" action="/AppleIdRaws/Download" method="post" onSubmit="if(!confirm('Are you sure to download?')){return false;}">
+        @(Html.AntiForgeryToken())
+        <abp-card-body>
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- ko ifnot: checkedTimeRange -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label><input type="checkbox" style="transform: scale(1.8);" asp-for="@Model.CheckedAll" data-bind="checked: checkedAll" />&nbsp;&nbsp;&nbsp;All</label>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                    <!-- ko ifnot: checkedAll -->
+                    <div class="row" style="padding-top: 15px;">
+                        <div class="col-md-12">
+                            <label><input type="checkbox" style="transform: scale(1.8);" asp-for="@Model.CheckedTimeRange" data-bind="checked: checkedTimeRange" />&nbsp;&nbsp;&nbsp;Time Range</label>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top: 15px;">
+                        <div class="col-md-4">
+                            <div style="padding-left: 30px;display: inline-flex;">
+                                <label style="padding-top: 5px;">From</label>
+                                <input type="date"
+                                       class="form-control"
+                                       asp-for="@Model.DateFrom"
+                                       value="@Model.DateFrom"
+                                       style="margin-left: 15px;" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div style="padding-left: 30px;display: inline-flex;">
+                                <label style="padding-top: 5px;">To</label>
+                                <input type="date"
+                                       class="form-control"
+                                       asp-for="@Model.DateTo"
+                                       value="@Model.DateTo"
+                                       style="margin-left: 15px;" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </abp-card-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </form>
+</abp-card>

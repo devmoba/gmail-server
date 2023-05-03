@@ -29,6 +29,13 @@ namespace GmailServer.ControllerInterfaces
 
         Task<List<AppleIdNoneStatusSelectionDto>> GetAppleIdNoneStatusSelectionsAsync(string username, DateTime? createdFrom, DateTime? createdTo);
 
+        Task<List<AppleIdNoneRemoveStatusSelectionDto>> GetAppleIdNoneRemoveStatusSelectionsAsync(
+            string username,
+            DateTime? createdFrom,
+            DateTime? createdTo,
+            DateTime? removeTakenTimeFrom,
+            DateTime? removeTakenTimeTo);
+
         Task<AppleIdNoneGetOutputDto> IncreasePurchaseAsync(string email);
 
         Task<AppleIdNoneGetOutputDto> SetTakenOutNumberAsync(string email, int value);

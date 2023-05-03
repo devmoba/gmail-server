@@ -26,6 +26,8 @@ namespace GmailServer.Background
             context.AddBackgroundWorker<UpdateMomoAccountStatusWorker>();
             context.AddBackgroundWorker<UpdateGmailResourceStatusWorker>();
             context.AddBackgroundWorker<UpdateGmailResourcePremiumTyeWorker>();
+            context.AddBackgroundWorker<UpdateAppleIdNoneStatusWorker>();
+            context.AddBackgroundWorker<UpdateAppleIdNoneRemovePaymentStatus>();
         }
     }
 }

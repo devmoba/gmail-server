@@ -39,7 +39,8 @@
 
         public const string AppleIdNone = Prefix + "AppleIdNone";
         public const string AppleIdNoneStatistic = Prefix + "AppleIdNone.Statistic";
-        public const string AppleIdNoneResetStatus = Prefix + "AppleIdNone.ResetStatus ";
+        public const string AppleIdNoneResetStatus = Prefix + "AppleIdNone.ResetStatus";
+        public const string AppleIdNoneResetRemovePaymentStatus = Prefix + "AppleIdNone.ResetRemovePaymentStatus";
         public const string AppleIdNoneDownload = Prefix + "AppleIdNone.Download";
 
         public const string AppleOrder = Prefix + "AppleOrder";

@@ -1,0 +1,125 @@
+﻿@page
+@model GmailServer.Web.Pages.MomoAccounts.ResetStatusModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Reset Status"];
+    PageLayout.Content.Title = L["Reset Status"].Value;
+}
+
+@section scripts {
+    <script>
+        var uploadGroupSelections = @Html.Raw(ViewData["uploadGroupSelections"]);
+        var momoAccountStatusSelections = @Html.Raw(ViewData["momoAccountStatusSelections"]);
+    </script>
+    <abp-script-bundle name="knockout" />
+    <abp-script-bundle name="chosen" />
+    <abp-script src="/Pages/MomoAccounts/js/resetStatusViewModel.js" />
+    <script>
+        var viewModel = new ResetStatusViewModel(momoAccountStatusSelections, uploadGroupSelections);
+        ko.applyBindings(viewModel);
+    </script>
+}
+
+@section styles {
+    <abp-style-bundle name="chosen" />
+    <abp-style src="/Pages/MomoAccounts/css/reset-status.css" />
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Momo Account</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <form action="/MomoAccounts/ResetStatus" method="post" onSubmit="if(!confirm('Are you sure to reset?')){return false;}">
+        @(Html.AntiForgeryToken())
+        <abp-card-body>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row row-top">
+                        <div class="col-md-2">
+                            <label>Upload Group</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="UploadGroup" class="form-control"
+                                    data-bind="options: uploadGroups, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}, value: selectedUploadGroup"></select>
+                        </div>
+                    </div>
+                    <div class="row row-bottom">
+                        <div class="col-md-2">
+                            <label>Created Time</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="created-date">
+                                <label style="padding-top: 5px;">From</label>
+                                <input id="createdFrom" type="date"
+                                       class="form-control"
+                                       asp-for="@Model.CreatedTimeFrom"
+                                       autocomplete="off"
+                                       data-bind="textInput: createdTimeFrom" />
+                                <label style="padding: 5px 0px 0px 10px;">To</label>
+                                <input id="createdTo" type="date"
+                                       class="form-control"
+                                       asp-for="@Model.CreatedTimeTo"
+                                       autocomplete="off"
+                                       data-bind="textInput: createdTimeTo" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row-top status-cb">
+                        <div class="col-md-2">
+                            <label>Status (*)</label>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row" data-bind="foreach: { data: statuses, as: 'status' }">
+                                <div class="col-md-6">
+                                    <label class="lb-checkbox">
+                                        <input type="checkbox" name="Statuses" data-bind="value: status.value" style="transform: scale(1.8);" />
+                                        <span data-bind="text: status.text" style="font-size: 20px; margin-left: 15px;"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row status-cb">
+                        @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.MomoAccounts.DeleteFilter))
+                        {
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-9">
+                                <label class="lb-checkbox">
+                                    <input type="checkbox" name="CheckedOnDelete" data-bind="checked: checkedOnDelete, value: checkedOnDelete" style="transform: scale(1.8);" />
+                                    <span style="font-size: 20px; margin-left: 15px;">On Delete</span>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <!-- ko ifnot: checkedOnDelete -->
+                    <div class="row row-top">
+                        <div class="col-md-2">
+                            <label>Target Status (*)</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select asp-for="TargetStatus" class="form-control"
+                                    data-bind="options: targetStatuses, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </abp-card-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </form>
+</abp-card>
+

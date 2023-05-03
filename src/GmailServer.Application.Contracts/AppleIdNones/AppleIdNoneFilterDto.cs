@@ -18,6 +18,8 @@ namespace GmailServer.AppleIdNones
 
         public int? TakenOutNumberMin { get; set; }
 
+        public bool? AddPaymentCompleted { get; set; }
+
         public AppleIdNoneStatus? Status { get; set; }
 
         public RemovePaymentStatus? RemovePaymentStatus { get; set; }

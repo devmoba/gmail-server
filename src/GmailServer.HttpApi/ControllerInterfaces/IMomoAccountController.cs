@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using GmailServer.MomoAccounts.Statistics;
+using GmailServer.Enums;
 
 namespace GmailServer.ControllerInterfaces
 {
@@ -22,6 +23,8 @@ namespace GmailServer.ControllerInterfaces
         Task<MomoAccountDto> CreateAsync(CreateMomoAccountInputDto input);
 
         Task<MomoAccountDto> UpdateMomoAcountAsync(string username, UpdateMomoAccountInputDto input);
+
+        Task<MomoAccountDto> UpdateStatusAsync(string username, MomoAccountStatus status);
 
         Task DeleteAllAsync();
 

@@ -1,0 +1,69 @@
+﻿@page
+@model GmailServer.Web.Pages.AppleIdNones.StatisticModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Apple ID None Statistic"];
+    PageLayout.Content.Title = L["Apple ID None Statistic"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.AppleIdNoneStatistic;
+}
+
+@section scripts {
+<abp-script-bundle name="knockout" />
+<abp-script-bundle name="chosen" />
+<script>
+    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
+</script>
+<abp-script src="/Pages/AppleIdNones/js/statistic.js" />
+}
+@section styles {
+<abp-style-bundle name="chosen" />
+<style>
+    #appleIdStatisticTable_wrapper .btn {
+        padding: 5px 10px;
+    }
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h4>Apple ID None Statistics</h4>
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="appleIdNoneStatisticTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["#"]</th>
+                    <th>@L["Created"]</th>
+                    <th>@L["Username"]</th>
+                    <th>@L["Total Upload"]</th>
+                    <th>@L["Total Purchase"]</th>
+                    <th>@L["Ready"]</th>
+                    <th>@L["Completed1"]</th>
+                    <th>@L["Completed2"]</th>
+                    <th>@L["Completed3"]</th>
+                    <th>@L["Completed4"]</th>
+                    <th>@L["Pending"]</th>
+                    <th>@L["WrongPass"]</th>
+                    <th>@L["Subed"]</th>
+                    <th>@L["Locked1"]</th>
+                    <th>@L["Locked2"]</th>
+                    <th>@L["Review"]</th>
+                    <th>@L["Error"]</th>
+                    <th>@L["Unknown"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>
