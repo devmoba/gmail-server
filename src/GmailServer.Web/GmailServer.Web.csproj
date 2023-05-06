@@ -75,6 +75,7 @@
     <None Remove="Pages\MomoAccounts\js\index.js" />
     <None Remove="Pages\MomoAccounts\js\resetStatusViewModel.js" />
     <None Remove="Pages\MomoAccounts\js\statistic.js" />
+    <None Remove="Pages\OwnerConfigs\js\index.js" />
     <None Remove="Pages\RecoveryEmails\js\index.js" />
   </ItemGroup>
 

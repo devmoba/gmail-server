@@ -56,5 +56,7 @@
 
         public const string GmailResourceStatistic = Prefix + ".GmailResource.Statistic";
 
+        public const string OwnerConfig = Prefix + ".OwnerConfig";
+
     }
 }

@@ -1,0 +1,63 @@
+﻿@page
+@model GmailServer.Web.Pages.OwnerConfigs.IndexModel
+@using GmailServer.Web.Menus
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Microsoft.AspNetCore.Mvc.Localization
+@using GmailServer.Localization
+@using GmailServer.Permissions
+@using Microsoft.AspNetCore.Authorization
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<GmailServerResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    ViewBag.PageTitle = L["Owner Config"];
+    PageLayout.Content.Title = L["Owner Config"].Value;
+    PageLayout.Content.MenuItemName = GmailServerMenus.OwnerConfig;
+}
+
+@section scripts {
+<abp-script src="/Pages/OwnerConfigs/js/index.js" />
+}
+
+@section styles {
+<style>
+    .modal-dialog {
+        max-width: 1000px;
+    }
+    /*.text-ellipsis {
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        text-overflow: ellipsis;
+        width: 500px;
+    }*/
+</style>
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+
+            </abp-column>
+            <abp-column size-md="_6">
+                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.OwnerConfigs.Create))
+                {
+                    <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Add Config"></abp-button>
+                }
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table striped-rows="true" id="ownerConfigTable" class="table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["ID"]</th>
+                    <th>@L["Key"]</th>
+                    <th>@L["Value"]</th>
+                    <th>@L["Action"]</th>
+                </tr>
+            </thead>
+        </abp-table>
+    </abp-card-body>
+</abp-card>

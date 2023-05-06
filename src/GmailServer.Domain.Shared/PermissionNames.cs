@@ -120,5 +120,11 @@
         public const string AppleIdRaw_Create = AppleIdRaw + ".Create";
         public const string AppleIdRaw_Statistic = AppleIdRaw + ".Statistic";
         public const string AppleIdRaw_Download = AppleIdRaw + ".Download";
+
+        public const string OwnerConfig = "OwnerConfigGroup";
+        public const string OwnerConfig_Default = OwnerConfig + ".OwnerConfigs";
+        public const string OwnerConfig_Create = OwnerConfig + ".Create";
+        public const string OwnerConfig_Update = OwnerConfig + ".Update";
+        public const string OwnerConfig_Delete = OwnerConfig + ".Delete";
     }
 }

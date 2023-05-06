@@ -87,6 +87,8 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<AppleIdRaw> AppleIdRaws { get; set; }
 
+        public DbSet<OwnerConfig> OwnerConfigs { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -394,6 +396,15 @@ namespace GmailServer.EntityFrameworkCore
                 {
                     re.Created
                 });
+            });
+
+            builder.Entity<OwnerConfig>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "OwnerConfigs", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.HasIndex(x => x.Key).IsUnique();
+                b.Property(x => x.Key).IsRequired();
+                b.Property(x => x.Value).IsRequired();
             });
         }
     }

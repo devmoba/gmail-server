@@ -9,6 +9,7 @@ using GmailServer.GmailResources;
 using GmailServer.Gmails;
 using GmailServer.GmailTypes;
 using GmailServer.MomoAccounts;
+using GmailServer.OwnerConfigs;
 using GmailServer.RecoveryEmails;
 using GmailServer.Web.Pages.AppleIdNones;
 using GmailServer.Web.Pages.AppleIds.ViewModels;
@@ -46,6 +47,8 @@ namespace GmailServer.Web
             CreateMap<CreateManyMomoAccoutModel, CreateManyMomoAccountInputDto>();
             CreateMap<AppleIdNoneViewModel, CreateManyAppleIdNoneInputDto>();
             CreateMap<AppleIdRaw, AppleIdRawDto>();
+
+            CreateMap<OwnerConfigDto, CreateUpdateOwnerConfigDto>();
         }
     }
 }

@@ -13,6 +13,7 @@ using GmailServer.GmailResources;
 using GmailServer.Gmails;
 using GmailServer.GmailTypes;
 using GmailServer.MomoAccounts;
+using GmailServer.OwnerConfigs;
 using GmailServer.RecoveryEmails;
 using GmailServer.TaskChecks;
 using System;
@@ -82,6 +83,9 @@ namespace GmailServer
 
             CreateMap<AppleIdRaw, AppleIdRawDto>();
             CreateMap<CreateAppleIdRawInputDto, AppleIdRaw>();
+
+            CreateMap<OwnerConfig, OwnerConfigDto>();
+            CreateMap<CreateUpdateOwnerConfigDto, OwnerConfig>();
         }
     }
 }

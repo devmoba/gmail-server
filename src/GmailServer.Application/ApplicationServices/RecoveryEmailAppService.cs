@@ -5,6 +5,7 @@ using GmailServer.Permissions;
 using GmailServer.RecoveryEmails;
 using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,11 @@ namespace GmailServer.ApplicationServices
         CreateUpdateRecoveryEmailDto>, IRecoveryEmailAppService
     {
         private new readonly IRecoveryEmailRepository Repository;
+        private readonly IConfiguration _cfg;
 
-        public RecoveryEmailAppService(IRecoveryEmailRepository repository) : base(repository)
+        public RecoveryEmailAppService(IRecoveryEmailRepository repository, IConfiguration configuration) : base(repository)
         {
+            _cfg = configuration;
             Repository = repository;
 
             GetPolicyName = GmailServerPermissions.RecoveryEmails.Default;
@@ -148,8 +151,10 @@ namespace GmailServer.ApplicationServices
 
         public async Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync()
         {
-            var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready);
-            query = query.OrderByDescending(x => x.Created);
+            var interval = _cfg.GetValue<int>("Workers:DeleteRecoveryEmailCompletedWorker:CheckDelete");
+            var timeCondition = DateTime.Now.AddHours(-interval);
+            var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready && x.Created > timeCondition);
+            query = query.OrderBy(x => x.Id);
             var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
             if (recoveryEmail != null)
             {

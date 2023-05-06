@@ -1,13 +1,16 @@
-﻿using GmailServer.Entities;
+﻿using GmailServer.Constants;
+using GmailServer.Entities;
 using GmailServer.Enums;
 using GmailServer.Hotmails;
 using GmailServer.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Volo.Abp.BackgroundWorkers;
@@ -34,19 +37,27 @@ namespace GmailServer.Background.Workers
         {
             _cfg = configuration;
             _httpClientFactory = httpClientFactory;
+            _quantity = 1;
+            _reserveQuantity = 10000;
             timer.Period = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:Interval");
         }
 
         protected async override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
             Logger.LogInformation("Start get and insert hotmail worker: Do something...");
-            _username = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:Username");
-            _apiUrl = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiUrl");
-            _apiKey = _cfg.GetValue<string>("Workers:GetAndInsertHotmailWorker:ApiConfig:ApiKey");
-            _quantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ApiConfig:Quantity");
-            _reserveQuantity = _cfg.GetValue<int>("Workers:GetAndInsertHotmailWorker:ReserveQuantity");
-            _mailCodes = _cfg.GetSection("Workers:GetAndInsertHotmailWorker:ApiConfig:MailCodes").Get<List<string>>();
+            var ownerConfigRepository = workerContext.ServiceProvider.GetRequiredService<IOwnerConfigRepository>();
             var recoveryEmailRepository = workerContext.ServiceProvider.GetRequiredService<IRecoveryEmailRepository>();
+
+            _username = (await ownerConfigRepository.GetByKeyAsync(RecoveryEmailCfg.USERNAME)).Value;
+            _apiUrl = (await ownerConfigRepository.GetByKeyAsync(RecoveryEmailCfg.API_URL)).Value; ;
+            _apiKey = (await ownerConfigRepository.GetByKeyAsync(RecoveryEmailCfg.API_KEY)).Value;
+            var quantityStr = (await ownerConfigRepository.GetByKeyAsync(RecoveryEmailCfg.QUANTITY)).Value;
+            int.TryParse(quantityStr, out _quantity);
+            var reserveQuantityStr = (await ownerConfigRepository.GetByKeyAsync(RecoveryEmailCfg.RESERVE_QUANTITY)).Value;
+            int.TryParse(reserveQuantityStr, out _reserveQuantity);
+            var mailCodesStr = (await ownerConfigRepository.GetByKeyAsync(RecoveryEmailCfg.MAILCODES)).Value; ;
+            _mailCodes = mailCodesStr.Split("|").ToList();
+
             var checkReserveQuantity = await recoveryEmailRepository.IsReserveQuantityEnoughAsync(_reserveQuantity);
             if (!checkReserveQuantity)
             {

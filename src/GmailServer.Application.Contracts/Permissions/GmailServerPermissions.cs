@@ -175,5 +175,14 @@ namespace GmailServer.Permissions
             public const string Statistic = PermissionNames.AppleIdRaw_Statistic;
             public const string Download = PermissionNames.AppleIdRaw_Download;
         }
+
+        public const string OwnerConfigGroup = PermissionNames.OwnerConfig;
+        public static class OwnerConfigs
+        {
+            public const string Default = PermissionNames.OwnerConfig_Default;
+            public const string Create = PermissionNames.OwnerConfig_Create;
+            public const string Update = PermissionNames.OwnerConfig_Update;
+            public const string Delete = PermissionNames.OwnerConfig_Delete;
+        }
     }
 }

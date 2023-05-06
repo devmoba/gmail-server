@@ -5,7 +5,6 @@
 $(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'RecoveryEmails/CreateModal');
-    var configGetRecoverEmail = new abp.ModalManager(abp.appPath + 'RecoveryEmails/ConfigGetRecoveryEmail');
 
     devmoba.datatables.enableIndividualColumnSearch("#recoveryEmailTable", [
         { searchDisabled: true },
@@ -104,11 +103,6 @@ $(function () {
     $('#createBtn').click((e) => {
         e.preventDefault();
         createModal.open();
-    });
-
-    $('#configGetRecoveryEmail').click((e) => {
-        e.preventDefault();
-        configGetRecoverEmail.open();
     });
 
     $('#btnRemoveAll').click((e) => {

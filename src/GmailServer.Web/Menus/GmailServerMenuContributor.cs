@@ -366,57 +366,6 @@ namespace GmailServer.Web.Menus
                );
             }
             context.Menu.AddItem(momoAccount);
-            //var appleId = new ApplicationMenuItem(GmailServerMenus.AppleId, "Apple ID", order: 6, icon: "fa fa-apple");
-
-            //if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Default))
-            //{
-            //    appleId.AddItem(
-            //       new ApplicationMenuItem(
-            //           GmailServerMenus.AppleId,
-            //           "Apple ID",
-            //           "/AppleIds",
-            //           order: 1
-            //       )
-            //   );
-            //}
-
-            //if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Statistic))
-            //{
-            //    appleId.AddItem(
-            //       new ApplicationMenuItem(
-            //           GmailServerMenus.AppleId,
-            //           "Statistics",
-            //           "/AppleIds/Statistic",
-            //           order: 2
-            //       )
-            //   );
-            //}
-
-            //if (await context.IsGrantedAsync(GmailServerPermissions.AppleIds.Download))
-            //{
-            //    appleId.AddItem(
-            //       new ApplicationMenuItem(
-            //           GmailServerMenus.AppleId,
-            //           "Download",
-            //           "/AppleIds/Download",
-            //           order: 3
-            //       )
-            //   );
-            //}
-
-            //if (await context.IsGrantedAsync(GmailServerPermissions.DownloadedApps.Default))
-            //{
-            //    appleId.AddItem(
-            //       new ApplicationMenuItem(
-            //           GmailServerMenus.DownloadedApp,
-            //           "Apps",
-            //           "/DownloadedApps",
-            //           order: 4
-            //       )
-            //   );
-            //}
-
-            //context.Menu.AddItem(appleId);
 
             if (await context.IsGrantedAsync(GmailServerPermissions.RecoveryEmails.Default))
             {
@@ -477,12 +426,24 @@ namespace GmailServer.Web.Menus
                        GmailServerMenus.Checker,
                        "Checker",
                        "/Checkers",
-                       icon: "fa fa-cog",
+                       icon: "fa fa-sliders",
                        order: 12
                    )
                );
             }
 
+            if (await context.IsGrantedAsync(GmailServerPermissions.OwnerConfigs.Default))
+            {
+                context.Menu.AddItem(
+                   new ApplicationMenuItem(
+                       GmailServerMenus.OwnerConfig,
+                       "Owner Config",
+                       "/OwnerConfigs",
+                       icon: "fa fa-cog",
+                       order: 13
+                   )
+               );
+            }
 
             //HostDashboard
             //context.Menu.AddItem(
@@ -506,11 +467,11 @@ namespace GmailServer.Web.Menus
             //    ).RequirePermissions(GmailServerPermissions.Dashboard.Tenant)
             //);
 
-            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 13);
+            context.Menu.SetSubItemOrder(SaasHostMenuNames.GroupName, 14);
 
             //Administration
             //var administration = context.Menu.GetAdministration();
-            administration.Order = 14;
+            administration.Order = 15;
 
             //Administration->Identity
             administration.SetSubItemOrder(IdentityMenuNames.GroupName, 1);

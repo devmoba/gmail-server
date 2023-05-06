@@ -49,8 +49,8 @@ namespace GmailServer.Web.Pages.AppleIdRaws
 
             if (CheckedTimeRange)
             {
-                query = query.Where(x => x.Created >= DateFrom);
-                query = query.Where(x => x.Created <= DateTo);
+                query = query.Where(x => x.Created.Date >= DateFrom.Date);
+                query = query.Where(x => x.Created.Date <= DateTo.Date);
                 fileName = $"AppleIdRaws_TimeRange_{DateFrom.ToString("dd/MM/yyyy")}-{DateTo.ToString("dd/MM/yyyy")}";
             }
 

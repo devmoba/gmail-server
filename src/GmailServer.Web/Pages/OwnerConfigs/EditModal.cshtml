@@ -1,15 +1,17 @@
 ﻿@page
-@model GmailServer.Web.Pages.RecoveryEmails.ConfigGetRecoveryEmailModel
+@model GmailServer.Web.Pages.OwnerConfigs.EditModalModel
 @using Microsoft.AspNetCore.Mvc.Localization
 @using GmailServer.Localization
 @using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
 @{
     Layout = null;
 }
-<abp-dynamic-form abp-model="Config" data-ajaxForm="true" asp-page="/RecoveryEmails/ConfigGetRecoveryEmail">
+<abp-dynamic-form abp-model="ConfigModel" data-ajaxForm="true" asp-page="/OwnerConfigs/EditModal">
      <abp-modal>
-        <abp-modal-header title="Config get recovery email"></abp-modal-header>
+        <abp-modal-header title="Edit - @Model.Key"></abp-modal-header>
         <abp-modal-body>
+            <abp-input asp-for="Id" />
+            <abp-input asp-for="Key" />
             <abp-form-content />
         </abp-modal-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>

@@ -1,0 +1,11 @@
+﻿using Volo.Abp.Application.Dtos;
+
+namespace GmailServer.OwnerConfigs
+{
+    public class OwnerConfigDto : EntityDto<long>
+    {
+        public string Key { get; set; }
+
+        public string Value { get; set; }
+    }
+}
