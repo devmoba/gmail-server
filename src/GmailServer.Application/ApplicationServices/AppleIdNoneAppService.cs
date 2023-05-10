@@ -308,7 +308,10 @@ namespace GmailServer.ApplicationServices
                             PurchaseNumber = 0,
                             TakenOutNumber = 0
                         };
-                        entity.Ccv = appleIdSplit.Length >= 3 ? appleIdSplit[2] : null;
+                        entity.SecretAnswer1 = appleIdSplit.Length >= 3 ? appleIdSplit[2] : null;
+                        entity.SecretAnswer2 = appleIdSplit.Length >= 4 ? appleIdSplit[3] : null;
+                        entity.SecretAnswer3 = appleIdSplit.Length >= 5 ? appleIdSplit[4] : null;
+                        entity.DateOfBirth = appleIdSplit.Length >= 6 ? appleIdSplit[5] : null;
                         entities.Add(entity);
                     }
                 }

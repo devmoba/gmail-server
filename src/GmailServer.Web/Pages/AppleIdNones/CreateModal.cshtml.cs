@@ -39,7 +39,7 @@ namespace GmailServer.Web.Pages.AppleIdNones
 
         [Required]
         [TextArea(Rows = 35)]
-        [Placeholder("email|password|ccv(optional)")]
+        [Placeholder("email|password|answer1(optional)|answer2(optional)|answer3(optional)|dob(optional)")]
         public string Emails { get; set; }
     }
 }
