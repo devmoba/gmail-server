@@ -11,16 +11,16 @@ namespace GmailServer.Web.Pages.GmailResources
     [Authorize(GmailServerPermissions.GmailResources.Default)]
     public class IndexModel : GmailServerPageModel
     {
-        private readonly IGmailResourceAppService _gmailResourceAppService;
+        //private readonly IGmailResourceAppService _gmailResourceAppService;
 
         public bool IsRoleNameAppleIdMember { get; private set; }
 
-        public IndexModel(IGmailResourceAppService gmailResourceAppService)
-        {
-            _gmailResourceAppService = gmailResourceAppService;
-        }
+        //public IndexModel(IGmailResourceAppService gmailResourceAppService)
+        //{
+        //    _gmailResourceAppService = gmailResourceAppService;
+        //}
 
-        public async void OnGet()
+        public void OnGet()
         {
             var gmailResourceStatusSelections = Enum.GetValues(typeof(GmailResourceStatus)).Cast<GmailResourceStatus>()
                .Select(item => new SelectListItem()
@@ -35,10 +35,10 @@ namespace GmailServer.Web.Pages.GmailResources
                     Value = $"{(int)item}"
                 }).ToList();
 
-            var usernameSelections = await _gmailResourceAppService.GetUsernameSelectionAsync();
+            //var usernameSelections = await _gmailResourceAppService.GetUsernameSelectionAsync();
             
             ViewData.Add("gmailResourceStatusSelections", SerializeObject(gmailResourceStatusSelections));
-            ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
+            //ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
             var isRoleNameAppleIdMember = CurrentUser.IsInRole(RoleName.RoleNameAppleIdMember);
             IsRoleNameAppleIdMember = isRoleNameAppleIdMember;
             ViewData.Add("isRoleNameAppleIdMember", SerializeObject(isRoleNameAppleIdMember));
