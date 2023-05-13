@@ -1,11 +1,12 @@
 ﻿using EFCore.BulkExtensions;
 using GmailServer.Entities;
 using GmailServer.EntityFrameworkCore;
+using GmailServer.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
@@ -96,6 +97,11 @@ namespace GmailServer.Repositories
                 };
                 await dbContext.BulkUpdateAsync(appleIdNones, bulkConfig);
             }
+        }
+
+        public IQueryable<AppleIdNone> FullTextSearch(IQueryable<AppleIdNone> query, Expression<Func<AppleIdNone, string>> keySelector, string value)
+        {
+            return query.FullTextContains(keySelector, value);
         }
     }
 }

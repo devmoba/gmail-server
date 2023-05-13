@@ -65,6 +65,8 @@ namespace GmailServer.ApplicationServices
             }
             else
             {
+                //if (!string.IsNullOrEmpty(input.Username))
+                //    query = Repository.FullTextSearch(query, x => x.Username, input.Username);
                 query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
             }
 

@@ -45,5 +45,7 @@ namespace GmailServer.ControllerInterfaces
         Task<AppleIdNoneGetOutputDto> UpdateRemoveStatusAsync(string email, RemovePaymentStatus status);
 
         Task<AppleIdNoneGetOutputDto> GetAppleIdToRemoveAsync();
+
+        Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync();
     }
 }

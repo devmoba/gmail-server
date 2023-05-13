@@ -47,7 +47,7 @@ var devmoba = devmoba || {};
             }
         },
         searchHelper: {
-            keyupThrottle: 500,
+            keyupThrottle: 800,
             searchInputRegex: new RegExp('search_(c|rmin|rmax|rdatefrom|rdateto)_(\\d+)'),
             lastKeyup: Date.now(),
             rangeSearchConditions: [],

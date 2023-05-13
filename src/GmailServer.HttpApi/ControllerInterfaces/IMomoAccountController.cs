@@ -31,5 +31,7 @@ namespace GmailServer.ControllerInterfaces
         Task DeleteAsync(long id);
 
         Task<MomoAccountDto> IncreaseLinkCountAsync(string username);
+
+        Task<List<UploadGroupSelectionDto>> GetUploadGroupSelectionAsync();
     }
 }

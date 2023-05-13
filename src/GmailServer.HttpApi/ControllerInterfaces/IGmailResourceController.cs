@@ -16,7 +16,7 @@ namespace GmailServer.ControllerInterfaces
 
         Task DeleteAsync(long id);
 
-        Task<List<string>> GetUsernameSelectionAsync();
+        Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync();
 
         Task<GmailResourceDto> GetFirstGmailResourceAsync();
 

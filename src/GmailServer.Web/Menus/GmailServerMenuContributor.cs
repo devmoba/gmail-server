@@ -110,6 +110,18 @@ namespace GmailServer.Web.Menus
               );
             }
 
+            if (await context.IsGrantedAsync(GmailServerPermissions.GmailResources.ResetStatus))
+            {
+                gmailResource.AddItem(
+                  new ApplicationMenuItem(
+                      GmailServerMenus.GmailResource,
+                      "Reset Status",
+                      "/GmailResources/ResetStatus",
+                      order: 3
+                  )
+              );
+            }
+
             if (await context.IsGrantedAsync(GmailServerPermissions.GmailResources.Download))
             {
                 gmailResource.AddItem(
@@ -117,7 +129,7 @@ namespace GmailServer.Web.Menus
                       GmailServerMenus.GmailResource,
                       "Download",
                       "/GmailResources/Download",
-                      order: 3
+                      order: 4
                   )
               );
             }

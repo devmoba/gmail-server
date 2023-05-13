@@ -25,7 +25,7 @@ namespace GmailServer.GmailResources
 
         Task<GmailResourceDto> GetByStatusAsync(GmailResourceStatus status);
 
-        Task<List<string>> GetUsernameSelectionAsync();
+        Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync();
 
         Task<List<GmailResourceStatusSelectionDto>> GetGmailResourceStatusSelectionAsync(string username, DateTime? createdFrom, DateTime? createdTo, int? updatedHours = null);
 

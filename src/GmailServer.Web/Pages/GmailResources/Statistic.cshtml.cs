@@ -1,8 +1,6 @@
 using GmailServer.GmailResources;
 using GmailServer.Permissions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
 
 namespace GmailServer.Web.Pages.GmailResources
 {
@@ -18,13 +16,7 @@ namespace GmailServer.Web.Pages.GmailResources
 
         public async void OnGet()
         {
-            var usernames = await _gmailResourceAppService.GetUsernameSelectionAsync();
-            var usernameSelections = usernames.Select(item => new SelectListItem()
-            {
-                Text = item,
-                Value = item
-            }).ToList();
-
+            var usernameSelections = await _gmailResourceAppService.GetUsernameSelectionAsync();
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
         }
     }

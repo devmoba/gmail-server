@@ -124,5 +124,12 @@ namespace GmailServer.Controllers
         {
             return _appleIdAppService.GetStatisticDailyAsync(input);
         }
+
+        [HttpGet]
+        [Route("getUsernameSelection")]
+        public Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
+        {
+            return _appleIdAppService.GetUsernameSelectionAsync();
+        }
     }
 }

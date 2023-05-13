@@ -79,6 +79,13 @@ namespace GmailServer.Controllers
             return _appService.GetStatisticAsync(input);    
         }
 
+        [HttpGet]
+        [Route("getUploadGroupSelection")]
+        public Task<List<UploadGroupSelectionDto>> GetUploadGroupSelectionAsync()
+        {
+            return _appService.GetUploadGroupSelectionAsync();
+        }
+
         [HttpPut]
         [Route("increaseLinkCount")]
         public Task<MomoAccountDto> IncreaseLinkCountAsync(string username)

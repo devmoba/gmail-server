@@ -2,6 +2,10 @@
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'GmailResources/CreateModal');
     var reupModal = new abp.ModalManager(abp.appPath + 'GmailResources/ReupModal');
+    //gmailServer.controllers.gmailResource.getUsernameSelection()
+    //    .then((usernames) => {
+    //        window.localStorage.setItem("GmailResource_UsernameSelections", JSON.stringify(usernames));
+    //    });
 
     var searchs = [
         { searchDisabled: true },

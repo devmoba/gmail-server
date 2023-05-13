@@ -70,7 +70,7 @@ namespace GmailServer.ApplicationServices
                             Created = DateTime.Now
                         }, autoSave: true);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }
@@ -181,7 +181,7 @@ namespace GmailServer.ApplicationServices
                     nameof(TaskCheck.Status)
                         });
                 }
-                catch (Exception ex) { }
+                catch (Exception) { }
             }
 
             var taskCheckDtos = ObjectMapper.Map<List<TaskCheck>, List<TaskCheckDto>>(taskChecks);

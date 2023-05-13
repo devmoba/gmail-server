@@ -36,7 +36,7 @@ namespace GmailServer.Web.Pages.AppleIdRaws
             _repository = repository;
         }
 
-        public async void OnGet()
+        public void OnGet()
         {
             DateTo = DateTime.Now;
             DateFrom = DateTime.Now;

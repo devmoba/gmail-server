@@ -16,37 +16,37 @@
 }
 
 @section scripts {
-<abp-script-bundle name="knockout" />
-<abp-script-bundle name="chosen" />
-<script>
-    var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
-    var premiumTypeSelections = @Html.Raw(ViewData["premiumTypeSelections"]);
-    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
-    var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
-</script>
-<abp-script src="/Pages/GmailResources/js/index.js" />
-<abp-script src="/Pages/GmailResources/js/resetStatusViewModel.js" />
-@*<abp-script src="/Pages/GmailResources/js/downloadViewModel.js" />*@
+    <abp-script-bundle name="knockout" />
+    <abp-script-bundle name="chosen" />
+    <script>
+        var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
+        var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
+        var premiumTypeSelections = @Html.Raw(ViewData["premiumTypeSelections"]);
+        var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
+    </script>
+    <abp-script src="/Pages/GmailResources/js/index.js" />
+    <abp-script src="/Pages/GmailResources/js/resetStatusViewModel.js" />
+    @*<abp-script src="/Pages/GmailResources/js/downloadViewModel.js" />*@
 }
 @section styles {
-<abp-style-bundle name="chosen" />
-<style>
-    .modal-dialog {
-        max-width: 800px;
-    }
+    <abp-style-bundle name="chosen" />
+    <style>
+        .modal-dialog {
+            max-width: 800px;
+        }
 
-    .text-ellipsis {
-        overflow: hidden;
-        white-space: nowrap;
-        display: inline-block;
-        text-overflow: ellipsis;
-        width: 300px;
-    }
+        .text-ellipsis {
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+            text-overflow: ellipsis;
+            width: 300px;
+        }
 
-    .float-right.btn.btn-small {
-        margin-right: 15px;
-    }
-</style>
+        .float-right.btn.btn-small {
+            margin-right: 15px;
+        }
+    </style>
 }
 
 <abp-card>
@@ -67,18 +67,18 @@
                     </a>
                     @*<abp-button class="float-right btn btn-small btn-primary" id="reupBtn" icon="reply" text="Re-up Email"></abp-button>*@
                 }
-                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.Download))
+                @*  @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.Download))
                 {
-                    <a class="float-right btn btn-small btn-primary" href="/GmailResources/Download">
-                        <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
-                    </a>
+                <a class="float-right btn btn-small btn-primary" href="/GmailResources/Download">
+                <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+                </a>
                 }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.ResetStatus))
                 {
-                     <a class="float-right btn btn-small btn-danger" href="/GmailResources/ResetStatus">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;<span>Reset Status</span>
-                    </a>
-                }
+                <a class="float-right btn btn-small btn-danger" href="/GmailResources/ResetStatus">
+                <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;<span>Reset Status</span>
+                </a>
+                }*@
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.GmailResources.DeleteAll))
                 {
                     <abp-button class="float-right btn btn-small btn-danger" id="btnRemoveAll" icon="trash" text="Remove All"></abp-button>

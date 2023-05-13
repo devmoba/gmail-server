@@ -1,30 +1,12 @@
 ﻿$(function () {
-    //gmailServer.controllers.gmailResource.getStatisticByUsername().done((res) => {
-    //    var chart = new CanvasJS.Chart("chartContainer", {
-    //        exportEnabled: false,
-    //        animationEnabled: true,
-    //        title: {
-    //            text: "Gmail Resource Statistics"
-    //        },
-    //        legend: {
-    //            cursor: "pointer",
-    //            itemclick: explodePie
-    //        },
-    //        data: [{
-    //            type: "pie",
-    //            showInLegend: false,
-    //            toolTipContent: `{name}: <strong>{y}</strong>`,
-    //            indexLabel: "{name} - {y}",
-    //            dataPoints: res.statusPoints
-    //        }]
-    //    });
-    //    chart.render();
-    //});
 
     var l = abp.localization.getResource('GmailServer');
-    //var viewModel = new StatisticViewModel();
-    //ko.applyBindings(viewModel);
-    //console.log(viewModel.usernameSelections());
+    //gmailServer.controllers.gmailResource.getUsernameSelection()
+    //    .then((usernames) => {
+    //        window.localStorage.setItem("GmailResource_UsernameSelections", JSON.stringify(usernames));
+    //    });
+
+    //var usernames = JSON.parse(window.localStorage.getItem("GmailResource_UsernameSelections"));
 
     var searchs = [
         { searchDisabled: true },
@@ -55,7 +37,7 @@
         //order: [[1, "desc"]],
         ordering: false,
         initComplete: () => {
-            $('select.search_c_2').chosen({ disable_search_threshold: 7, search_contains: true });
+            $('select.search_c_2').chosen({ disable_search_threshold: 5, search_contains: true });
         },
         ajax: abp.libs.datatables.createAjax(gmailServer.controllers.gmailResource.getStatistic, () => {
             return devmoba.datatables.searchHelper.getSearchConditions();

@@ -121,7 +121,7 @@ namespace GmailServer.Controllers
 
         [HttpGet]
         [Route("getUsernameSelection")]
-        public Task<List<string>> GetUsernameSelectionAsync()
+        public Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
         {
             return _gmailResourceAppService.GetUsernameSelectionAsync();
         }

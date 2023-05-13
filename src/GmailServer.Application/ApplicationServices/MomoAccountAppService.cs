@@ -35,7 +35,10 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(input.UploadGroup), x => x.UploadGroup == input.UploadGroup);
-            query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
+
+            if (!string.IsNullOrEmpty(input.Username))
+                query = Repository.FullTextSearch(query, x => x.Username, input.Username);
+
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
             query = query.WhereIf(input.TotalLinkCountMax.HasValue, x => x.TotalLinkCount <= input.TotalLinkCountMax.Value);
             query = query.WhereIf(input.TotalLinkCountMin.HasValue, x => x.TotalLinkCount >= input.TotalLinkCountMin.Value);

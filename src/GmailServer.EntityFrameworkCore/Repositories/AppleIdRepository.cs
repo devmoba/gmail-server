@@ -2,10 +2,12 @@
 using GmailServer.Entities;
 using GmailServer.EntityFrameworkCore;
 using GmailServer.Enums;
+using GmailServer.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
@@ -61,6 +63,11 @@ namespace GmailServer.Repositories
         {
             var dbContext = await GetDbContextAsync();
             await dbContext.Database.ExecuteSqlRawAsync($"{query}");
+        }
+
+        public IQueryable<AppleId> FullTextSearch(IQueryable<AppleId> query, Expression<Func<AppleId, string>> keySelector, string value)
+        {
+            return query.FullTextContains(keySelector, value);
         }
 
         public async Task UpdateStatusByTimeoutAsync(int minute)

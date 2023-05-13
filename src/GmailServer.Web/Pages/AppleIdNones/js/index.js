@@ -3,6 +3,7 @@
 $(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'AppleIdNones/CreateModal');
+
     var searchs = [
         { searchDisabled: true },
         { name: "username", options: usernameSelections },
@@ -33,6 +34,7 @@ $(function () {
         orderCellsTop: true,
         order: [[0, "desc"]],
         initComplete: () => {
+            $('select.search_c_1').chosen({ disable_search_threshold: 5, search_contains: true });
             $('select.search_c_4').chosen({ disable_search_threshold: 5, search_contains: true });
             $('select.search_c_5').chosen({ disable_search_threshold: 5, search_contains: true });
             $('select.search_c_6').chosen({ disable_search_threshold: 5, search_contains: true });

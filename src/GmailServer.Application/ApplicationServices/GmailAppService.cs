@@ -23,7 +23,7 @@ namespace GmailServer.ApplicationServices
         GmailFilterDto>, IGmailAppService
     {
         private readonly new IGmailRepository Repository;
-        private readonly new IGmailTypeRepository gmailTypeRepository;
+        private readonly IGmailTypeRepository gmailTypeRepository;
 
         public GmailAppService(IGmailRepository repository, IGmailTypeRepository gmailTypeRepository) : base(repository)
         {

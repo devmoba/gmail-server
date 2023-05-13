@@ -1,28 +1,5 @@
 ﻿$(function () {
-    //gmailServer.controllers.appleId.getStatisticByUsername().done((res) => {
-    //    var chart = new CanvasJS.Chart("chartContainer", {
-    //        exportEnabled: false,
-    //        animationEnabled: true,
-    //        title: {
-    //            text: "Apple ID Statistics"
-    //        },
-    //        legend: {
-    //            cursor: "pointer",
-    //            itemclick: explodePie
-    //        },
-    //        data: [{
-    //            type: "pie",
-    //            showInLegend: false,
-    //            toolTipContent: `{name}: <strong>{y}</strong>`,
-    //            indexLabel: "{name} - {y}",
-    //            dataPoints: res.statusPoints
-    //        }]
-    //    });
-    //    chart.render();
-    //});
-
     var l = abp.localization.getResource('GmailServer');
-
     var searchs = [
         { searchDisabled: true },
         { name: "created", enableDateRangeFilter: true },

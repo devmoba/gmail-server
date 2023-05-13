@@ -50,14 +50,9 @@ namespace GmailServer.Web.Pages.GmailResources
         }
         public async Task OnGetAsync()
         {
-            var usernames = await this.gmailResourceAppService.GetUsernameSelectionAsync();
-            var usernameSelections = usernames.Select(item => new SelectListItem()
-            {
-                Text = item,
-                Value = item
-            }).ToList();
-
-            usernameSelections.AddFirst(new SelectListItem()
+            var usernameSelections = await this.gmailResourceAppService.GetUsernameSelectionAsync();
+         
+            usernameSelections.AddFirst(new UsernameSelectionDto()
             {
                 Text = "All Username",
                 Value = string.Empty

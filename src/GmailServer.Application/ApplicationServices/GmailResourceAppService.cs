@@ -330,9 +330,13 @@ namespace GmailServer.ApplicationServices
         }
 
         [Authorize]
-        public async Task<List<string>> GetUsernameSelectionAsync()
+        public async Task<List<UsernameSelectionDto>> GetUsernameSelectionAsync()
         {
-            var query = Repository.GroupBy(x => x.Username).Select(x => x.Key);
+            var query = Repository.GroupBy(x => x.Username).Select(x => new UsernameSelectionDto()
+            {
+                Text = x.Key,
+                Value = x.Key
+            });
             var res = await AsyncExecuter.ToListAsync(query);
             return res;
         }
