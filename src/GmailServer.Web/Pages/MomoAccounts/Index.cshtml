@@ -19,34 +19,32 @@
 }
 
 @section scripts {
-<abp-script-bundle name="knockout" />
-<abp-script-bundle name="chosen" />
-<script>
+    <abp-script-bundle name="knockout" />
+    <abp-script-bundle name="chosen" />
+    <script>
         var momoAccountStatusSelections = @Html.Raw(ViewData["momoAccountStatusSelections"]);
-        var uploadGroupSelections = @Html.Raw(ViewData["uploadGroupSelections"]);
-</script>
-<abp-script src="/Pages/MomoAccounts/js/index.js" />
-@*<abp-script src="/Pages/AppleIds/js/downloadViewModel.js" />*@
+    </script>
+    <abp-script src="/Pages/MomoAccounts/js/index.js" />
     <abp-script src="/Pages/MomoAccounts/js/resetStatusViewModel.js" />
 }
 @section styles {
-<abp-style-bundle name="chosen" />
-<style>
-    .modal-dialog {
-        max-width: 1000px;
-    }
+    <abp-style-bundle name="chosen" />
+    <style>
+        .modal-dialog {
+            max-width: 1000px;
+        }
 
-    .text-ellipsis {
-        overflow: hidden;
-        white-space: nowrap;
-        display: inline-block;
-        text-overflow: ellipsis;
-        width: 400px;
-    }
+        .text-ellipsis {
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+            text-overflow: ellipsis;
+            width: 400px;
+        }
 
-    .text-ellipsis.sm-width {
-         width: 120px;
-    }
+            .text-ellipsis.sm-width {
+                width: 120px;
+            }
     </style>
 }
 

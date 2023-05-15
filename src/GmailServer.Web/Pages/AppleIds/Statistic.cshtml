@@ -18,10 +18,6 @@
 @section scripts {
 <abp-script-bundle name="knockout" />
 <abp-script-bundle name="chosen" />
-@*<abp-script-bundle name="canvasjs" />*@
-<script>
-    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
-</script>
 <abp-script src="/Pages/AppleIds/js/statistic.js" />
 }
 @section styles {
@@ -30,17 +26,6 @@
     #appleIdStatisticTable_wrapper .btn {
         padding: 5px 10px;
     }
-    /*.modal-dialog {
-        max-width: 800px;
-    }
-
-    .text-ellipsis {
-        overflow: hidden;
-        white-space: nowrap;
-        display: inline-block;
-        text-overflow: ellipsis;
-        width: 450px;
-    }*/
 </style>
 }
 
@@ -54,11 +39,6 @@
                 
             </abp-column>
         </abp-row> 
-        @*<abp-row>
-            <abp-column size-md="_8">
-                <div id="chartContainer" style="height: 550px; width: 100%;"></div>
-            </abp-column>
-        </abp-row>*@
     </abp-card-header>
     <abp-card-body>
         <abp-table striped-rows="true" id="appleIdStatisticTable" class="table-bordered">

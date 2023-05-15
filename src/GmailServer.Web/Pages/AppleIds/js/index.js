@@ -3,173 +3,177 @@
 $(function () {
     var l = abp.localization.getResource('GmailServer');
     var createModal = new abp.ModalManager(abp.appPath + 'AppleIds/CreateModal');
-    var searchs = [
-        { searchDisabled: true },
-        { name: "username", options: usernameSelections },
-        { name: "email" },
-        { searchDisabled: true },
-        { name: "purchaseNumber", enableRangeFilter: true },
-        { name: "status", options: appleIdStatusSelections },
-        { searchDisabled: true },
-        { searchDisabled: true },
-        { searchDisabled: true },
-        { searchDisabled: true },
-        { searchDisabled: true },
-        { name: "takenOutNumber", enableRangeFilter: true },
-        { searchDisabled: true },
-        { name: "created", enableDateRangeFilter: true },
-        { searchDisabled: true },
-        { searchDisabled: true },
-        { searchDisabled: true }
-    ];
-    if (isRoleNameAppleIdMember) {
-        searchs[1] = { searchDisabled: true };
-    }
-    devmoba.datatables.enableIndividualColumnSearch("#appleIdTable", searchs);
+    gmailServer.controllers.appleId.getUsernameSelection().done((usernames) => {
+        var searchs = [
+            { searchDisabled: true },
+            { name: "username", options: usernames },
+            { name: "email" },
+            { searchDisabled: true },
+            { name: "purchaseNumber", enableRangeFilter: true },
+            { name: "status", options: appleIdStatusSelections },
+            { searchDisabled: true },
+            { searchDisabled: true },
+            { searchDisabled: true },
+            { searchDisabled: true },
+            { searchDisabled: true },
+            { name: "takenOutNumber", enableRangeFilter: true },
+            { searchDisabled: true },
+            { name: "created", enableDateRangeFilter: true },
+            { searchDisabled: true },
+            { searchDisabled: true },
+            { searchDisabled: true }
+        ];
+        if (isRoleNameAppleIdMember) {
+            searchs[1] = { searchDisabled: true };
+        }
 
-    var datatableConfig = abp.libs.datatables.normalizeConfiguration({
-        processing: true,
-        serverSide: true,
-        paging: true,
-        lengthMenu: [100, 200, 300, 500],
-        searching: true,
-        autoWidth: false,
-        scrollCollapse: true,
-        orderCellsTop: true,
-        order: [[0, "desc"]],
-        initComplete: () => {
-            $('select.search_c_1').chosen({ disable_search_threshold: 5, search_contains: true });
-            $('select.search_c_4').chosen({ disable_search_threshold: 5, search_contains: true });
-        },
-        ajax: abp.libs.datatables.createAjax(gmailServer.controllers.appleId.getList, () => {
-            return devmoba.datatables.searchHelper.getSearchConditions();
-        }),
-        columnDefs: [
-            {
-                orderable: false,
-                targets: [2],
-                render: function (data, type, row, meta) {
-                    return `<span class="text-ellipsis">${data}</span>`;
-                }
+        devmoba.datatables.enableIndividualColumnSearch("#appleIdTable", searchs);
+
+        var datatableConfig = abp.libs.datatables.normalizeConfiguration({
+            processing: true,
+            serverSide: true,
+            paging: true,
+            lengthMenu: [100, 200, 300, 500],
+            searching: true,
+            autoWidth: false,
+            scrollCollapse: true,
+            orderCellsTop: true,
+            order: [[0, "desc"]],
+            initComplete: () => {
+                $('select.search_c_1').chosen({ disable_search_threshold: 5, search_contains: true });
+                $('select.search_c_4').chosen({ disable_search_threshold: 5, search_contains: true });
             },
-            {
-                targets: [4],
-                render: function (data, type, row, meta) {
-                    if (abp.auth.isGranted('AppleIdGroup.PurchaseNumber')) {
+            ajax: abp.libs.datatables.createAjax(gmailServer.controllers.appleId.getList, () => {
+                return devmoba.datatables.searchHelper.getSearchConditions();
+            }),
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: [2],
+                    render: function (data, type, row, meta) {
+                        return `<span class="text-ellipsis">${data}</span>`;
+                    }
+                },
+                {
+                    targets: [4],
+                    render: function (data, type, row, meta) {
+                        if (abp.auth.isGranted('AppleIdGroup.PurchaseNumber')) {
+                            return data;
+                        }
+                        return `NA`;
+                    }
+                },
+                {
+                    targets: [5],
+                    render: function (data, type, row, meta) {
+                        var status = appleIdStatusSelections.find(x => x.value == data.toString()).text;
+                        return status;
+                    }
+                },
+                {
+                    orderable: false,
+                    targets: [7, 8, 9, 10],
+                    render: function (data, type, row, meta) {
+                        return `<span class="text-ellipsis sm-width">${data}</span>`;
+                    }
+                },
+                {
+                    orderable: false,
+                    targets: [12, 13, 14],
+                    render: function (data, type, row, meta) {
+                        if (data && type === 'display') {
+                            let m = moment(data);
+                            data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
+                        }
                         return data;
                     }
-                    return `NA`;
-                }
-            },
-            {
-                targets: [5],
-                render: function (data, type, row, meta) {
-                    var status = appleIdStatusSelections.find(x => x.value == data.toString()).text;
-                    return status;
-                }
-            },
-            {
-                orderable: false,
-                targets: [7, 8, 9, 10],
-                render: function (data, type, row, meta) {
-                    return `<span class="text-ellipsis sm-width">${data}</span>`;
-                }
-            },
-            {
-                orderable: false,
-                targets: [12, 13, 14],
-                render: function (data, type, row, meta) {
-                    if (data && type === 'display') {
-                        let m = moment(data);
-                        data = `<span title="${m.fromNow()}">${m.local().format('YYYY/MM/DD HH:mm')}</span>`;
+                },
+                {
+                    orderable: false,
+                    targets: [15],
+                    render: function (data, type, row, meta) {
+                        if (abp.auth.isGranted('DownloadedAppGroup.DownloadedApps')) {
+                            var html = `<button onclick="openDownloadedAppModal('${row.email}')" class="btn btn-sm btn-success" data-id="${row.email}">`;
+                            html += `<span>${data}</span>&nbsp;&nbsp;<i class="fa fa-share" aria-hidden="true"></i>`;
+                            html += `</button>`;
+                            return html;
+                        }
+                        return `NA`;
                     }
-                    return data;
-                }
-            },
-            {
-                orderable: false,
-                targets: [15],
-                render: function (data, type, row, meta) {
-                    if (abp.auth.isGranted('DownloadedAppGroup.DownloadedApps')) {
-                        var html = `<button onclick="openDownloadedAppModal('${row.email}')" class="btn btn-sm btn-success" data-id="${row.email}">`;
-                        html += `<span>${data}</span>&nbsp;&nbsp;<i class="fa fa-share" aria-hidden="true"></i>`;
-                        html += `</button>`;
-                        return html;
-                    }
-                    return `NA`;
-                }
-            },
-            {
-                targets: [16],
-                rowAction: {
-                    items:
-                        [
-                            {
-                                text: l('Delete'),
-                                iconClass: "fas fa-trash-alt",
-                                visible: function (data) {
-                                    return abp.auth.isGranted('AppleIdGroup.Delete');
-                                },
-                                confirmMessage: data => l('DeleteConfirm'),
-                                action: data => {
-                                    gmailServer.controllers.appleId.delete(data.record.id).then(() => {
-                                        abp.notify.info(l('SuccessfullyDeleted'));
-                                        dataTable.ajax.reload();
-                                    });
+                },
+                {
+                    targets: [16],
+                    rowAction: {
+                        items:
+                            [
+                                {
+                                    text: l('Delete'),
+                                    iconClass: "fas fa-trash-alt",
+                                    visible: function (data) {
+                                        return abp.auth.isGranted('AppleIdGroup.Delete');
+                                    },
+                                    confirmMessage: data => l('DeleteConfirm'),
+                                    action: data => {
+                                        gmailServer.controllers.appleId.delete(data.record.id).then(() => {
+                                            abp.notify.info(l('SuccessfullyDeleted'));
+                                            dataTable.ajax.reload();
+                                        });
+                                    }
                                 }
-                            }
-                        ]
-                }
-            },
-        ],
-        columns: [
-            { data: "id", width: "100px" },
-            { data: "username", width: "150px" },
-            { data: "email", width: "220px" },
-            { data: "password", width: "150px" },
-            { data: "purchaseNumber", width: "150px" },
-            { data: "status", width: "150px" },
-            { data: "ccv", width: "150px" },
-            { data: "secretAnswer1", width: "150px" },
-            { data: "secretAnswer2", width: "150px" },
-            { data: "secretAnswer3", width: "150px" },
-            { data: "dateOfBirth", width: "150px" },
-            { data: "takenOutNumber", width: "150px" },
-            { data: "takenTime", width: "250px" },
-            { data: "created", width: "250px" },
-            { data: "updated", width: "250px" },
-            { data: "downloadedAppCount", width: "200px" },
-            { data: null, width: "130px" },
-        ]
-    });
+                            ]
+                    }
+                },
+            ],
+            columns: [
+                { data: "id", width: "100px" },
+                { data: "username", width: "150px" },
+                { data: "email", width: "220px" },
+                { data: "password", width: "150px" },
+                { data: "purchaseNumber", width: "150px" },
+                { data: "status", width: "150px" },
+                { data: "ccv", width: "150px" },
+                { data: "secretAnswer1", width: "150px" },
+                { data: "secretAnswer2", width: "150px" },
+                { data: "secretAnswer3", width: "150px" },
+                { data: "dateOfBirth", width: "150px" },
+                { data: "takenOutNumber", width: "150px" },
+                { data: "takenTime", width: "250px" },
+                { data: "created", width: "250px" },
+                { data: "updated", width: "250px" },
+                { data: "downloadedAppCount", width: "200px" },
+                { data: null, width: "130px" },
+            ]
+        });
 
-    var dataTable = $('#appleIdTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
+        var dataTable = $('#appleIdTable').DataTable(devmoba.datatables.fixDomConfiguration(datatableConfig));
 
-    createModal.onResult(() => {
-        dataTable.ajax.reload();
-    });
+        createModal.onResult(() => {
+            dataTable.ajax.reload();
+        });
 
-    $('#createBtn').click((e) => {
-        e.preventDefault();
-        createModal.open();
-    });
+        $('#createBtn').click((e) => {
+            e.preventDefault();
+            createModal.open();
+        });
 
-    $('.btnDownloadedApp').click(function (e) {
-        e.preventDefault();
-        alert($(this).data('id'));
-    });
+        $('.btnDownloadedApp').click(function (e) {
+            e.preventDefault();
+            alert($(this).data('id'));
+        });
 
-    $('#btnRemoveAll').click((e) => {
-        e.preventDefault();
-        abp.message.confirm('Are you sure to remove all recovery emails?')
-            .then(function (confirmed) {
-                if (confirmed) {
-                    gmailServer.controllers.appleId.deleteAll().then(() => {
-                        dataTable.ajax.reload();
-                    });
-                }
-            });
+        $('#btnRemoveAll').click((e) => {
+            e.preventDefault();
+            abp.message.confirm('Are you sure to remove all recovery emails?')
+                .then(function (confirmed) {
+                    if (confirmed) {
+                        gmailServer.controllers.appleId.deleteAll().then(() => {
+                            dataTable.ajax.reload();
+                        });
+                    }
+                });
+        });
     });
+    
 });
 
 /* Downloaded App Modal */

@@ -23,11 +23,9 @@
 <abp-script-bundle name="chosen" />
 <script>
     var appleIdStatusSelections = @Html.Raw(ViewData["appleIdStatusSelections"]);
-    var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
     var isRoleNameAppleIdMember = @Html.Raw(ViewData["isRoleNameAppleIdMember"]);
 </script>
 <abp-script src="/Pages/AppleIds/js/index.js" />
-@*<abp-script src="/Pages/AppleIds/js/downloadViewModel.js" />*@
 <abp-script src="/Pages/AppleIds/js/resetStatusViewModel.js" />
 }
 @section styles {
@@ -71,18 +69,6 @@
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Create))
                 {
                     <abp-button class="float-right btn btn-small btn-primary" id="createBtn" icon="plus" text="Create"></abp-button>
-                }
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Download))
-                {
-                    <a class="float-right btn btn-small btn-primary" style="margin-right: 15px;" href="/AppleIds/Download">
-                        <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
-                    </a>
-                }
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.ResetStatus))
-                {
-                    <a class="float-right btn btn-small btn-danger" style="margin-right: 15px;" href="/AppleIds/ResetStatus">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;<span>Reset Status</span>
-                    </a>
                 }
                 @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.AppleIds.Delete))
                 {
