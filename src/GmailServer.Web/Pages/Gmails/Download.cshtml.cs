@@ -1,17 +1,13 @@
-using GmailServer.Entities;
+using GmailServer.Enums;
 using GmailServer.Gmails;
-using GmailServer.GmailTypes;
 using GmailServer.Permissions;
-using GmailServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GmailServer.Web.Pages.Gmails
@@ -20,86 +16,46 @@ namespace GmailServer.Web.Pages.Gmails
     public class DownloadModel : GmailServerPageModel
     {
         [BindProperty]
-        public bool CheckedAll { get; set; }
+        public List<Status> Statuses { get; set; }
 
         [BindProperty]
-        public bool CheckedTimeRange { get; set; }
+        [Required]
+        public string FileName { get; set; }
 
         [BindProperty]
-        public bool CheckedGmailType { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? CreatedFrom { get; set; }
 
         [BindProperty]
-        public long? GmailTypeId { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? CreatedTo { get; set; }
 
-        [BindProperty]
-        public DateTime DateFrom { get; set; }
+        private readonly IGmailAppService _appService;
 
-        [BindProperty]
-        public DateTime DateTo { get; set; }
-
-        private readonly IGmailRepository gmailRepository;
-        private readonly IGmailTypeAppService gmailTypeAppService;
-
-        public DownloadModel(IGmailRepository gmailRepository, IGmailTypeAppService gmailTypeAppService)
+        public DownloadModel(IGmailAppService appService)
         {
-            this.gmailRepository = gmailRepository;
-            this.gmailTypeAppService = gmailTypeAppService;
-        }
-
-        public async void OnGet()
-        {
-            DateTo = DateTime.Now.Date.AddDays(-1);
-            DateFrom = DateTo.Date.AddDays(-1);
-
-            var gmailTypes = await gmailTypeAppService.GetAllSelectionAsync();
-            var gmailTypeSelections = gmailTypes.Select(item => new SelectListItem()
-            {
-                Text = item.Name,
-                Value = $"{item.Id}"
-            }).ToList();
-            gmailTypeSelections.AddFirst(new SelectListItem()
-            {
-                Text = "Non of Gmail Type",
-                Value = "null"
-            });
-
-            ViewData.Add("gmailTypeSelections", SerializeObject(gmailTypeSelections));
+            _appService = appService;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var res = new List<Gmail>();
-            var fileName = "Gmails_All";
-            var query = this.gmailRepository.AsQueryable();
-           
-            if (CheckedTimeRange)
-            {
-                query = query.Where(x => x.Created >= DateFrom);
-                query = query.Where(x => x.Created <= DateTo);
-                fileName = $"Gmails_TimeRange_{DateFrom.ToString("dd/MM/yyyy")}-{DateTo.ToString("dd/MM/yyyy")}";
-            }
-
-            if (CheckedGmailType)
-            {
-                query = query.Where(x => x.GmailTypeId == GmailTypeId);
-                fileName += $"_{GmailTypeId}";
-            }
-
-            fileName += ".xlsx";
-            res = await query.ToListAsync();
             var stream = new MemoryStream();
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (var package = new ExcelPackage(stream))
             {
-                var gmailExcelModels = ObjectMapper.Map<List<Gmail>, List<GmailExcelModel>>(res);
+                var appleIds = await _appService.GetGmailExcelModelsAsync(new GmailDownloadFilter()
+                {
+                    Statuses = Statuses,
+                    CreatedFrom = CreatedFrom,
+                    CreatedTo = CreatedTo
+                });
                 var workSheet = package.Workbook.Worksheets.Add("Sheet1");
-                workSheet.Cells.LoadFromCollection(gmailExcelModels, true);
-
+                workSheet.Cells.LoadFromCollection(appleIds, true);
                 package.Save();
             }
             stream.Position = 0;
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{FileName}.xlsx");
         }
     }
 }

@@ -13,6 +13,7 @@
         public const string GmailType = Prefix + ".GmailType";
 
         public const string Gmail = Prefix + ".Gmail";
+        public const string GmailDownload = Prefix + ".Gmail.Download";
 
         public const string FakeSetting = Prefix + ".FakeSetting";
 
@@ -55,6 +56,8 @@
         public const string GmailResource = Prefix + ".GmailResource";
 
         public const string GmailResourceStatistic = Prefix + ".GmailResource.Statistic";
+        public const string GmailResourceResetStatus = Prefix + ".GmailResource.ResetStatus";
+        public const string GmailResourceDownload = Prefix + ".GmailResource.Download";
 
         public const string OwnerConfig = Prefix + ".OwnerConfig";
 

@@ -17,14 +17,13 @@
 
 @section scripts {
 <script>
-    var gmailResourceStatusSelections = @Html.Raw(ViewData["gmailResourceStatusSelections"]);
     var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
 </script>
 <abp-script-bundle name="knockout" />
 <abp-script-bundle name="chosen" />
 <abp-script src="/Pages/GmailResources/js/downloadViewModel.js" />
 <script>
-    var viewModel = new DownloadViewModel(usernameSelections, gmailResourceStatusSelections);
+    var viewModel = new DownloadViewModel(usernameSelections);
     ko.applyBindings(viewModel);
 </script>
 }

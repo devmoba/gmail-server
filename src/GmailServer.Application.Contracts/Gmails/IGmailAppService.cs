@@ -20,5 +20,9 @@ namespace GmailServer.Gmails
         Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input);
 
         Task<ReportbyStatusDto> GetReportbyStatusAsync();
+
+        Task<List<GmailStatusSelectionDto>> GetGmailStatusSelectionAsync(DateTime? createdFrom, DateTime? createdTo);
+
+        Task<List<GmailExcelModel>> GetGmailExcelModelsAsync(GmailDownloadFilter input);
     }
 }

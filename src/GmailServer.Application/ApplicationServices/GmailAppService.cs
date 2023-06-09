@@ -47,6 +47,8 @@ namespace GmailServer.ApplicationServices
 
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status);
             query = query.WhereIf(input.GmailTypeId.HasValue, x => x.GmailTypeId == input.GmailTypeId);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
 
             var count = await AsyncExecuter.CountAsync(query);
 
@@ -149,6 +151,35 @@ namespace GmailServer.ApplicationServices
 
             var res = await AsyncExecuter.ToListAsync(queryGroupBy);
             return new PagedResultDto<GmailReportDto>(count, res.OrderByDescending(x => x.Created).ToList());
+        }
+
+        [Authorize(GmailServerPermissions.Gmails.Download)]
+        public async Task<List<GmailExcelModel>> GetGmailExcelModelsAsync(GmailDownloadFilter input)
+        {
+            var query = Repository.AsQueryable();
+            if (input.Statuses.Count > 0)
+                query = query.Where(x => input.Statuses.Contains(x.Status));
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+
+            var res = await AsyncExecuter.ToListAsync(query);
+            return ObjectMapper.Map<List<Gmail>, List<GmailExcelModel>>(res);
+        }
+
+        [Authorize]
+        public async Task<List<GmailStatusSelectionDto>> GetGmailStatusSelectionAsync(DateTime? createdFrom, DateTime? createdTo)
+        {
+            var query = Repository.AsQueryable();
+            query = query.WhereIf(createdFrom.HasValue, x => x.Created.Date >= createdFrom.Value.Date);
+            query = query.WhereIf(createdTo.HasValue, x => x.Created.Date <= createdTo.Value.Date);
+
+            var groupBy = query.GroupBy(x => x.Status).Select(x => new GmailStatusSelectionDto()
+            {
+                Text = $"{x.Key.ToString()} | {x.Count()}",
+                Value = x.Key
+            });
+            var res = await AsyncExecuter.ToListAsync(groupBy);
+            return res;
         }
 
         [Authorize(GmailServerPermissions.Dashboard.Home)]

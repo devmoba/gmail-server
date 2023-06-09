@@ -16,30 +16,56 @@
 }
 
 @section scripts {
-<script>
-    var gmailTypeSelections = @Html.Raw(ViewData["gmailTypeSelections"]);
-</script>
-<abp-script-bundle name="knockout" />
-<abp-script-bundle name="chosen" />
-<abp-script src="/Pages/Gmails/js/downloadFormViewModel.js" />
-<abp-script src="/Pages/Gmails/js/download.js" />
+    <abp-script-bundle name="knockout" />
+    <abp-script-bundle name="chosen" />
+    <abp-script src="/Pages/Gmails/js/downloadViewModel.js" />
+    <script>
+        var viewModel = new DownloadViewModel();
+        ko.applyBindings(viewModel);
+    </script>
 }
 
 @section styles {
-<abp-style-bundle name="chosen" />
-<style>
-    #downloadGmailForm .row {
-        margin-bottom: 20px;
-    }
-</style>
-}
+    <abp-style-bundle name="chosen" />
+    <style>
+        .col-md-6 label {
+            margin-left: 5px;
+        }
 
+        .lb-checkbox {
+            padding: 15px 35px;
+            border-radius: 11px;
+            background: #f1f1f1;
+            width: 335px;
+            margin-bottom: 15px;
+        }
+
+        .row-bottom {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid black;
+        }
+
+        .row-top {
+            margin-top: 15px;
+        }
+
+        .created-date {
+            display: inline-flex;
+        }
+
+            .created-date input {
+                margin-left: 15px;
+                width: 345px;
+            }
+    </style>
+}
 
 <abp-card>
     <abp-card-header>
         <abp-row>
             <abp-column size-md="_6">
-                <h4>Download Gmail</h4>
+                <h4>Download Gmails</h4>
             </abp-column>
         </abp-row>
     </abp-card-header>
@@ -48,60 +74,54 @@
         <abp-card-body>
             <div class="row">
                 <div class="col-md-6">
-                    <!-- ko ifnot: checkedTimeRange -->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label><input type="checkbox" style="transform: scale(1.8);" asp-for="@Model.CheckedAll" data-bind="checked: checkedAll" />&nbsp;&nbsp;&nbsp;All</label>
+                    <div class="row row-top">
+                        <div class="col-md-2">
+                            <label>Created Date</label>
                         </div>
-                    </div>
-                    <!-- /ko -->
-                    <!-- ko ifnot: checkedAll -->
-                    <div class="row" style="padding-top: 15px;">
-                        <div class="col-md-12">
-                            <label><input type="checkbox" style="transform: scale(1.8);" asp-for="@Model.CheckedTimeRange" data-bind="checked: checkedTimeRange" />&nbsp;&nbsp;&nbsp;Time Range</label>
-                        </div>
-                    </div>
-                    <div class="row" style="padding-top: 15px;">
-                        <div class="col-md-4">
-                            <div style="padding-left: 30px;display: inline-flex;">
+                        <div class="col-md-9">
+                            <div class="created-date">
                                 <label style="padding-top: 5px;">From</label>
-                                <input type="date"
+                                <input id="createdFrom" type="date"
                                        class="form-control"
-                                       asp-for="@Model.DateFrom"
-                                       value="@Model.DateFrom"
-                                       style="margin-left: 15px;" />
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div style="padding-left: 30px;display: inline-flex;">
-                                <label style="padding-top: 5px;">To</label>
-                                <input type="date"
+                                       asp-for="@Model.CreatedFrom"
+                                       autocomplete="off"
+                                       data-bind="textInput: createdFrom" />
+                                <label style="padding: 5px 0px 0px 10px;">To</label>
+                                <input id="createdTo" type="date"
                                        class="form-control"
-                                       asp-for="@Model.DateTo"
-                                       value="@Model.DateTo"
-                                       style="margin-left: 15px;" />
+                                       asp-for="@Model.CreatedTo"
+                                       autocomplete="off"
+                                       data-bind="textInput: createdTo" />
                             </div>
                         </div>
                     </div>
-                    <!-- /ko -->
-                     <div class="row">
-                        <div class="col-md-12">
-                            <label><input type="checkbox" style="transform: scale(1.8);" asp-for="@Model.CheckedGmailType" data-bind="checked: checkedGmailType" />&nbsp;&nbsp;&nbsp;Gmail Type</label>
+                    <div class="row row-top">
+                        <div class="col-md-2">
+                            <label>Status</label>
                         </div>
-                    </div>
-                     <!-- ko if: checkedGmailType -->
-                    <div class="row" style="padding-top: 15px;">
-                        <div class="col-md-8">
-                            <div style="padding-left: 30px;">
-                                <select asp-for="@Model.GmailTypeId" class="form-control"
-                                        data-bind="options: gmailTypeSelections, optionsText: (i) => i.text, optionsValue: 'value', chosen: {}"></select>
+                        <div class="col-md-10">
+                            <div class="row" data-bind="foreach: { data: statuses, as: 'status' }">
+                                <div class="col-md-6">
+                                    <label class="lb-checkbox">
+                                        <input type="checkbox" name="Statuses" data-bind="value: status.value" style="transform: scale(1.8);" />
+                                        <span data-bind="text: status.text" style="font-size: 20px; margin-left: 15px;"></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- /ko -->
+                    <div class="row row-bottom">
+                        <div class="col-md-2">
+                            <label>File name (*)</label>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" asp-for="FileName" class="form-control" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </abp-card-body>
         <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
     </form>
 </abp-card>
+

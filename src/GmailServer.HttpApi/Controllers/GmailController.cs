@@ -1,6 +1,8 @@
 ﻿using GmailServer.ControllerInterfaces;
 using GmailServer.Gmails;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -37,6 +39,13 @@ namespace GmailServer.Controllers
         public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
         {
             return await _appService.GetGmailReportsAsync(input);
+        }
+
+        [HttpGet]
+        [Route("getGmailStatusSelection")]
+        public Task<List<GmailStatusSelectionDto>> GetGmailStatusSelectionAsync(DateTime? createdFrom, DateTime? createdTo)
+        {
+            return _appService.GetGmailStatusSelectionAsync(createdFrom, createdTo);
         }
 
         [HttpGet]

@@ -30,7 +30,7 @@
 
         public string Country { get; set; }
 
-        public int Status { get; set; }
+        public string Status { get; set; }
 
         public string Arg1 { get; set; }
 

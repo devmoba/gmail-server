@@ -3,13 +3,11 @@ using GmailServer.GmailResources;
 using GmailServer.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GmailServer.Web.Pages.GmailResources
@@ -51,15 +49,6 @@ namespace GmailServer.Web.Pages.GmailResources
                 Text = "All Username",
                 Value = string.Empty
             });
-
-            var gmailResourceStatusSelections = Enum.GetValues(typeof(GmailResourceStatus)).Cast<GmailResourceStatus>()
-               .Select(item => new SelectListItem()
-               {
-                   Text = item.ToString(),
-                   Value = $"{(int)item}"
-               }).ToList();
-
-            ViewData.Add("gmailResourceStatusSelections", SerializeObject(gmailResourceStatusSelections));
             ViewData.Add("usernameSelections", SerializeObject(usernameSelections));
         }
 

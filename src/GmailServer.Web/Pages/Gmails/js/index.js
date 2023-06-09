@@ -12,9 +12,8 @@
         { searchDisabled: true },
         { searchDisabled: true },
         { searchDisabled: true },
-        { searchDisabled: true },
         { name: "gmailTypeId", options: gmailTypeSelections },
-        { searchDisabled: true },
+        { name: "created", enableDateRangeFilter: true },
         { searchDisabled: true }
     ]);
 

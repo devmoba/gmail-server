@@ -57,19 +57,34 @@ namespace GmailServer.Web.Menus
                    )
                );
             }
+            var gmail = new ApplicationMenuItem(GmailServerMenus.Gmail, "Gmail", order: 3, icon: "fa fa-google");
 
             if (await context.IsGrantedAsync(GmailServerPermissions.Gmails.Default))
             {
-                context.Menu.AddItem(
+                gmail.AddItem(
                    new ApplicationMenuItem(
                        GmailServerMenus.Gmail,
                        "Gmail",
                        "/Gmails",
                        icon: "fa fa-google",
-                       order: 3
+                       order: 1
                    )
                );
             }
+
+            if (await context.IsGrantedAsync(GmailServerPermissions.Gmails.Download))
+            {
+                gmail.AddItem(
+                  new ApplicationMenuItem(
+                      GmailServerMenus.GmailDownload,
+                      "Download",
+                      "/Gmails/Download",
+                      order: 2
+                  )
+              );
+            }
+
+            context.Menu.AddItem(gmail);
 
             if (await context.IsGrantedAsync(GmailServerPermissions.GmailPremiums.Default))
             {
@@ -102,7 +117,7 @@ namespace GmailServer.Web.Menus
             {
                 gmailResource.AddItem(
                   new ApplicationMenuItem(
-                      GmailServerMenus.GmailResource,
+                      GmailServerMenus.GmailResourceStatistic,
                       "Statistic",
                       "/GmailResources/Statistic",
                       order: 2
@@ -114,7 +129,7 @@ namespace GmailServer.Web.Menus
             {
                 gmailResource.AddItem(
                   new ApplicationMenuItem(
-                      GmailServerMenus.GmailResource,
+                      GmailServerMenus.GmailResourceResetStatus,
                       "Reset Status",
                       "/GmailResources/ResetStatus",
                       order: 3
@@ -126,7 +141,7 @@ namespace GmailServer.Web.Menus
             {
                 gmailResource.AddItem(
                   new ApplicationMenuItem(
-                      GmailServerMenus.GmailResource,
+                      GmailServerMenus.GmailResourceDownload,
                       "Download",
                       "/GmailResources/Download",
                       order: 4
@@ -156,7 +171,7 @@ namespace GmailServer.Web.Menus
                 {
                     appleId.AddItem(
                        new ApplicationMenuItem(
-                           GmailServerMenus.AppleId,
+                           GmailServerMenus.AppleIdStatistic,
                            "Statistic",
                            "/AppleIds/Statistic",
                            order: 2
@@ -339,8 +354,8 @@ namespace GmailServer.Web.Menus
 
                 apple.AddItem(appleIdRaw);
             }
-
             context.Menu.AddItem(apple);
+
             var momoAccount = new ApplicationMenuItem(GmailServerMenus.MomoAccount, "Momo Account", order: 7, icon: "fa fa-credit-card");
             if (await context.IsGrantedAsync(GmailServerPermissions.MomoAccounts.Default))
             {
@@ -358,10 +373,10 @@ namespace GmailServer.Web.Menus
             {
                 momoAccount.AddItem(
                    new ApplicationMenuItem(
-                       GmailServerMenus.MomoAccount,
+                       GmailServerMenus.MomoAccountStatistic,
                        "Statistic",
                        "/MomoAccounts/Statistic",
-                       order: 1
+                       order: 2
                    )
                );
             }
@@ -370,10 +385,10 @@ namespace GmailServer.Web.Menus
             {
                 momoAccount.AddItem(
                    new ApplicationMenuItem(
-                       GmailServerMenus.MomoAccount,
+                       GmailServerMenus.MomoAccountResetStatus,
                        "Reset Status",
                        "/MomoAccounts/ResetStatus",
-                       order: 2
+                       order: 3
                    )
                );
             }

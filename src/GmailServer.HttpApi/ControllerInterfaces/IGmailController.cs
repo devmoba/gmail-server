@@ -1,4 +1,5 @@
 ﻿using GmailServer.Gmails;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
@@ -16,5 +17,7 @@ namespace GmailServer.ControllerInterfaces
         Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input);
 
         Task<ReportbyStatusDto> GetReportbyStatusAsync();
+
+        Task<List<GmailStatusSelectionDto>> GetGmailStatusSelectionAsync(DateTime? createdFrom, DateTime? createdTo);
     }
 }

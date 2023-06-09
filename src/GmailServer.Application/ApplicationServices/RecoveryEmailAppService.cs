@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp;
 using Volo.Abp.Application.Dtos;
@@ -27,6 +28,8 @@ namespace GmailServer.ApplicationServices
         CreateUpdateRecoveryEmailDto>, IRecoveryEmailAppService
     {
         private new readonly IRecoveryEmailRepository Repository;
+        private static SemaphoreSlim getFirstLock = new SemaphoreSlim(1, 1);
+        private static SemaphoreSlim getRandomSyncLock = new SemaphoreSlim(1, 1);
         private readonly IConfiguration _cfg;
 
         public RecoveryEmailAppService(IRecoveryEmailRepository repository, IConfiguration configuration) : base(repository)
@@ -72,17 +75,25 @@ namespace GmailServer.ApplicationServices
 
         public async Task<RecoveryEmailDto> GetRecoveryEmailRandomAsync()
         {
-            var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready);
-            query = query.OrderBy(x => Guid.NewGuid());
-            var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (recoveryEmail != null)
+            await getRandomSyncLock.WaitAsync();
+            try
             {
-                var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
-                recoveryEmail.Status = RecoveryEmailStatus.Completed;
-                await Repository.UpdateAsync(recoveryEmail, autoSave: true);
-                return res;
+                var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready);
+                query = query.OrderBy(x => Guid.NewGuid());
+                var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (recoveryEmail != null)
+                {
+                    var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
+                    recoveryEmail.Status = RecoveryEmailStatus.Completed;
+                    await Repository.UpdateAsync(recoveryEmail, autoSave: true);
+                    return res;
+                }
+                return new RecoveryEmailDto();
             }
-            return new RecoveryEmailDto();
+            finally 
+            {
+                getRandomSyncLock.Release();
+            }
         }
 
         private bool ValidateRecoveryEmailInput(string str)
@@ -151,19 +162,28 @@ namespace GmailServer.ApplicationServices
 
         public async Task<RecoveryEmailDto> GetFirstRecoveryEmailAsync()
         {
-            var interval = _cfg.GetValue<int>("Workers:DeleteRecoveryEmailCompletedWorker:CheckDelete");
-            var timeCondition = DateTime.Now.AddHours(-interval);
-            var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready && x.Created > timeCondition);
-            query = query.OrderBy(x => x.Id);
-            var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
-            if (recoveryEmail != null)
+            await getFirstLock.WaitAsync();
+            try
             {
-                var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
-                recoveryEmail.Status = RecoveryEmailStatus.Completed;
-                await Repository.UpdateAsync(recoveryEmail, autoSave: true);
-                return res;
+                var interval = _cfg.GetValue<int>("Workers:DeleteRecoveryEmailCompletedWorker:CheckDelete");
+                var timeCondition = DateTime.Now.AddHours(-interval);
+                var query = Repository.Where(x => x.Status == RecoveryEmailStatus.Ready && x.Created > timeCondition);
+                query = query.OrderBy(x => x.Id);
+                var recoveryEmail = await AsyncExecuter.FirstOrDefaultAsync(query);
+                if (recoveryEmail != null)
+                {
+                    var res = ObjectMapper.Map<RecoveryEmail, RecoveryEmailDto>(recoveryEmail);
+                    recoveryEmail.Status = RecoveryEmailStatus.Completed;
+                    await Repository.UpdateAsync(recoveryEmail, autoSave: true);
+                    return res;
+                }
+                return new RecoveryEmailDto();
             }
-            return new RecoveryEmailDto();
+            finally
+            {
+                getFirstLock.Release();
+            }
+
         }
 
         [Authorize]

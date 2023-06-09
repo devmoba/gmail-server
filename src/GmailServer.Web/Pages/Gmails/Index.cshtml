@@ -31,12 +31,6 @@
             <abp-column size-md="_6">
                 <h4>List Gmail</h4>
             </abp-column>
-             <abp-column size-md="_6">
-                @if (await AuthorizationService.IsGrantedAsync(GmailServerPermissions.Gmails.Download))
-                {
-                   <a class="float-right btn btn-small btn-primary" href="/Gmails/Download">Download Gmail</a> 
-                }
-            </abp-column>
         </abp-row>
     </abp-card-header>
     <abp-card-body>

@@ -30,6 +30,9 @@ namespace GmailServer
 
             CreateMap<Gmail, GmailDto>();
             CreateMap<CreateGmailDto, Gmail>();
+            CreateMap<Gmail, GmailExcelModel>()
+                .AfterMap((a, b) => b.Date = a.Date.ToString("dd/MM/yyyy HH:mm"))
+                .AfterMap((a, b) => b.Status = Enum.GetName(typeof(Status), a.Status));
 
             CreateMap<FakeSetting, FakeSettingDto>();
             CreateMap<CreateUpdateFakeSettingDto, FakeSetting>();

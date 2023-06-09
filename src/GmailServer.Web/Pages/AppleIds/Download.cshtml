@@ -17,14 +17,13 @@
 
 @section scripts {
 <script>
-    var appleIdStatusSelections = @Html.Raw(ViewData["appleIdStatusSelections"]);
     var usernameSelections = @Html.Raw(ViewData["usernameSelections"]);
 </script>
 <abp-script-bundle name="knockout" />
 <abp-script-bundle name="chosen" />
 <abp-script src="/Pages/AppleIds/js/downloadViewModel.js" />
 <script>
-    var viewModel = new DownloadViewModel(usernameSelections, appleIdStatusSelections);
+    var viewModel = new DownloadViewModel(usernameSelections);
     ko.applyBindings(viewModel);
 </script>
 }
