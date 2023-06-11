@@ -53,8 +53,8 @@ namespace GmailServer.ApplicationServices
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
             query = query.WhereIf(input.PremiumType.HasValue, x => x.PremiumType == input.PremiumType.Value);
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
             query = query.WhereIf(!string.IsNullOrEmpty(input.Country), x => x.Country == input.Country.ToLower().Trim());
             var currentUser = CurrentUser;
             if (currentUser.IsInRole(RoleName.RoleNameAppleIdMember))
@@ -390,8 +390,8 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<GmailResourceStatisticDto>> GetStatisticAsync(GmailResourceStatisticFilterDto input)
         {
             var query = Repository.AsQueryable();
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
             var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date, Username = x.Username }).Select(g => new GmailResourceStatisticDto()
             {
@@ -420,8 +420,8 @@ namespace GmailServer.ApplicationServices
         {
             var query = Repository.AsQueryable();
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
 
             var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new GmailResourceStatisticDailyDto()
             {
@@ -458,17 +458,14 @@ namespace GmailServer.ApplicationServices
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
-                {
                     queryBuilder.Append($"And Username = '{input.Username}' ");
-                }
+
                 if (input.CreatedFrom.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+
                 if (input.CreatedTo.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created < '{input.CreatedTo.Value.Date.AddDays(1).ToString("yyyy-MM-dd")}' ");
+
                 if (input.UpdatedHours.HasValue)
                 {
                     var current = DateTime.Now;
@@ -496,8 +493,8 @@ namespace GmailServer.ApplicationServices
             {
                 query = query.Where(x => input.Statuses.Contains(x.Status));
             }
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
 
             var res = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<GmailResource>, List<GmailResourceExcelModel>>(res);
@@ -513,17 +510,14 @@ namespace GmailServer.ApplicationServices
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
-                {
                     queryBuilder.Append($"And Username = '{input.Username}' ");
-                }
+
                 if (input.CreatedFrom.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+
                 if (input.CreatedTo.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created < '{input.CreatedTo.Value.Date.AddDays(1).ToString("yyyy-MM-dd")}' ");
+
                 if (input.UpdatedHours.HasValue)
                 {
                     var current = DateTime.Now;

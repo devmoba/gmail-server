@@ -48,8 +48,8 @@ namespace GmailServer.ApplicationServices
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status.Value);
             query = query.WhereIf(input.AddPaymentCompleted.HasValue, x => x.AddPaymentCompleted == input.AddPaymentCompleted.Value);
             query = query.WhereIf(input.RemovePaymentStatus.HasValue, x => x.RemovePaymentStatus == input.RemovePaymentStatus.Value);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
             query = query.WhereIf(input.PurchaseNumberMax.HasValue, x => x.PurchaseNumber <= input.PurchaseNumberMax.Value);
             query = query.WhereIf(input.PurchaseNumberMin.HasValue, x => x.PurchaseNumber >= input.PurchaseNumberMin.Value);
             query = query.WhereIf(input.TakenOutNumberMin.HasValue, x => x.TakenOutNumber >= input.TakenOutNumberMin.Value);
@@ -97,8 +97,8 @@ namespace GmailServer.ApplicationServices
             {
                 query = query.Where(x => input.Statuses.Contains(x.Status));
             }
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
 
             var res = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<AppleIdNone>, List<AppleIdNoneExcelModel>>(res);
@@ -191,8 +191,8 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<AppleIdNoneStatisticDto>> GetStatisticAsync(AppleIdNoneStatisticFilterDto input)
         {
             var query = Repository.AsQueryable();
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
             query = query.WhereIf(!string.IsNullOrEmpty(input.Username), x => x.Username == input.Username);
             var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date, Username = x.Username }).Select(g => new AppleIdNoneStatisticDto()
             {
@@ -365,17 +365,14 @@ namespace GmailServer.ApplicationServices
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
-                {
                     queryBuilder.Append($"And Username = '{input.Username}' ");
-                }
+
                 if (input.CreatedFrom.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+
                 if (input.CreatedTo.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created < '{input.CreatedTo.Value.Date.AddDays(1).ToString("yyyy-MM-dd")}' ");
+
                 var query = queryBuilder.ToString();
                 try
                 {
@@ -395,7 +392,6 @@ namespace GmailServer.ApplicationServices
         {
             if (input.Statuses.Count > 0)
             {
-
                 var queryBuilder = new StringBuilder();
                 queryBuilder.AppendLine("Update AppAppleIdNones");
                 queryBuilder.AppendLine($"Set Status = {(int)input.TargetStatus}, TakenOutNumber = 0, Updated = GETDATE()");
@@ -403,17 +399,13 @@ namespace GmailServer.ApplicationServices
                 queryBuilder.Append($"Status IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
-                {
                     queryBuilder.Append($"And Username = '{input.Username}' ");
-                }
+
                 if (input.CreatedFrom.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+
                 if (input.CreatedTo.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created < '{input.CreatedTo.Value.Date.AddDays(1).ToString("yyyy-MM-dd")}' ");
 
                 string query = queryBuilder.ToString();
                 try
@@ -506,25 +498,19 @@ namespace GmailServer.ApplicationServices
                 queryBuilder.Append($"RemovePaymentStatus IN ({string.Join(",", input.Statuses.Select(x => (int)x).ToArray())}) ");
 
                 if (!string.IsNullOrEmpty(input.Username))
-                {
                     queryBuilder.Append($"And Username = '{input.Username}' ");
-                }
+
                 if (input.CreatedFrom.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created >= '{input.CreatedFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+
                 if (input.CreatedTo.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, Created) <= '{input.CreatedTo.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And Created < '{input.CreatedTo.Value.Date.AddDays(1).ToString("yyyy-MM-dd")}' ");
+
                 if (input.RemoveTakenTimeFrom.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, RemoveTakenTime) >= '{input.RemoveTakenTimeFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And RemoveTakenTime >= '{input.RemoveTakenTimeFrom.Value.Date.ToString("yyyy-MM-dd")}' ");
+
                 if (input.RemoveTakenTimeTo.HasValue)
-                {
-                    queryBuilder.Append($"And CONVERT(DATE, RemoveTakenTime) <= '{input.RemoveTakenTimeTo.Value.Date.ToString("yyyy-MM-dd")}' ");
-                }
+                    queryBuilder.Append($"And RemoveTakenTime < '{input.RemoveTakenTimeTo.Value.Date.AddDays(1).ToString("yyyy-MM-dd")}' ");
 
                 string query = queryBuilder.ToString();
                 try

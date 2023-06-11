@@ -47,8 +47,8 @@ namespace GmailServer.ApplicationServices
 
             query = query.WhereIf(input.Status.HasValue, x => x.Status == input.Status);
             query = query.WhereIf(input.GmailTypeId.HasValue, x => x.GmailTypeId == input.GmailTypeId);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
 
             var count = await AsyncExecuter.CountAsync(query);
 
@@ -128,8 +128,8 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<GmailReportDto>> GetGmailReportsAsync(GmailReportFilterDto input)
         {
             var query = Repository.AsQueryable();
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
 
             var queryGroupBy = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new GmailReportDto()
             {
@@ -159,8 +159,8 @@ namespace GmailServer.ApplicationServices
             var query = Repository.AsQueryable();
             if (input.Statuses.Count > 0)
                 query = query.Where(x => input.Statuses.Contains(x.Status));
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
 
             var res = await AsyncExecuter.ToListAsync(query);
             return ObjectMapper.Map<List<Gmail>, List<GmailExcelModel>>(res);

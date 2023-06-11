@@ -1,4 +1,5 @@
 ﻿using GmailServer.Background.Workers;
+using GmailServer.Background.Workers.Statistics;
 using GmailServer.EntityFrameworkCore;
 using Volo.Abp;
 using Volo.Abp.BackgroundWorkers;
@@ -28,6 +29,10 @@ namespace GmailServer.Background
             context.AddBackgroundWorker<UpdateGmailResourcePremiumTyeWorker>();
             context.AddBackgroundWorker<UpdateAppleIdNoneStatusWorker>();
             context.AddBackgroundWorker<UpdateAppleIdNoneRemovePaymentStatus>();
+
+            #region Statistic
+            context.AddBackgroundWorker<AppleIdStatisticWorker>();
+            #endregion
         }
     }
 }

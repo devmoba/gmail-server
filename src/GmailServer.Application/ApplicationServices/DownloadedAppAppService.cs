@@ -37,8 +37,8 @@ namespace GmailServer.ApplicationServices
 
             query = query.WhereIf(!string.IsNullOrEmpty(input.Email), x => x.Email == input.Email.ToLower().Trim());
             query = query.WhereIf(!string.IsNullOrEmpty(input.AppleId), x => x.AppleId.Email == input.AppleId.ToLower().Trim());
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
             query = query.WhereIf(input.AppleIdFK.HasValue, x => x.AppleIdFK == input.AppleIdFK.Value);
 
             var count = await AsyncExecuter.CountAsync(query);

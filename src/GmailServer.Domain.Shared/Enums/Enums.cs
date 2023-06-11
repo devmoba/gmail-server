@@ -1,5 +1,6 @@
 ﻿namespace GmailServer.Enums
 {
+    #region Gmail
     public enum Status
     {
         Unknown = 0,
@@ -17,7 +18,9 @@
         Male = 1,
         Female = 2
     }
+    #endregion
 
+    #region Check Mail
     public enum CheckerStatus
     {
         Online = 1,
@@ -29,7 +32,7 @@
         Failed = -1,
         NA = 0,
         Checking = 1,
-        Done = 2    
+        Done = 2
     }
 
     public enum TypeCheck
@@ -37,13 +40,17 @@
         OwnerDB = 1,
         Browser = 2
     }
-    
+    #endregion
+
+    #region RecoveryEmail
     public enum RecoveryEmailStatus
     {
         Ready = 0,
         Completed = 1
     }
+    #endregion
 
+    #region GmailPremium
     public enum GmailPremiumStatus
     {
         Ready = 0,
@@ -51,7 +58,9 @@
         Error = 8,
         Unknown = 9
     }
+    #endregion
 
+    #region AppleId
     public enum AppleIdStatus
     {
         Ready = 0,
@@ -85,7 +94,9 @@
         Error = 8,
         Unknown = 9
     }
+    #endregion
 
+    #region GmailResource
     public enum GmailResourceStatus
     {
         Ready = 0,
@@ -109,24 +120,26 @@
         Disabled = 8,
         Verify = 9
     }
+    #endregion
 
-    // MomoAccount
+    #region MomoAccount
     public enum MomoAccountStatus
     {
         NotUse = 0,
         InUse = 1,
-        Lock = 3, 
+        Lock = 3,
         WrongPassword = 4,
         Unknown = 5
     }
+    #endregion
 
-    // AppleOrder
+    #region AppleOrder
     public enum LinkStatus
     {
         Ready = 0,
         InUse = 1,
         Expired = 2,
-        Error= 3,
+        Error = 3,
         Linked = 4
     }
 
@@ -139,8 +152,10 @@
         Completed = 4
     }
 
-    // AppleIdNone
-    public enum RemovePaymentStatus 
+    #endregion
+
+    #region AppleIdNone
+    public enum RemovePaymentStatus
     {
         Ready = 0,
         InUse = 1,
@@ -151,4 +166,13 @@
         Error = 6,
         Unknown = 7
     }
+    #endregion
+
+    #region Statistic
+    public enum StatisticType
+    {
+        Overview = 1,
+        Daily = 2
+    }
+    #endregion
 }

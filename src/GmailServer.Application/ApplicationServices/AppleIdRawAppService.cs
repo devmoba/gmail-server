@@ -37,8 +37,8 @@ namespace GmailServer.ApplicationServices
         public async Task<PagedResultDto<AppleIdRawStatisticDailyDto>> GetAppleIdRawStatisticDailyAsync(AppleIdRawStatisticFilterDto input)
         {
             var query = _repository.AsQueryable();
-            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created.Date >= input.CreatedFrom.Value.Date);
-            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created.Date <= input.CreatedTo.Value.Date);
+            query = query.WhereIf(input.CreatedFrom.HasValue, x => x.Created >= input.CreatedFrom.Value.Date);
+            query = query.WhereIf(input.CreatedTo.HasValue, x => x.Created < input.CreatedTo.Value.Date.AddDays(1));
             var group = query.GroupBy(x => new { Created = x.Created.Date }).Select(g => new AppleIdRawStatisticDailyDto()
             {
                 Created = g.Key.Created,

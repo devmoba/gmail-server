@@ -89,6 +89,8 @@ namespace GmailServer.EntityFrameworkCore
 
         public DbSet<OwnerConfig> OwnerConfigs { get; set; }
 
+        public DbSet<Statistic> Statistics { get; set; }
+
         #endregion
 
         public GmailServerDbContext(DbContextOptions<GmailServerDbContext> options)
@@ -405,6 +407,24 @@ namespace GmailServer.EntityFrameworkCore
                 b.HasIndex(x => x.Key).IsUnique();
                 b.Property(x => x.Key).IsRequired();
                 b.Property(x => x.Value).IsRequired();
+            });
+
+            builder.Entity<Statistic>(b =>
+            {
+                b.ToTable(GmailServerConsts.DbTablePrefix + "Statistics", GmailServerConsts.DbSchema);
+                b.ConfigureByConvention();
+
+                b.HasIndex(x => x.HashCode).IsUnique();
+                b.Property(x => x.HashCode).HasMaxLength(128).IsRequired();
+                b.Property(x => x.EntityName).HasMaxLength(128).IsRequired();
+                b.Property(x => x.Type).IsRequired();
+                b.Property(x => x.Data).IsRequired();
+                b.HasIndex(x => x.Id).IncludeProperties<Statistic>(re => new
+                {
+                    re.Date,
+                    re.EntityName,
+                    re.Type
+                });
             });
         }
     }
