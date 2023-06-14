@@ -11,9 +11,7 @@ namespace GmailServer.Repositories
     {
         IQueryable<Statistic> FullTextSearch(IQueryable<Statistic> query, Expression<Func<Statistic, string>> keySelector, string value);
 
-        Task AddOrUpdateForEntityAsync(int recoveryDate = 1);
-
-        Task AddOrUpdateForAppleIdAsync(DateTime? dateTime = null);
+        Task AddOrUpdateForEntityAsync(string entityName, int recoveryDays = 1);
 
         Task ExecuteSqlRawAsync(string query);
     }

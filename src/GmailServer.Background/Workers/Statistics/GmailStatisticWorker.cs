@@ -3,30 +3,29 @@ using GmailServer.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Threading;
 
 namespace GmailServer.Background.Workers.Statistics
 {
-    public class AppleIdStatisticWorker : AsyncPeriodicBackgroundWorkerBase
+    public class GmailStatisticWorker : AsyncPeriodicBackgroundWorkerBase
     {
         private readonly int _recoveryDays;
 
-        public AppleIdStatisticWorker(AbpAsyncTimer timer, 
+        public GmailStatisticWorker(AbpAsyncTimer timer, 
             IServiceScopeFactory serviceScopeFactory,
             IConfiguration configuration) : base(timer, serviceScopeFactory)
         {
             _recoveryDays = configuration.GetValue<int>("Workers:Statistics:RecoveryDays");
-            timer.Period = configuration.GetValue<int>("Workers:Statistics:AppleId:Interval");
+            timer.Period = configuration.GetValue<int>("Workers:Statistics:Gmail:Interval");
         }
 
         protected override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
-            Logger.LogInformation("Start AppleId Statistic Worker.");
+            Logger.LogInformation("Start Gmail Statistic Worker.");
             var statisticRepository = workerContext.ServiceProvider.GetRequiredService<IStatisticRepository>();
-            statisticRepository.AddOrUpdateForEntityAsync(nameof(AppleId), _recoveryDays);
+            statisticRepository.AddOrUpdateForEntityAsync(nameof(Gmail), _recoveryDays);
             return Task.CompletedTask;
         }
     }

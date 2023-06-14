@@ -32,6 +32,10 @@ namespace GmailServer.Background
 
             #region Statistic
             context.AddBackgroundWorker<AppleIdStatisticWorker>();
+            context.AddBackgroundWorker<AppleIdRawStatisticWorker>();
+            context.AddBackgroundWorker<AppleOrderStatisticWorker>();
+            context.AddBackgroundWorker<GmailResourceStatisticWorker>();
+            context.AddBackgroundWorker<GmailStatisticWorker>();
             #endregion
         }
     }
