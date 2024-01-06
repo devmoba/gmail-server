@@ -36,6 +36,7 @@ using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Bundling;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared.Toolbars;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.AspNetCore.SignalR;
+using Volo.Abp.Auditing;
 using Volo.Abp.AuditLogging.Web;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
@@ -119,6 +120,11 @@ namespace GmailServer.Web
                 options.Conventions.AuthorizePage("/FakeSettings", GmailServerPermissions.FakeSettings.Default);
                 options.Conventions.AuthorizePage("/Decrypt", GmailServerPermissions.Decrypts.Default);
                 options.Conventions.AuthorizePage("/CheckMails", GmailServerPermissions.CheckMails.Default);
+            });
+
+            Configure<AbpAuditingOptions>(options =>
+            {
+                options.IsEnabled = false; //Disables the auditing system
             });
 
             Configure<AbpBundlingOptions>(options =>
